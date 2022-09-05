@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import SuscriptionsApiView
 
 urlpatterns = [
-    path("", views.index)
+    path("subscriptions", SuscriptionsApiView.as_view())
 ]
