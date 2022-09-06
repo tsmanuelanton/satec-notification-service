@@ -5,4 +5,4 @@ from .models import Subscriptions
 class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscriptions
-        fields = ["service_id", "subscription_data"]
+        fields = ["service_id", "subscription_data", "id"]
