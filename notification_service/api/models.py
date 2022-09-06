@@ -1,6 +1,10 @@
 from django.db import models
 
 
-class Subscriptions(models.Model):
-    service_id = models.CharField(max_length=30)
+class Service(models.Model):
+    service_name = models.CharField(max_length=60)
+
+
+class Subscription(models.Model):
+    service_id = models.ForeignKey(Service, on_delete=models.CASCADE)
     subscription_data = models.JSONField()

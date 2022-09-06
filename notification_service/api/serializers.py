@@ -1,8 +1,14 @@
 from rest_framework import serializers
-from .models import Subscriptions
+from .models import Subscription, Service
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subscriptions
-        fields = ["service_id", "subscription_data", "id"]
+        model = Subscription
+        fields = ["id", "service_id", "subscription_data"]
+
+
+class ServicesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ["id", "service_name"]
