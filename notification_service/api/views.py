@@ -1,8 +1,9 @@
+from http import server
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Service, Subscription
-from .serializers import ServicesSerializer, SubscriptionsSerializer
+from .serializers import NotificationSerializer, ServicesSerializer, SubscriptionsSerializer
 
 
 class SuscriptionsListApiView(APIView):
@@ -135,7 +136,7 @@ class ServicesListApiView(APIView):
 
 class ServicesDetailsApiView(APIView):
 
-    def get_service(self, service_id):
+    def get_service(service_id):
         '''
         Busca en la BD un servicio concreto
         '''
@@ -149,7 +150,7 @@ class ServicesDetailsApiView(APIView):
         Muestra los detalles del servicio con id pasado por parámetros.
         '''
 
-        service = self.get_service(service_id)
+        service = ServicesDetailsApiView.get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
@@ -201,3 +202,37 @@ class ServicesDetailsApiView(APIView):
             {"res": "Servicio eliminado"},
             status=status.HTTP_200_OK
         )
+
+
+class NotifyApiView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        '''
+        Notificar a los suscriptores del servicio.
+        '''
+
+        serializer = NotificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        service_id = request.data.get('service_id')
+
+        service = ServicesDetailsApiView.get_service(service_id)
+        if not service:
+            return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # TODO: Comprobar que el cliente es el servicio que dice ser
+
+        # Obtenemos los suscriptores asociados a este servicio
+        subscriptions = Subscription.objects.filter(service_id)
+
+        serializer = SubscriptionsSerializer(subscriptions, many=True)
+
+        data = {
+            "subscription_data": [subscription['subscription_data'] for subscription in serializer.data],
+            "message": request.data.get('message')
+        }
+
+        # TODO: Filtrar y enviarlo al conector adecuado
+
+        return Response(data, status=status.HTTP_200_OK)

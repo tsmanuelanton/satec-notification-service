@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ServicesDetailsApiView, SuscriptionsListApiView, SuscriptionsDetailsApiView, ServicesListApiView
+from .views import ServicesDetailsApiView, SuscriptionsListApiView, SuscriptionsDetailsApiView, ServicesListApiView, NotifyApiView
 
 urlpatterns = [
     path("subscriptions", SuscriptionsListApiView.as_view()),
@@ -7,5 +7,6 @@ urlpatterns = [
          SuscriptionsDetailsApiView.as_view()),
     path("services", ServicesListApiView.as_view()),
     path("services/<int:service_id>", ServicesDetailsApiView.as_view()),
+    path("notify", NotifyApiView.as_view()),
 
 ]

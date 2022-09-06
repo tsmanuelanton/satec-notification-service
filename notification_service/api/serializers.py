@@ -12,3 +12,11 @@ class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ["id", "service_name"]
+
+
+class NotificationSerializer(serializers.Serializer):
+    '''
+    Valida que el cuerpo de la notificación POST esté bien formado
+    '''
+    service_id = serializers.IntegerField()
+    message = serializers.JSONField()
