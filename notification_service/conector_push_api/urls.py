@@ -1,8 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
-from api import urls as api_urls
-from . import views
+from django.urls import path
+from .views import NotificationApiView
 
 urlpatterns = [
-    path('notify', views.notify)
+    path('notify', NotificationApiView.as_view()),
 ]

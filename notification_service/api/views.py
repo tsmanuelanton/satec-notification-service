@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Service, Subscription
-from .serializers import NotificationSerializer, ServicesSerializer, SubscriptionsSerializer
+from .serializers import MessageSerializer, ServicesSerializer, SubscriptionsSerializer
 
 
 class SuscriptionsListApiView(APIView):
@@ -204,14 +204,14 @@ class ServicesDetailsApiView(APIView):
         )
 
 
-class NotifyApiView(APIView):
+class MessagesApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         '''
-        Notificar a los suscriptores del servicio.
+        Envía el mensaje recibido al conector aducado
         '''
 
-        serializer = NotificationSerializer(data=request.data)
+        serializer = MessageSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -224,7 +224,7 @@ class NotifyApiView(APIView):
         # TODO: Comprobar que el cliente es el servicio que dice ser
 
         # Obtenemos los suscriptores asociados a este servicio
-        subscriptions = Subscription.objects.filter(service_id)
+        subscriptions = Subscription.objects.filter(service_id=service_id)
 
         serializer = SubscriptionsSerializer(subscriptions, many=True)
 
