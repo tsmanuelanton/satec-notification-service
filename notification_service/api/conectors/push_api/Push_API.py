@@ -4,6 +4,16 @@ from pywebpush import webpush
 from os import path
 from django.conf import settings
 
+vapid_pkey_file_path = path.join(
+    settings.BASE_DIR, "api", "conectors", "push_api", "secrets", "private_key.pem")
+
+# Comprobamos que existe la key
+try:
+    open(vapid_pkey_file_path, "r")
+except FileNotFoundError as e:
+    raise FileNotFoundError(
+        "No se ha encontrado la clave PRIVADA VAPID en " + e.filename)
+
 
 def notify(data):
     '''
@@ -12,10 +22,7 @@ def notify(data):
     serializer = NotificationSerializer(data=data)
 
     if not serializer.is_valid():
-        raise BaseException(serializer.errors)
-
-    vapid_pkey_file_path = path.join(
-        settings.BASE_DIR, "api", "conectors", "push_api", "secrets", "private_key.pem")
+        raise SyntaxError(serializer.errors)
 
     for subscription in data['subscription_data']:
         webpush(
