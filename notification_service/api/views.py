@@ -1,9 +1,10 @@
-from http import server
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+
 from .models import Service, Subscription
 from .serializers import MessageSerializer, ServicesSerializer, SubscriptionsSerializer
+from .conectors.push_api import Push_API
 
 
 class SuscriptionsListApiView(APIView):
@@ -211,9 +212,9 @@ class MessagesApiView(APIView):
         Envía el mensaje recibido al conector aducado
         '''
 
-        serializer = MessageSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        msgSerializer = MessageSerializer(data=request.data)
+        if not msgSerializer.is_valid():
+            return Response(msgSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         service_id = request.data.get('service_id')
 
@@ -226,13 +227,17 @@ class MessagesApiView(APIView):
         # Obtenemos los suscriptores asociados a este servicio
         subscriptions = Subscription.objects.filter(service_id=service_id)
 
-        serializer = SubscriptionsSerializer(subscriptions, many=True)
+        subscriptionSerializer = SubscriptionsSerializer(
+            subscriptions, many=True)
 
         data = {
-            "subscription_data": [subscription['subscription_data'] for subscription in serializer.data],
-            "message": request.data.get('message')
+            "subscription_data": [subscription['subscription_data'] for subscription in subscriptionSerializer.data],
+            "message": msgSerializer.data['message']
         }
 
         # TODO: Filtrar y enviarlo al conector adecuado
-
-        return Response(data, status=status.HTTP_200_OK)
+        try:
+            Push_API.notify(data)
+            return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
+        except BaseException:
+            return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

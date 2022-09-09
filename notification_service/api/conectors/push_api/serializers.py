@@ -14,7 +14,7 @@ class SubscriptionDataSerializer(serializers.Serializer):
     '''
     Valida que el campo subscription data tenga el formato esperado
     '''
-    endpoint = serializers.CharField(max_length=60)
+    endpoint = serializers.CharField(max_length=None)
     keys = SubscriptionDataKeysSerializer(required=True)
 
 
