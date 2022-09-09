@@ -239,5 +239,7 @@ class MessagesApiView(APIView):
         try:
             Push_API.notify(data)
             return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
-        except BaseException:
-            return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except BaseException as e:
+            # TODO: Controlar la excepción por suscripción eliminada en el cliente (410 Gone),
+            # Vapid private key and application key no válidas (401 Unauthorized)
+            raise e
