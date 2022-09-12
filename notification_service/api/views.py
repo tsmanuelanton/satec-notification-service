@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Service, Subscription
-from .serializers import MessageSerializer, ServicesSerializer, SubscriptionsSerializer
+from .models import Conector, Service, Subscription
+from .serializers import ConectorsSerializer, MessageSerializer, ServicesSerializer, SubscriptionsSerializer
 from .conectors.push_api import Push_API
 
 
@@ -25,6 +25,7 @@ class SuscriptionsListApiView(APIView):
 
         data = {
             'service_id': request.data.get('service_id'),
+            'conector_id': request.data.get('conector_id'),
             'subscription_data': request.data.get('subscription_data'),
         }
 
@@ -243,3 +244,33 @@ class MessagesApiView(APIView):
             # TODO: Controlar la excepción por suscripción eliminada en el cliente (410 Gone),
             # Vapid private key and application key no válidas (401 Unauthorized)
             raise e
+
+
+class ConectorsApiView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        '''
+        Muestra los conectores disponibles.
+        '''
+
+        conectors = Conector.objects
+        serializer = ConectorsSerializer(conectors, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        '''
+        Registra una suscripción en el sistema.
+        '''
+
+        data = {
+            'name': request.data.get('name'),
+            'description': request.data.get('description'),
+            'meta': request.data.get('meta'),
+        }
+
+        serializer = ConectorsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
