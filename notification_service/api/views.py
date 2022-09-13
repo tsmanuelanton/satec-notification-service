@@ -1,3 +1,4 @@
+import json
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -208,6 +209,11 @@ class ServicesDetailsApiView(APIView):
 
 class MessagesApiView(APIView):
 
+    def sendDataToConector(data, conector_id):
+        conector = Conector.objects.get(id=conector_id)
+        if getattr(conector, "name") == 'Push API - Navegadores':
+            Push_API.notify(data)
+
     def post(self, request, *args, **kwargs):
         '''
         Envía el mensaje recibido al conector aducado
@@ -228,22 +234,19 @@ class MessagesApiView(APIView):
         # Obtenemos los suscriptores asociados a este servicio
         subscriptions = Subscription.objects.filter(service_id=service_id)
 
-        subscriptionSerializer = SubscriptionsSerializer(
-            subscriptions, many=True)
+        for subscription in subscriptions:
+            data = {
+                "subscription": subscription,
+                "message":  json.dumps(msgSerializer["message"].value)
+            }
+            try:
+                MessagesApiView.sendDataToConector(
+                    data, subscription.conector_id.id)
 
-        data = {
-            "subscription_data": [subscription['subscription_data'] for subscription in subscriptionSerializer.data],
-            "message": msgSerializer.data['message']
-        }
+            except Conector.BaseException:
+                return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # TODO: Filtrar y enviarlo al conector adecuado
-        try:
-            Push_API.notify(data)
-            return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
-        except BaseException as e:
-            # TODO: Controlar la excepción por suscripción eliminada en el cliente (410 Gone),
-            # Vapid private key and application key no válidas (401 Unauthorized)
-            raise e
+        return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
 
 
 class ConectorsApiView(APIView):

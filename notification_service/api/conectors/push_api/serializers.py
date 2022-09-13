@@ -22,5 +22,5 @@ class NotificationSerializer(serializers.Serializer):
     '''
     Valida que el cuerpo de la notificación POST esté bien formado
     '''
-    subscription_data = SubscriptionDataSerializer(many=True)
+    subscription_data = SubscriptionDataSerializer()
     message = serializers.JSONField()

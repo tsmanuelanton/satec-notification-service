@@ -1,6 +1,8 @@
 import json
+
+from notification_service.api.models import Subscription
 from .serializers import NotificationSerializer
-from pywebpush import webpush
+from pywebpush import webpush, WebPushException
 from os import path
 from django.conf import settings
 
@@ -24,12 +26,20 @@ def notify(data):
     if not serializer.is_valid():
         raise SyntaxError(serializer.errors)
 
-    for subscription in data['subscription_data']:
+    try:
         webpush(
-            subscription_info=subscription,
-            data=json.dumps(data['message']),
+            subscription_info=data['subscription']['subscription_data'],
+            data=data['message'],
             vapid_private_key=vapid_pkey_file_path,
             vapid_claims={
                 'sub': 'mailto:manuel.anton@satec.es'
             }
         )
+
+    except WebPushException as e:
+        # Si el Push Service lanza un error Gone 410 es que el usuario ya no está suscrito
+        if e.response.status_code == 410:
+            # Borramos la suscripción de nuestra BD
+            data['subscription'].delete()
+        else:
+            raise e
