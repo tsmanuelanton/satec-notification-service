@@ -1,4 +1,4 @@
-from .serializers import NotificationSerializer
+from .serializers import NotificationSerializer, SubscriptionDataSerializer
 from pywebpush import webpush, WebPushException
 from os import path
 from django.conf import settings
@@ -25,7 +25,7 @@ def notify(data):
 
     try:
         webpush(
-            subscription_info=data['subscription']['subscription_data'],
+            subscription_info=data['subscription_data'],
             data=data['message'],
             vapid_private_key=vapid_pkey_file_path,
             vapid_claims={
@@ -40,3 +40,16 @@ def notify(data):
             data['subscription'].delete()
         else:
             raise e
+
+
+def get_subscription_serializer():
+    return SubscriptionDataSerializer
+
+# def validate_subscription(subscription):
+
+#     serializer = SubscriptionDataSerializer.validate(data=subscription)
+
+#     if serializer.is_valid():
+#         return True
+
+#     return False, serializer.error

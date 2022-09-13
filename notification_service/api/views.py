@@ -10,6 +10,14 @@ from .conectors.push_api import Push_API
 
 class SuscriptionsListApiView(APIView):
 
+    def from_conector_get_subscription_serializer(conector_id):
+        '''
+        Devuelve el serializador del subscription_data del conector
+        '''
+        conector = Conector.objects.get(id=conector_id)
+        if conector.name == 'Push API - Navegadores':
+            return Push_API.get_subscription_serializer()
+
     def get(self, request, *args, **kwargs):
         '''
         Muestra las suscripciones registradas.
@@ -31,11 +39,19 @@ class SuscriptionsListApiView(APIView):
         }
 
         serializer = SubscriptionsSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Validar el campo subscription_data con el conector específico
+        subscription_data_serializer = SuscriptionsListApiView.from_conector_get_subscription_serializer(
+            data["conector_id"])
+        serialized = subscription_data_serializer(
+            data=data["subscription_data"])
+        if not serialized.is_valid():
+            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class SuscriptionsDetailsApiView(APIView):
@@ -241,14 +257,14 @@ class MessagesApiView(APIView):
 
         for subscription in subscriptions:
             data = {
-                "subscription": subscription,
+                "subscription_data": subscription.subscription_data,
                 "message":  json.dumps(msgSerializer["message"].value)
             }
             try:
                 MessagesApiView.sendDataToConector(
                     data, subscription.conector_id.id)
 
-            except Conector.BaseException:
+            except BaseException:
                 return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
