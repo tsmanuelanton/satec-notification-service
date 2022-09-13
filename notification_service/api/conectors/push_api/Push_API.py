@@ -1,6 +1,3 @@
-import json
-
-from notification_service.api.models import Subscription
 from .serializers import NotificationSerializer
 from pywebpush import webpush, WebPushException
 from os import path

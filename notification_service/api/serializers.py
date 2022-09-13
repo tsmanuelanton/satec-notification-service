@@ -12,7 +12,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ["id", "service_name"]
+        fields = ["id", "service_name", "token"]
 
 
 class ConectorsSerializer(serializers.ModelSerializer):

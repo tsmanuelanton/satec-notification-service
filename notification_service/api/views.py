@@ -2,7 +2,7 @@ import json
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-
+from rest_framework.authtoken.models import Token
 from .models import Conector, Service, Subscription
 from .serializers import ConectorsSerializer, MessageSerializer, ServicesSerializer, SubscriptionsSerializer
 from .conectors.push_api import Push_API
@@ -127,6 +127,7 @@ class ServicesListApiView(APIView):
 
         data = {
             'service_name': request.data.get('service_name'),
+            'token': Token.generate_key(),
         }
 
         serializer = ServicesSerializer(data=data)
@@ -172,7 +173,7 @@ class ServicesDetailsApiView(APIView):
             'service_name': request.data.get('service_name'),
         }
 
-        service = self.get_service(service_id)
+        service = ServicesDetailsApiView.get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
@@ -192,7 +193,7 @@ class ServicesDetailsApiView(APIView):
         Elimina un servicio del sistema
         '''
 
-        service = self.get_service(service_id)
+        service = ServicesDetailsApiView.get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
@@ -229,7 +230,11 @@ class MessagesApiView(APIView):
         if not service:
             return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # TODO: Comprobar que el cliente es el servicio que dice ser
+        if not request.data.get('service_token'):
+            return Response({"res": "Falta el campo service_token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if service.token != request.data.get('service_token'):
+            return Response({"res": "El token no corresponde a ningún servicio"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Obtenemos los suscriptores asociados a este servicio
         subscriptions = Subscription.objects.filter(service_id=service_id)

@@ -3,6 +3,7 @@ from django.db import models
 
 class Service(models.Model):
     service_name = models.CharField(max_length=60)
+    token = models.CharField(max_length=45)
 
 
 class Conector(models.Model):
