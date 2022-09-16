@@ -247,10 +247,7 @@ class MessagesApiView(APIView):
         if not service:
             return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not request.data.get('service_token'):
-            return Response({"res": "Falta el campo service_token"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if service.token != request.data.get('service_token'):
+        if service.token != msgSerializer.data['token']:
             return Response({"res": "El token no corresponde a ningún servicio"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Obtenemos los suscriptores asociados a este servicio
@@ -265,7 +262,8 @@ class MessagesApiView(APIView):
                 MessagesApiView.sendDataToConector(
                     data, subscription.conector_id.id)
 
-            except BaseException:
+            except BaseException as e:
+                print(e)
                 return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
