@@ -36,6 +36,7 @@ class SuscriptionsListApiView(APIView):
             'service_id': request.data.get('service_id'),
             'conector_id': request.data.get('conector_id'),
             'subscription_data': request.data.get('subscription_data'),
+            'token': request.data.get('token'),
         }
 
         serializer = SubscriptionsSerializer(data=data)
