@@ -1,8 +1,9 @@
+from api.models import Subscription
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
 from pywebpush import webpush, WebPushException
 from os import path
 from django.conf import settings
-
+from rest_framework import serializers
 vapid_pkey_file_path = path.join(
     settings.BASE_DIR, "api", "conectors", "push_api", "secrets", "private_key.pem")
 
@@ -21,7 +22,7 @@ def notify(data):
     serializer = NotificationSerializer(data=data)
 
     if not serializer.is_valid():
-        raise SyntaxError(serializer.errors)
+        raise serializers.ValidationError(serializer.errors)
 
     try:
         webpush(
@@ -35,21 +36,11 @@ def notify(data):
 
     except WebPushException as e:
         # Si el Push Service lanza un error Gone 410 es que el usuario ya no está suscrito
-        if e.response.status_code == 410:
+        # Si el Push Service lanza un error Gone 401 es que no coinciden la key pública y la privada del servidor
+        if e.response.status_code == 410 or e.response.status_code == 401:
             # Borramos la suscripción de nuestra BD
-            data['subscription'].delete()
+            subscription = Subscription.objects.get(
+                id=data['subscription_id'])
+            subscription.delete()
         else:
             raise e
-
-
-def get_subscription_serializer():
-    return SubscriptionDataSerializer
-
-# def validate_subscription(subscription):
-
-#     serializer = SubscriptionDataSerializer.validate(data=subscription)
-
-#     if serializer.is_valid():
-#         return True
-
-#     return False, serializer.error
