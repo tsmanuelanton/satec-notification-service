@@ -1,4 +1,3 @@
-from dataclasses import fields
 from rest_framework import serializers
 from .models import Conector, Subscription, Service
 
@@ -28,4 +27,15 @@ class MessageSerializer(serializers.Serializer):
     '''
     service_id = serializers.IntegerField()
     message = serializers.JSONField()
+    token = serializers.CharField(max_length=45)
+
+
+class DeleteSubsciptionSerilizer(serializers.Serializer):
+    '''
+    Valida que el cuerpo del DELETE de la suscipción
+    '''
+
+    field_name = serializers.CharField(max_length=45)
+    field_value = serializers.CharField(max_length=None)
+    service_name = serializers.CharField(max_length=60)
     token = serializers.CharField(max_length=45)

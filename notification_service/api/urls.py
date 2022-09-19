@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import ConectorsApiView, ServicesDetailsApiView, SuscriptionsListApiView, SuscriptionsDetailsApiView, ServicesListApiView, MessagesApiView
+from .views.conectors_views import ConectorsApiView
+from .views.messages_views import MessagesApiView
+from .views.services_views import ServicesDetailsApiView, ServicesListApiView
+from .views.subscription_views import SuscriptionsListApiView, SuscriptionsDetailsApiView
 
 urlpatterns = [
     path("subscriptions", SuscriptionsListApiView.as_view()),
