@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from api.models import Conector, Subscription
-from api.serializers import DeleteSubsciptionSerilizer, SubscriptionsSerializer
+from api.serializers import SubscriptionsSerializer
 from api.conectors.push_api import Push_API
 
 
@@ -55,12 +56,12 @@ class SuscriptionsListApiView(APIView):
 
 class SuscriptionsDetailsApiView(APIView):
 
-    def get_subscription(self, field_value, field_name=id):
+    def get_subscription(self, subscription_id):
         '''
         Busca en la BD la suscripción con id subscription_id
         '''
         try:
-            return Subscription.objects.get(field_name=field_value)
+            return Subscription.objects.get(id=subscription_id)
         except Subscription.DoesNotExist:
             return None
 
@@ -104,34 +105,22 @@ class SuscriptionsDetailsApiView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, subscription_id, *args, **kwargs):
+    def delete(self, request: Request, subscription_id, *args, **kwargs):
         '''
         Eliminar una suscripción del sistema
         '''
 
-        serilizer = DeleteSubsciptionSerilizer(data=request.data)
-        # field_name = request.data.get("fild_name")
-        # field_value = request.data.get("field_value")
+        if not request.data.get("token"):
+            return Response({"res": f"Falta el token de seguridad"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # errors = []
-        # if not field_name:
-        #     errors.append("Falta el campo fild_name")
-        # if not field_value:
-        #     errors.append("Falta el campo field_value")
+        subscription = self.get_subscription(subscription_id)
 
-        # if errors.count() > 0:
-        #     return Response({"res": errors})
+        if not subscription:
+            return Response({"res": f"No se ha encontrado ninguna subscripción con id {subscription_id}"}, status=status.HTTP_404_NOT_FOUND)
 
-        # subscription = self.get_subscription(field_value, field_name)
-        # if not subscription:
-        #     return Response(
-        #         {"res": f"Suscripción con campo {field_name} {field_value} no existe"},
-        #         status=status.HTTP_400_BAD_REQUEST
-        #     )
+        if request.data["token"] != subscription.service_id.token:
+            return Response({"res": "Token no válido"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # subscription.delete()
+        subscription.delete()
 
-        # return Response(
-        #     {"res": "Suscripción eliminada"},
-        #     status=status.HTTP_200_OK
-        # )
+        return Response({"res": "Subscripción eliminada"})
