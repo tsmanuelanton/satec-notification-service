@@ -46,5 +46,5 @@ def notify(data):
             raise e
 
 
-def from_conector_get_subscription_serializer():
+def get_subscription_serializer():
     return SubscriptionDataSerializer

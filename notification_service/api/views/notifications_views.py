@@ -8,7 +8,7 @@ from api.conectors.push_api import Push_API
 from api.views.services_views import ServicesDetailsApiView
 
 
-class MessagesApiView(APIView):
+class NotificationsApiView(APIView):
 
     def sendDataToConector(data, conector_id):
         conector = Conector.objects.get(id=conector_id)
@@ -44,11 +44,10 @@ class MessagesApiView(APIView):
                     "message":  json.dumps(msgSerializer["message"].value)
                 }
 
-                MessagesApiView.sendDataToConector(
+                NotificationsApiView.sendDataToConector(
                     data, subscription.conector_id.id)
 
         except BaseException as e:
-            print(e)
             return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
