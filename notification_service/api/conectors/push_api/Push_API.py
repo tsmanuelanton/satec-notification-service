@@ -44,3 +44,7 @@ def notify(data):
             subscription.delete()
         else:
             raise e
+
+
+def from_conector_get_subscription_serializer():
+    return SubscriptionDataSerializer
