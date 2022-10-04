@@ -31,22 +31,15 @@ class SuscriptionsListApiView(APIView):
         Registra una suscripción en el sistema.
         '''
 
-        data = {
-            'service_id': request.data.get('service_id'),
-            'conector_id': request.data.get('conector_id'),
-            'subscription_data': request.data.get('subscription_data'),
-            'token': request.data.get('token'),
-        }
-
-        serializer = SubscriptionsSerializer(data=data)
+        serializer = SubscriptionsSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Validar el campo subscription_data con el conector específico
         subscription_data_serializer = SuscriptionsListApiView.from_conector_get_subscription_serializer(
-            data["conector_id"])
+            request.data.get('conector_id'))
         serialized = subscription_data_serializer(
-            data=data["subscription_data"])
+            data=request.data.get('subscription_data'))
         if not serialized.is_valid():
             return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -85,11 +78,6 @@ class SuscriptionsDetailsApiView(APIView):
         Actualizar una suscripción
         '''
 
-        data = {
-            'service_id': request.data.get('service_id'),
-            'subscription_data': request.data.get('subscription_data'),
-        }
-
         subscription = self.get_subscription(subscription_id)
         if not subscription:
             return Response(
@@ -98,7 +86,7 @@ class SuscriptionsDetailsApiView(APIView):
             )
 
         serializer = SubscriptionsSerializer(
-            instance=subscription, data=data, partial=True)
+            instance=subscription, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
