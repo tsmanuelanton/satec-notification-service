@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.conectors.push_api import Push_API
-from api.views.services_views import ServicesDetailsApiView
+from api.views.services_views import get_service
 
 
 class NotificationsApiView(APIView):
@@ -21,7 +21,7 @@ class NotificationsApiView(APIView):
 
         service_id = request.data.get('service_id')
 
-        service = ServicesDetailsApiView.get_service(service_id)
+        service = get_service(service_id)
         if not service:
             return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,18 +1,15 @@
 from api.models import Subscription
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
 from pywebpush import webpush, WebPushException
-from os import path
-from django.conf import settings
+from os import environ
 from rest_framework import serializers
-vapid_pkey_file_path = path.join(
-    settings.BASE_DIR, "api", "conectors", "push_api", "secrets", "private_key.pem")
 
-# Comprobamos que existe la key
+# Comprobamos que hay una variabla con la clave privada
 try:
-    open(vapid_pkey_file_path, "r")
-except FileNotFoundError as e:
-    raise FileNotFoundError(
-        "No se ha encontrado la clave PRIVADA VAPID en " + e.filename)
+    environ["PUSH_API_PRIVATE_KEY"]
+except KeyError as e:
+    raise EnvironmentError(
+        "Conector PUSH_API: No está definida la variable con la clave PRIVADA VAPID")
 
 
 def notify(data):
@@ -28,7 +25,7 @@ def notify(data):
         webpush(
             subscription_info=data['subscription_data'],
             data=data['message'],
-            vapid_private_key=vapid_pkey_file_path,
+            vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
             vapid_claims={
                 'sub': 'mailto:manuel.anton@satec.es'
             }
