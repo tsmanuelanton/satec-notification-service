@@ -13,4 +13,4 @@ Estructura de rutas de la API:
 | `v1/services` | Listar los servicios | Registrar un nuevo servicio | N/A | N/A
 | `v1/services/id` | N/A | N/A | Actualizar servicio | Eliminar servicio
 | `v1/conectors/` | Muestra los conectores disponibles | N/A | N/A | N/A
-| `v1/notify` | N/A | Enviar mensaje para notificar a los suscriptores | N/A | N/A |
+| `v1/notifications` | N/A | Enviar mensaje para notificar a los suscriptores | N/A | N/A |

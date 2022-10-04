@@ -5,15 +5,10 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.conectors.push_api import Push_API
-from api.views.services_views import ServicesDetailsApiView
+from api.views.services_views import get_service
 
 
-class MessagesApiView(APIView):
-
-    def sendDataToConector(data, conector_id):
-        conector = Conector.objects.get(id=conector_id)
-        if getattr(conector, "name") == 'Push API - Navegadores':
-            Push_API.notify(data)
+class NotificationsApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         '''
@@ -26,7 +21,7 @@ class MessagesApiView(APIView):
 
         service_id = request.data.get('service_id')
 
-        service = ServicesDetailsApiView.get_service(service_id)
+        service = get_service(service_id)
         if not service:
             return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -37,18 +32,27 @@ class MessagesApiView(APIView):
         subscriptions = Subscription.objects.filter(service_id=service_id)
 
         try:
-            for subscription in subscriptions:
-                data = {
-                    "subscription_id": subscription.id,
-                    "subscription_data": subscription.subscription_data,
-                    "message":  json.dumps(msgSerializer["message"].value)
-                }
-
-                MessagesApiView.sendDataToConector(
-                    data, subscription.conector_id.id)
+            notify_subscriptors(msgSerializer["message"].value, subscriptions)
 
         except BaseException as e:
-            print(e)
             return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
+
+
+def notify_subscriptors(msg, subscriptions):
+    for subscription in subscriptions:
+        data = {
+            "subscription_id": subscription.id,
+            "subscription_data": subscription.subscription_data,
+            "message":  json.dumps(msg)
+        }
+
+        sendDataToConector(
+            data, subscription.conector_id.id)
+
+
+def sendDataToConector(data, conector_id):
+    conector = Conector.objects.get(id=conector_id)
+    if getattr(conector, "name") == 'Push API - Navegadores':
+        Push_API.notify(data)
