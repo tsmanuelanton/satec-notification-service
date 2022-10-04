@@ -5,7 +5,7 @@ from api.serializers import ConectorsSerializer
 from api.models import Conector
 
 
-class ConectorsApiView(APIView):
+class ConectorsListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
@@ -33,3 +33,64 @@ class ConectorsApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ConectorsDetailsApiView(APIView):
+
+    def get(self, request, conector_id, *args, **kwargs):
+        '''
+        Muestra los detalles del conector
+        '''
+
+        conector = get_conector(conector_id)
+        if not conector:
+            return Response(
+                {"res": f"Conector con id {conector_id} no existe"},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ConectorsSerializer(conector)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, conector_id, *args, **kwargs):
+        '''
+        Registra una suscripción en el sistema.
+        '''
+
+        conector = get_conector(conector_id)
+        if not conector:
+            return Response(
+                {"res": f"Conector con id {conector_id} no existe"},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ConectorsSerializer(
+            instance=conector, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, conector_id, *args, **kwargs):
+        '''
+        Eliminar una suscripción del sistema
+        '''
+
+        conector = get_conector(conector_id)
+        if not conector:
+            return Response(
+                {"res": f"Conector con id {conector_id} no existe"},
+                status=status.HTTP_404_NOT_FOUND)
+
+        conector.delete()
+
+        return Response({"res": f"Conector {conector_id} eliminada"})
+
+
+def get_conector(conector_id):
+    '''
+    Busca en la BD un conector concreto
+    '''
+    try:
+        return Conector.objects.get(id=conector_id)
+    except Conector.DoesNotExist:
+        return None
