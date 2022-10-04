@@ -46,7 +46,7 @@ class ConectorsDetailsApiView(APIView):
         if not conector:
             return Response(
                 {"res": f"Conector con id {conector_id} no existe"},
-                status=status.HTTP_400_BAD_REQUEST)
+                status=status.HTTP_404_NOT_FOUND)
 
         serializer = ConectorsSerializer(conector)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -60,7 +60,7 @@ class ConectorsDetailsApiView(APIView):
         if not conector:
             return Response(
                 {"res": f"Conector con id {conector_id} no existe"},
-                status=status.HTTP_400_BAD_REQUEST)
+                status=status.HTTP_404_NOT_FOUND)
 
         serializer = ConectorsSerializer(
             instance=conector, data=request.data, partial=True)

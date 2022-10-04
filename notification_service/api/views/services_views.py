@@ -37,25 +37,16 @@ class ServicesListApiView(APIView):
 
 class ServicesDetailsApiView(APIView):
 
-    def get_service(service_id):
-        '''
-        Busca en la BD un servicio concreto
-        '''
-        try:
-            return Service.objects.get(id=service_id)
-        except Service.DoesNotExist:
-            return None
-
     def get(self, request, service_id, *args, **kwargs):
         '''
         Muestra los detalles del servicio con id pasado por parámetros.
         '''
 
-        service = ServicesDetailsApiView.get_service(service_id)
+        service = get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = ServicesSerializer(service)
@@ -70,11 +61,11 @@ class ServicesDetailsApiView(APIView):
             'service_name': request.data.get('service_name'),
         }
 
-        service = ServicesDetailsApiView.get_service(service_id)
+        service = get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = ServicesSerializer(
@@ -90,11 +81,11 @@ class ServicesDetailsApiView(APIView):
         Elimina un servicio del sistema
         '''
 
-        service = ServicesDetailsApiView.get_service(service_id)
+        service = get_service(service_id)
         if not service:
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_404_NOT_FOUND
             )
 
         service.delete()
@@ -103,3 +94,13 @@ class ServicesDetailsApiView(APIView):
             {"res": "Servicio eliminado"},
             status=status.HTTP_200_OK
         )
+
+
+def get_service(service_id):
+    '''
+    Busca en la BD un servicio concreto
+    '''
+    try:
+        return Service.objects.get(id=service_id)
+    except Service.DoesNotExist:
+        return None

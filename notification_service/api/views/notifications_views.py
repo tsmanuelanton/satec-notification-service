@@ -10,11 +10,6 @@ from api.views.services_views import ServicesDetailsApiView
 
 class NotificationsApiView(APIView):
 
-    def sendDataToConector(data, conector_id):
-        conector = Conector.objects.get(id=conector_id)
-        if getattr(conector, "name") == 'Push API - Navegadores':
-            Push_API.notify(data)
-
     def post(self, request, *args, **kwargs):
         '''
         Envía el mensaje recibido al conector aducado
@@ -53,5 +48,11 @@ def notify_subscriptors(msg, subscriptions):
             "message":  json.dumps(msg)
         }
 
-        NotificationsApiView.sendDataToConector(
+        sendDataToConector(
             data, subscription.conector_id.id)
+
+
+def sendDataToConector(data, conector_id):
+    conector = Conector.objects.get(id=conector_id)
+    if getattr(conector, "name") == 'Push API - Navegadores':
+        Push_API.notify(data)
