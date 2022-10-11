@@ -27,4 +27,3 @@ class MessageSerializer(serializers.Serializer):
     '''
     service_id = serializers.IntegerField()
     message = serializers.JSONField()
-    token = serializers.CharField(max_length=45)
