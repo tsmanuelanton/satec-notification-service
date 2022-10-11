@@ -1,9 +1,10 @@
 from django.db import models
+from rest_framework.authtoken.models import Token
 
 
 class Service(models.Model):
     service_name = models.CharField(max_length=60)
-    token = models.CharField(max_length=45, unique=True)
+    token = models.ForeignKey(Token, on_delete=models.CASCADE)
 
 
 class Conector(models.Model):
@@ -18,5 +19,3 @@ class Subscription(models.Model):
         Service, related_name="service_id", on_delete=models.CASCADE)
     conector_id = models.ForeignKey(Conector, on_delete=models.CASCADE)
     subscription_data = models.JSONField()
-    token = models.ForeignKey(
-        Service, to_field="token", on_delete=models.CASCADE)

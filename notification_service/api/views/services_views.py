@@ -4,16 +4,23 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from api.models import Service
 from api.serializers import ServicesSerializer
+from .util import has_permissions
 
 
 class ServicesListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
-        Muestra los servicios registrados.
+        Muestra los servicios registrados del usuario.
         '''
 
-        services = Service.objects
+        services = None
+        if request.user.is_staff:
+            services = Service.objects.all()
+        else:
+            services = Service.objects.filter(
+                token=request.auth or Token.objects.get(user=request.user).key)
+
         serializer = ServicesSerializer(services, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -24,7 +31,7 @@ class ServicesListApiView(APIView):
 
         data = {
             'service_name': request.data.get('service_name'),
-            'token': Token.generate_key(),
+            'token': request.auth or Token.objects.get(user=request.user).key
         }
 
         serializer = ServicesSerializer(data=data)
@@ -49,6 +56,12 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if not has_permissions(request, service.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = ServicesSerializer(service)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -66,6 +79,12 @@ class ServicesDetailsApiView(APIView):
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
                 status=status.HTTP_404_NOT_FOUND
+            )
+
+        if not has_permissions(request, service.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
             )
 
         serializer = ServicesSerializer(
@@ -86,6 +105,12 @@ class ServicesDetailsApiView(APIView):
             return Response(
                 {"res": f"Servicio con id {service_id} no existe"},
                 status=status.HTTP_404_NOT_FOUND
+            )
+
+        if not has_permissions(request, service.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
             )
 
         service.delete()

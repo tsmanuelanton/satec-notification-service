@@ -6,7 +6,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ["id", "service_id", "conector_id",
-                  "subscription_data", "token"]
+                  "subscription_data"]
 
 
 class ServicesSerializer(serializers.ModelSerializer):
