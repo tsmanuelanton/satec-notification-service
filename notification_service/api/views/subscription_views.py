@@ -5,6 +5,9 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import SubscriptionsSerializer
 from api.conectors.push_api import Push_API
+from rest_framework.authtoken.models import Token
+from api.models import Service
+from .util import has_permissions
 
 
 class SuscriptionsListApiView(APIView):
@@ -14,7 +17,16 @@ class SuscriptionsListApiView(APIView):
         Muestra las suscripciones registradas.
         '''
 
-        subscriptions = Subscription.objects
+        subscriptions = None
+
+        if request.user.is_staff:
+            subscriptions = Subscription.objects.all()
+        else:
+            services = Service.objects.filter(
+                token=request.auth or Token.objects.get(user=request.user).key)
+            subscriptions = Subscription.objects.filter(
+                service_id__in=services)
+
         serializer = SubscriptionsSerializer(subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -53,6 +65,12 @@ class SuscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if not has_permissions(request, subscription.service_id.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = SubscriptionsSerializer(subscription)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -68,6 +86,12 @@ class SuscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if not has_permissions(request, subscription.service_id.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = SubscriptionsSerializer(
             instance=subscription, data=request.data, partial=True)
         if serializer.is_valid():
@@ -81,16 +105,16 @@ class SuscriptionsDetailsApiView(APIView):
         Eliminar una suscripción del sistema
         '''
 
-        if not request.data.get("token"):
-            return Response({"res": f"Falta el token de seguridad"}, status=status.HTTP_400_BAD_REQUEST)
-
         subscription = get_subscription(subscription_id)
 
         if not subscription:
             return Response({"res": f"No se ha encontrado ninguna subscripción con id {subscription_id}"}, status=status.HTTP_404_NOT_FOUND)
 
-        if request.data["token"] != subscription.service_id.token:
-            return Response({"res": "Token no válido"}, status=status.HTTP_401_UNAUTHORIZED)
+        if not has_permissions(request, subscription.service_id.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         subscription.delete()
 

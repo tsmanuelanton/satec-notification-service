@@ -6,6 +6,7 @@ from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.conectors.push_api import Push_API
 from api.views.services_views import get_service
+from .util import has_permissions
 
 
 class NotificationsApiView(APIView):
@@ -25,8 +26,11 @@ class NotificationsApiView(APIView):
         if not service:
             return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if service.token != msgSerializer.data['token']:
-            return Response({"res": "El token no corresponde a ningún servicio"}, status=status.HTTP_401_UNAUTHORIZED)
+        if not has_permissions(request, service.token):
+            return Response(
+                {"res": f"No tienes permisos"},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         # Obtenemos los suscriptores asociados a este servicio
         subscriptions = Subscription.objects.filter(service_id=service_id)
