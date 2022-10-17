@@ -1,3 +1,5 @@
+[![Tests](https://github.com/manuel-anton-satec/satec-notification-service/actions/workflows/run_tests.yml/badge.svg)](https://github.com/manuel-anton-satec/satec-notification-service/actions/workflows/run_tests.yml)
+
 # satec-notification-service
 
 API desarrollada con Django Rest Framework que permite enviar notificaciones a los usuarios suscritos.
