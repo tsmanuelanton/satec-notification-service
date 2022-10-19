@@ -54,7 +54,7 @@ class ConectorsDetailsApiView(APIView):
         serializer = ConectorsSerializer(conector)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, conector_id, *args, **kwargs):
+    def put(self, request, conector_id, *args, **kwargs):
         '''
         Registra una suscripción en el sistema.
         '''
@@ -92,7 +92,7 @@ class ConectorsDetailsApiView(APIView):
 
         conector.delete()
 
-        return Response({"res": f"Conector {conector_id} eliminada"})
+        return Response({"res": f"Conector {conector_id} eliminado"})
 
 
 def get_conector(conector_id):
