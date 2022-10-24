@@ -2,7 +2,7 @@ import random
 import string
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from api.models import Service, Conector
+from api.models import Service, Conector, Subscription
 
 
 def gen_random_word(length=5) -> string:
@@ -37,3 +37,11 @@ def create_conector():
     new_name = gen_random_word()
 
     return Conector(name=new_name, description=f"Descripción de {new_name}", meta={"Key": new_name})
+
+
+def create_subscription(service: Service, conector: Conector) -> Subscription:
+    '''Devuelve un nueva suscripción asociada al servicio
+    y conector que se pasan por parámetros'''
+    # Genera un nombre un aleatorio
+    value = gen_random_word()
+    return Subscription(service_id=service, conector_id=conector, subscription_data={"Field": value})

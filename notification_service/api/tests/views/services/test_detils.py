@@ -12,24 +12,6 @@ class TestDetailsServices(APITestCase):
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
-    def test_services_details_null(self):
-        '''Comprueba que se lanza un error cuando no existe la id del servicio'''
-
-        # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
-
-        # Apuntamos el endpoint con el método get
-        request = self.factory.get(endpoint + "/1")
-
-        force_authenticate(request, user, token)
-
-        # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=1)
-
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(
-            response.data, {"res": f"Servicio con id 1 no existe"})
-
     def test_services_details_owner(self):
         '''Comprueba que se muestran los datos cuando el servicio pertenece al usuario'''
 
@@ -61,10 +43,8 @@ class TestDetailsServices(APITestCase):
 
         request = self.factory.get(f'{endpoint}/{not_owned_service.id}')
 
-        # Creamos un nuevo usario autenticado con un servicio
+        # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
-        my_service = create_service(token)
-        my_service.save()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -74,3 +54,21 @@ class TestDetailsServices(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.data, {"res": f"No tienes permisos"})
+
+    def test_services_details_null(self):
+        '''Comprueba que se lanza un error cuando no existe el servicio'''
+
+        # Creamos un nuevo usario autenticado
+        user, token = create_authenticated_user()
+
+        # Apuntamos el endpoint con el método get
+        request = self.factory.get(endpoint + "/1")
+
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = ServicesDetailsApiView.as_view()(request, service_id=1)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            response.data, {"res": f"Servicio con id 1 no existe"})

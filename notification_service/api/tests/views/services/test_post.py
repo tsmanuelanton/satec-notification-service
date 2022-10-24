@@ -38,7 +38,7 @@ class TestPostServices(APITestCase):
     def test_services_post_valid(self):
         '''Comprueba que se registra un servicio válido'''
 
-        # Cuerpo del POST sin el campo service_name
+        # Cuerpo del POST
         data = {"service_name": "service_0"}
 
         # POST  del data
