@@ -93,9 +93,7 @@ class TestUpdateSubsciptions(APITestCase):
 
         conector.save()
         not_owned_service.save()
-        print("antes:", not_owned_subscription.id)
         not_owned_subscription.save()
-        print("despues:", not_owned_subscription.id)
 
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
