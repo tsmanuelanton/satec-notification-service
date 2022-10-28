@@ -76,7 +76,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'service_id': [ErrorDetail(string='Invalid pk "1" - object does not exist.', code='does_not_exist')]})
+            response.data, {'service_id': [ErrorDetail(string='Unknown service', code='does_not_exist')]})
 
     def test_subscriptions_post_invalid_connector(self):
         '''Comprueba que se lanza un error si el conector no existe'''
@@ -104,7 +104,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'conector_id': [ErrorDetail(string='Invalid pk "1" - object does not exist.', code='does_not_exist')]})
+            response.data, {'conector_id': [ErrorDetail(string='Unknown conector', code='does_not_exist')]})
 
     def test_subscriptions_post_missing_service(self):
         '''Comrpueba que se lanza un error si falta el servicio al registrar la suscripción'''

@@ -24,7 +24,7 @@ class NotificationsApiView(APIView):
 
         service = get_service(service_id)
         if not service:
-            return Response({"res": f"Servicio con id {service_id} no existe"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"res": "Unknown service"}, status=status.HTTP_400_BAD_REQUEST)
 
         if not has_permissions(request, service.token):
             return Response(
