@@ -10,7 +10,7 @@ from api.models import Service
 from .util import has_permissions
 
 
-class SuscriptionsListApiView(APIView):
+class SubscriptionsListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
@@ -39,19 +39,22 @@ class SuscriptionsListApiView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validar el campo subscription_data con el conector específico
+        # Obtenemos si existe el validador de la suscripción del conector
         subscription_data_serializer = from_conector_get_subscription_serializer(
             request.data.get('conector_id'))
-        serialized = subscription_data_serializer(
-            data=request.data.get('subscription_data'))
-        if not serialized.is_valid():
-            return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if subscription_data_serializer:
+            # Validar el campo subscription_data con el conector específico
+            serialized = subscription_data_serializer(
+                data=request.data.get('subscription_data'))
+            if not serialized.is_valid():
+                return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class SuscriptionsDetailsApiView(APIView):
+class SubscriptionsDetailsApiView(APIView):
 
     def get(self, request, subscription_id, *args, **kwargs):
         '''
@@ -108,7 +111,7 @@ class SuscriptionsDetailsApiView(APIView):
         subscription = get_subscription(subscription_id)
 
         if not subscription:
-            return Response({"res": f"No se ha encontrado ninguna subscripción con id {subscription_id}"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"res": f"Suscripción con id {subscription_id} no existe"}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription.service_id.token):
             return Response(
@@ -118,7 +121,7 @@ class SuscriptionsDetailsApiView(APIView):
 
         subscription.delete()
 
-        return Response({"res": "Subscripción eliminada"})
+        return Response({"res": "Suscripción eliminada"})
 
 
 def get_subscription(subscription_id):
@@ -138,3 +141,5 @@ def from_conector_get_subscription_serializer(conector_id):
     conector = Conector.objects.get(id=conector_id)
     if conector.name == 'Push API - Navegadores':
         return Push_API.get_subscription_serializer()
+    else:
+        return None

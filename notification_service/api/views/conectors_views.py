@@ -21,6 +21,9 @@ class ConectorsListApiView(APIView):
         Registra una suscripción en el sistema.
         '''
 
+        if not request.user.is_superuser:
+            return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
+
         data = {
             'name': request.data.get('name'),
             'description': request.data.get('description'),
@@ -51,10 +54,13 @@ class ConectorsDetailsApiView(APIView):
         serializer = ConectorsSerializer(conector)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, conector_id, *args, **kwargs):
+    def put(self, request, conector_id, *args, **kwargs):
         '''
         Registra una suscripción en el sistema.
         '''
+
+        if not request.user.is_superuser:
+            return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
 
         conector = get_conector(conector_id)
         if not conector:
@@ -75,6 +81,9 @@ class ConectorsDetailsApiView(APIView):
         Eliminar una suscripción del sistema
         '''
 
+        if not request.user.is_superuser:
+            return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
+
         conector = get_conector(conector_id)
         if not conector:
             return Response(
@@ -83,7 +92,7 @@ class ConectorsDetailsApiView(APIView):
 
         conector.delete()
 
-        return Response({"res": f"Conector {conector_id} eliminada"})
+        return Response({"res": f"Conector {conector_id} eliminado"})
 
 
 def get_conector(conector_id):

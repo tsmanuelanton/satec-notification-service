@@ -70,10 +70,6 @@ class ServicesDetailsApiView(APIView):
         Actualizar un servicio
         '''
 
-        data = {
-            'service_name': request.data.get('service_name'),
-        }
-
         service = get_service(service_id)
         if not service:
             return Response(
@@ -88,7 +84,7 @@ class ServicesDetailsApiView(APIView):
             )
 
         serializer = ServicesSerializer(
-            instance=service, data=data, partial=True)
+            instance=service, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

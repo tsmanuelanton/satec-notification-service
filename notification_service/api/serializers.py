@@ -8,6 +8,14 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         fields = ["id", "service_id", "conector_id",
                   "subscription_data"]
 
+        extra_kwargs = {
+            "conector_id": {
+                "error_messages": {
+                    "does_not_exist": "Unknown conector"
+                }
+            }, "service_id": {"error_messages": {
+                "does_not_exist": "Unknown service"}}}
+
 
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
