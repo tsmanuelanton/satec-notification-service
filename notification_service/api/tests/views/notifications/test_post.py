@@ -86,7 +86,7 @@ class TestPostNotifications(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {"res": f"Unkown service"})
+            response.data, {"res": f"Unknown service"})
 
     def test_notifications_post_not_owned_service(self):
         '''Comprueba que se lanza un error cuando el servicio no es nuestro'''
