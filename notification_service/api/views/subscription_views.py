@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import SubscriptionsSerializer
-from api.conectors.push_api import Push_API
+from api.conectors.push_api.Push_API import PushAPIConector
 from rest_framework.authtoken.models import Token
 from api.models import Service
 from .util import has_permissions
@@ -140,6 +140,6 @@ def from_conector_get_subscription_serializer(conector_id):
     '''
     conector = Conector.objects.get(id=conector_id)
     if conector.name == 'Push API - Navegadores':
-        return Push_API.get_subscription_serializer()
+        return PushAPIConector.get_subscription_serializer()
     else:
         return None
