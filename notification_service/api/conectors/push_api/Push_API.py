@@ -4,8 +4,6 @@ from .serializers import NotificationSerializer, SubscriptionDataSerializer
 from pywebpush import webpush, WebPushException
 from os import environ
 from rest_framework import serializers
-from api.models import Conector
-from api.serializers import ConectorsSerializer
 
 
 class PushAPIConector(IConector):
@@ -51,15 +49,3 @@ class PushAPIConector(IConector):
 
     def get_subscription_serializer():
         return SubscriptionDataSerializer
-
-
-# Registra el conector en la BD
-conector_details = PushAPIConector.getDetails()
-
-# Comprueba que no se haya registrado previamente
-if not Conector.objects.filter(name=conector_details.get("name")):
-    serialized = ConectorsSerializer(data=conector_details)
-    if serialized.is_valid():
-        serialized.save()
-    else:
-        raise (serialized.errors)
