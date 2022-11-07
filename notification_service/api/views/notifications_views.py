@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
-from api.conectors.push_api import Push_API
+from api.conectors.push_api.Push_API import PushAPIConector
 from api.views.services_views import get_service
 from .util import has_permissions
 
@@ -59,4 +59,4 @@ def notify_subscriptors(msg, subscriptions):
 def sendDataToConector(data, conector_id):
     conector = Conector.objects.get(id=conector_id)
     if getattr(conector, "name") == 'Push API - Navegadores':
-        Push_API.notify(data)
+        PushAPIConector.notify(data)
