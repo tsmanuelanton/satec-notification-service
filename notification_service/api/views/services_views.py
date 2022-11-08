@@ -1,7 +1,7 @@
+from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from api.models import Service
 from api.serializers import ServicesSerializer
 from .util import has_permissions
@@ -9,7 +9,7 @@ from .util import has_permissions
 
 class ServicesListApiView(APIView):
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs):
         '''
         Muestra los servicios registrados del usuario.
         '''
@@ -19,19 +19,19 @@ class ServicesListApiView(APIView):
             services = Service.objects.all()
         else:
             services = Service.objects.filter(
-                token=request.auth or Token.objects.get(user=request.user).key)
+                service_owner=request.user)
 
         serializer = ServicesSerializer(services, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs):
         '''
         Registra un servicio en el sistema.
         '''
 
         data = {
             'service_name': request.data.get('service_name'),
-            'token': request.auth or Token.objects.get(user=request.user).key
+            'service_owner': request.user.id
         }
 
         serializer = ServicesSerializer(data=data)
@@ -56,7 +56,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, service.token):
+        if request.user.is_staff or request.user != service.service_owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -77,7 +77,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, service.token):
+        if request.user.is_staff or request.user != service.service_owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -103,7 +103,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, service.token):
+        if request.user.is_staff or request.user != service.service_owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN

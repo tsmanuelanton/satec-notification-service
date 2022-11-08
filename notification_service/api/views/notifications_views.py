@@ -26,7 +26,7 @@ class NotificationsApiView(APIView):
         if not service:
             return Response({"res": "Unknown service"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not has_permissions(request, service.token):
+        if not has_permissions(request, service.service_owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN

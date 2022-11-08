@@ -21,8 +21,8 @@ class TestUpdateSubsciptions(APITestCase):
         conector = create_conector()
         new_conector = create_conector()
 
-        service = create_service(token)
-        new_service = create_service(token)
+        service = create_service(user)
+        new_service = create_service(user)
 
         subscription = create_subscription(service, conector)
 
@@ -59,7 +59,7 @@ class TestUpdateSubsciptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
         subscription = create_subscription(service, conector)
 
         conector.save()
@@ -86,7 +86,7 @@ class TestUpdateSubsciptions(APITestCase):
 
         # Creamos otro usuario con un servicio
         other_user, other_token = create_authenticated_user()
-        not_owned_service = create_service(other_token)
+        not_owned_service = create_service(other_user)
 
         not_owned_subscription = create_subscription(
             not_owned_service, conector)

@@ -43,7 +43,7 @@ class TestPostNotifications(APITestCase):
         # Creamos un nuevo usario
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST sin el campo message
@@ -94,7 +94,7 @@ class TestPostNotifications(APITestCase):
         # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
 
-        service = create_service(other_token)
+        service = create_service(other_user)
         service.save()
 
         # Cuerpo del POST

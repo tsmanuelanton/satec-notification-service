@@ -23,7 +23,7 @@ class SubscriptionsListApiView(APIView):
             subscriptions = Subscription.objects.all()
         else:
             services = Service.objects.filter(
-                token=request.auth or Token.objects.get(user=request.user).key)
+                service_owner=request.user)
             subscriptions = Subscription.objects.filter(
                 service_id__in=services)
 
@@ -68,7 +68,7 @@ class SubscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, subscription.service_id.token):
+        if not has_permissions(request, subscription.service_id.service_owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -89,7 +89,7 @@ class SubscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, subscription.service_id.token):
+        if not has_permissions(request, subscription.service_id.service_owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -113,7 +113,7 @@ class SubscriptionsDetailsApiView(APIView):
         if not subscription:
             return Response({"res": f"Suscripción con id {subscription_id} no existe"}, status=status.HTTP_404_NOT_FOUND)
 
-        if not has_permissions(request, subscription.service_id.token):
+        if not has_permissions(request, subscription.service_id.service_owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN

@@ -18,7 +18,7 @@ class TestDeleteServices(APITestCase):
 
         # Creamos otro usario con un servicio
         other_user, other_token = create_authenticated_user()
-        not_owner_service = create_service(other_token)
+        not_owner_service = create_service(other_user)
         not_owner_service.save()
 
         # Creamos un nuevo usario autenticado
@@ -61,7 +61,7 @@ class TestDeleteServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Registramos un serivcio a este usuario
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Llamamos a la vista

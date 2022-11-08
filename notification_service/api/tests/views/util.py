@@ -24,11 +24,11 @@ def create_authenticated_user():
     return user, token
 
 
-def create_service(token=None):
+def create_service(user):
     '''Devuelve un nuevo servicio y, opcionalmente, lo registra con el token pasado por parámetros'''
     # Genera un nombre un aleatorio
     new_name = gen_random_word()
-    return Service(service_name=new_name, token=token)
+    return Service(service_name=new_name, service_owner=user)
 
 
 def create_conector():

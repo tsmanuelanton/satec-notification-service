@@ -22,7 +22,7 @@ class TestPostSubscriptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
 
         conector.save()
         service.save()
@@ -84,7 +84,7 @@ class TestPostSubscriptions(APITestCase):
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST
@@ -140,7 +140,7 @@ class TestPostSubscriptions(APITestCase):
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST
@@ -168,7 +168,7 @@ class TestPostSubscriptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
 
         conector.save()
         service.save()

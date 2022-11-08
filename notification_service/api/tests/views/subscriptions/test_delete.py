@@ -22,7 +22,7 @@ class TestDeleteSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
         subscription = create_subscription(service, conector)
 
         conector.save()
@@ -46,7 +46,7 @@ class TestDeleteSubscriptions(APITestCase):
 
         # Creamos otro usario con una suscripción
         other_user, other_token = create_authenticated_user()
-        not_owner_service = create_service(other_token)
+        not_owner_service = create_service(other_user)
 
         other_subscription = create_subscription(not_owner_service, conector)
 

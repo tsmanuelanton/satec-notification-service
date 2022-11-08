@@ -1,10 +1,11 @@
 from django.db import models
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 
 class Service(models.Model):
     service_name = models.CharField(max_length=60)
-    token = models.ForeignKey(Token, on_delete=models.CASCADE)
+    service_owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Conector(models.Model):

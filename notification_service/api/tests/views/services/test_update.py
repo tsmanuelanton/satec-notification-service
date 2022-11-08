@@ -17,7 +17,7 @@ class TestUpdateServices(APITestCase):
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_authenticated_user()
-        my_service = create_service(token)
+        my_service = create_service(user)
         my_service.save()
 
         # Apuntamos el endpoint con el método put y el campo service_name actualizado
@@ -42,7 +42,7 @@ class TestUpdateServices(APITestCase):
         user, token = create_authenticated_user()
 
         # Creamos el servicio a actualizar
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Apuntamos el endpoint con el método put y un cuerpo vacío
@@ -62,12 +62,12 @@ class TestUpdateServices(APITestCase):
 
         # Creamos otro usuario con un servicio
         other_user, other_token = create_authenticated_user()
-        not_owned_service = create_service(other_token)
+        not_owned_service = create_service(other_user)
         not_owned_service.save()
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_authenticated_user()
-        my_service = create_service(token)
+        my_service = create_service(user)
         my_service.save()
 
         # Apuntamos el endpoint con el método put a un servicio que no somos dueños
