@@ -33,5 +33,5 @@ class MessageSerializer(serializers.Serializer):
     '''
     Valida que el cuerpo del mensaje POST esté bien formado
     '''
-    service_id = serializers.IntegerField()
+    service = serializers.IntegerField()
     message = serializers.JSONField()
