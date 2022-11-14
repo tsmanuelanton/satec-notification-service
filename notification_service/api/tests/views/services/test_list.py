@@ -84,8 +84,8 @@ class TestListServices(APITestCase):
 
         # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
-        Service(service_name="other_user_service",
-                service_owner=other_user).save()
+        Service(name="other_user_service",
+                owner=other_user).save()
 
         # Creamos un usario autenticado
         user, token = create_authenticated_user()

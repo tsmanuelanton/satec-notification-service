@@ -28,7 +28,7 @@ def create_service(user):
     '''Devuelve un nuevo servicio y, opcionalmente, lo registra con el token pasado por parámetros'''
     # Genera un nombre un aleatorio
     new_name = gen_random_word()
-    return Service(service_name=new_name, service_owner=user)
+    return Service(name=new_name, owner=user)
 
 
 def create_conector():
@@ -44,4 +44,4 @@ def create_subscription(service: Service, conector: Conector) -> Subscription:
     y conector que se pasan por parámetros'''
     # Genera un nombre un aleatorio
     value = gen_random_word()
-    return Subscription(service_id=service, conector_id=conector, subscription_data={"Field": value})
+    return Subscription(service=service, conector=conector, subscription_data={"Field": value})

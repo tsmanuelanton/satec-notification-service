@@ -19,7 +19,7 @@ class ServicesListApiView(APIView):
             services = Service.objects.all()
         else:
             services = Service.objects.filter(
-                service_owner=request.user)
+                owner=request.user)
 
         serializer = ServicesSerializer(services, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -30,8 +30,8 @@ class ServicesListApiView(APIView):
         '''
 
         data = {
-            'service_name': request.data.get('service_name'),
-            'service_owner': request.user.id
+            'name': request.data.get('name'),
+            'owner': request.user.id
         }
 
         serializer = ServicesSerializer(data=data)
@@ -56,7 +56,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.service_owner:
+        if request.user.is_staff or request.user != service.owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -77,7 +77,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.service_owner:
+        if request.user.is_staff or request.user != service.owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -103,7 +103,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.service_owner:
+        if request.user.is_staff or request.user != service.owner:
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN

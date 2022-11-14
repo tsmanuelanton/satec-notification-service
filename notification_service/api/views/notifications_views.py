@@ -20,20 +20,20 @@ class NotificationsApiView(APIView):
         if not msgSerializer.is_valid():
             return Response(msgSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        service_id = request.data.get('service_id')
+        service_id = request.data.get('service')
 
         service = get_service(service_id)
         if not service:
             return Response({"res": "Unknown service"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not has_permissions(request, service.service_owner):
+        if not has_permissions(request, service.owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         # Obtenemos los suscriptores asociados a este servicio
-        subscriptions = Subscription.objects.filter(service_id=service_id)
+        subscriptions = Subscription.objects.filter(service=service)
 
         try:
             notify_subscriptors(msgSerializer["message"].value, subscriptions)
@@ -53,10 +53,9 @@ def notify_subscriptors(msg, subscriptions):
         }
 
         sendDataToConector(
-            data, subscription.conector_id.id)
+            data, subscription.conector)
 
 
-def sendDataToConector(data, conector_id):
-    conector = Conector.objects.get(id=conector_id)
+def sendDataToConector(data, conector: Conector):
     if getattr(conector, "name") == 'Push API - Navegadores':
         PushAPIConector.notify(data)

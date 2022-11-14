@@ -15,10 +15,10 @@ class TestPostServices(APITestCase):
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
-    def test_services_post_missing_service_name(self):
-        '''Comprueba que se lanza un error cuando falta el campo service_name'''
+    def test_services_post_missing_name(self):
+        '''Comprueba que se lanza un error cuando falta el campo name'''
 
-        # Cuerpo del POST sin el campo service_name
+        # Cuerpo del POST sin el campo name
         data = {}
 
         # POST  del data
@@ -33,13 +33,13 @@ class TestPostServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {'service_name': [ErrorDetail(string='This field may not be null.', code='null')]})
+            response.data, {'name': [ErrorDetail(string='This field may not be null.', code='null')]})
 
     def test_services_post_valid(self):
         '''Comprueba que se registra un servicio válido'''
 
         # Cuerpo del POST
-        data = {"service_name": "service_0"}
+        data = {"name": "service_0"}
 
         # POST  del data
         request = self.factory.post(endpoint, data)
@@ -56,7 +56,7 @@ class TestPostServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Comprobamos que se registra el serivico
-        self.assertEqual(service_from_db.service_name, "service_0")
+        self.assertEqual(service_from_db.name, "service_0")
         # Comprobamos que la respuesta del post sea el servicio creado
         self.assertEqual(
             response.data, ServicesSerializer(service_from_db).data)

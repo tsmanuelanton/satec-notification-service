@@ -41,7 +41,7 @@ class TestListSubscriptions(APITestCase):
         # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
         other_service = Service(
-            service_name="other_user_service", service_owner=other_user)
+            name="other_user_service", owner=other_user)
         other_service.save()
 
         other_subscription = create_subscription(other_service, conector)
@@ -81,7 +81,7 @@ class TestListSubscriptions(APITestCase):
        # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
         other_service = Service(
-            service_name="other_user_service", service_owner=other_user)
+            name="other_user_service", owner=other_user)
         other_service.save()
 
         other_subscription = create_subscription(other_service, conector1)

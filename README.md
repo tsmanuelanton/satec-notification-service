@@ -35,7 +35,7 @@ git clone https://github.com/manuel-anton-satec/satec-notification-service`git
 cd satec-notification-service
 pip install -r requirements.txt
 cd notification_service
-python manage.py runserver
+python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```

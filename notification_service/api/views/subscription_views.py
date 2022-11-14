@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import SubscriptionsSerializer
 from api.conectors.push_api.Push_API import PushAPIConector
-from rest_framework.authtoken.models import Token
 from api.models import Service
 from .util import has_permissions
 
@@ -23,7 +22,7 @@ class SubscriptionsListApiView(APIView):
             subscriptions = Subscription.objects.all()
         else:
             services = Service.objects.filter(
-                service_owner=request.user)
+                owner=request.user)
             subscriptions = Subscription.objects.filter(
                 service_id__in=services)
 
@@ -39,9 +38,11 @@ class SubscriptionsListApiView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        conector = Conector.objects.get(id=request.data.get('conector'))
+
         # Obtenemos si existe el validador de la suscripción del conector
         subscription_data_serializer = from_conector_get_subscription_serializer(
-            request.data.get('conector_id'))
+            conector)
 
         if subscription_data_serializer:
             # Validar el campo subscription_data con el conector específico
@@ -68,7 +69,7 @@ class SubscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, subscription.service_id.service_owner):
+        if not has_permissions(request, subscription.service.owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -89,7 +90,7 @@ class SubscriptionsDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if not has_permissions(request, subscription.service_id.service_owner):
+        if not has_permissions(request, subscription.service.owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -113,7 +114,7 @@ class SubscriptionsDetailsApiView(APIView):
         if not subscription:
             return Response({"res": f"Suscripción con id {subscription_id} no existe"}, status=status.HTTP_404_NOT_FOUND)
 
-        if not has_permissions(request, subscription.service_id.service_owner):
+        if not has_permissions(request, subscription.service.owner):
             return Response(
                 {"res": f"No tienes permisos"},
                 status=status.HTTP_403_FORBIDDEN
@@ -134,11 +135,10 @@ def get_subscription(subscription_id):
         return None
 
 
-def from_conector_get_subscription_serializer(conector_id):
+def from_conector_get_subscription_serializer(conector: Conector):
     '''
     Devuelve el serializador del subscription_data del conector
     '''
-    conector = Conector.objects.get(id=conector_id)
     if conector.name == 'Push API - Navegadores':
         return PushAPIConector.get_subscription_serializer()
     else:
