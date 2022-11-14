@@ -35,7 +35,7 @@ class TestPostNotifications(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.data, {'service_id': [ErrorDetail(string='This field is required.', code='required')]})
+            response.data, {'service': [ErrorDetail(string='This field is required.', code='required')]})
 
     def test_notifications_post_messing_message(self):
         '''Comprueba que se lanza un error cuando falta el id del servicio'''
@@ -43,12 +43,12 @@ class TestPostNotifications(APITestCase):
         # Creamos un nuevo usario
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST sin el campo message
         data = {
-            "service_id": service.id
+            "service": service.id
         }
 
         # POST  del data
@@ -67,7 +67,7 @@ class TestPostNotifications(APITestCase):
 
         # Cuerpo del POST
         data = {
-            "service_id": 0,
+            "service": 0,
             "message": {
                 "Type": "Test",
                 "body": "TestBody"
@@ -94,12 +94,12 @@ class TestPostNotifications(APITestCase):
         # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
 
-        service = create_service(other_token)
+        service = create_service(other_user)
         service.save()
 
         # Cuerpo del POST
         data = {
-            "service_id": service.id,
+            "service": service.id,
             "message": {
                 "Type": "Test",
                 "body": "TestBody"

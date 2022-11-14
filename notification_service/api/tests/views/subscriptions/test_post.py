@@ -22,15 +22,15 @@ class TestPostSubscriptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
 
         conector.save()
         service.save()
 
         # Cuerpo del POST
         data = {
-            "service_id": service.id,
-            "conector_id": conector.id,
+            "service": service.id,
+            "conector": conector.id,
             "subscription_data": {"key": "Value"},
         }
 
@@ -61,8 +61,8 @@ class TestPostSubscriptions(APITestCase):
 
         # Cuerpo del POST
         data = {
-            "service_id": 1,
-            "conector_id": conector.id,
+            "service": 1,
+            "conector": conector.id,
             "subscription_data": {"key": "Value"},
         }
 
@@ -76,7 +76,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'service_id': [ErrorDetail(string='Unknown service', code='does_not_exist')]})
+            response.data, {'service': [ErrorDetail(string='Unknown service', code='does_not_exist')]})
 
     def test_subscriptions_post_invalid_connector(self):
         '''Comprueba que se lanza un error si el conector no existe'''
@@ -84,13 +84,13 @@ class TestPostSubscriptions(APITestCase):
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST
         data = {
-            "service_id": service.id,
-            "conector_id": 1,
+            "service": service.id,
+            "conector": 1,
             "subscription_data": {"key": "Value"},
         }
 
@@ -104,7 +104,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'conector_id': [ErrorDetail(string='Unknown conector', code='does_not_exist')]})
+            response.data, {'conector': [ErrorDetail(string='Unknown conector', code='does_not_exist')]})
 
     def test_subscriptions_post_missing_service(self):
         '''Comrpueba que se lanza un error si falta el servicio al registrar la suscripción'''
@@ -118,7 +118,7 @@ class TestPostSubscriptions(APITestCase):
 
         # Cuerpo del POST
         data = {
-            "conector_id": conector.id,
+            "conector": conector.id,
             "subscription_data": {"key": "Value"},
         }
 
@@ -132,7 +132,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'service_id': [ErrorDetail(string='This field is required.', code='required')]})
+            response.data, {'service': [ErrorDetail(string='This field is required.', code='required')]})
 
     def test_subscriptions_post_missing_conector(self):
         '''Comrpueba que se lanza un error si falta el conector al registrar la suscripción'''
@@ -140,12 +140,12 @@ class TestPostSubscriptions(APITestCase):
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
 
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Cuerpo del POST
         data = {
-            "service_id": service.id,
+            "service": service.id,
             "subscription_data": {"key": "Value"},
         }
 
@@ -159,7 +159,7 @@ class TestPostSubscriptions(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
         self.assertEqual(
-            response.data, {'conector_id': [ErrorDetail(string='This field is required.', code='required')]})
+            response.data, {'conector': [ErrorDetail(string='This field is required.', code='required')]})
 
     def test_subscriptions_post_missing_subscription_data(self):
         '''Comrpueba que se lanza un error si falta el campo suscription_data al registrar la suscripción'''
@@ -168,15 +168,15 @@ class TestPostSubscriptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
 
         conector.save()
         service.save()
 
         # Cuerpo del POST
         data = {
-            "service_id": service.id,
-            "conector_id": conector.id,
+            "service": service.id,
+            "conector": conector.id,
         }
 
         # POST  del data

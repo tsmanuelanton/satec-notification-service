@@ -6,11 +6,16 @@ class IConector(ABC):
     '''Interfaz que declara el contrato de todas los subtipos de conectores'''
 
     @abstractmethod
-    def notify(self, data):
-        '''Envía el mensaje a los suscriptores conenido en data'''
+    def getDetails():
+        '''Devuelve un diccionario con los detalles del conector'''
+
+    @abstractmethod
+    def notify(data):
+        '''Envía notificaciones a los navegadores de los suscriptores y
+        devuelve True si ha tenido éxito la operación'''
         pass
 
     @abstractmethod
-    def get_subscription_serializer(self) -> Serializer:
+    def get_subscription_serializer() -> Serializer:
         '''Devuelve el serializador para la suscripción de este conector'''
         pass

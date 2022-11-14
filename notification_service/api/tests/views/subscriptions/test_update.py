@@ -7,13 +7,45 @@ from api.serializers import SubscriptionsSerializer
 endpoint = "/v1/subscriptions"
 
 
-class TestUpdateSubsciptions(APITestCase):
+class TestUpdateSubscriptions(APITestCase):
 
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
     def test_subscriptions_update_valid(self):
-        '''Comprueba que se actualiza la suscripción cuando se pasan todos los campos'''
+        '''Comprueba que se actualiza la suscripción cuando se modifica el campo subscription_data'''
+
+        # Creamos un nuevo usario autenticado con un servicio
+        user, token = create_authenticated_user()
+
+        conector = create_conector()
+        service = create_service(user)
+        subscription = create_subscription(service, conector)
+
+        conector.save()
+        service.save()
+        subscription.save()
+
+        data = {
+            "subscription_data": {"NewKey": "NewValue"},
+        }
+
+        # Apuntamos el endpoint con el método put y el campo name actualizado
+        request = self.factory.put(
+            f'{endpoint}/{subscription.id}', data, format="json")
+
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = SubscriptionsDetailsApiView.as_view()(
+            request, subscription_id=subscription.id)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data, {"id": subscription.id, **data})
+
+    def test_subscriptions_update_valid(self):
+        '''Comprueba que no se actualiza si se intenta cambiar campos rad_only'''
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_authenticated_user()
@@ -21,8 +53,8 @@ class TestUpdateSubsciptions(APITestCase):
         conector = create_conector()
         new_conector = create_conector()
 
-        service = create_service(token)
-        new_service = create_service(token)
+        service = create_service(user)
+        new_service = create_service(user)
 
         subscription = create_subscription(service, conector)
 
@@ -33,8 +65,8 @@ class TestUpdateSubsciptions(APITestCase):
         subscription.save()
 
         data = {
-            "service_id": new_service.id,
-            "conector_id": new_conector.id,
+            "service": new_service.id,
+            "conector": new_conector.id,
             "subscription_data": {"NewKey": "NewValue"},
         }
 
@@ -59,7 +91,7 @@ class TestUpdateSubsciptions(APITestCase):
         user, token = create_authenticated_user()
 
         conector = create_conector()
-        service = create_service(token)
+        service = create_service(user)
         subscription = create_subscription(service, conector)
 
         conector.save()
@@ -86,7 +118,7 @@ class TestUpdateSubsciptions(APITestCase):
 
         # Creamos otro usuario con un servicio
         other_user, other_token = create_authenticated_user()
-        not_owned_service = create_service(other_token)
+        not_owned_service = create_service(other_user)
 
         not_owned_subscription = create_subscription(
             not_owned_service, conector)

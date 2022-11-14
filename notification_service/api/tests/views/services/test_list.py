@@ -39,7 +39,7 @@ class TestListServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Creamos un servicio a nombre del usuario
-        created_service = create_service(token)
+        created_service = create_service(user)
         created_service.save()
 
         # Llamamos a la vista
@@ -61,8 +61,8 @@ class TestListServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Creamos varios servicios a nombre del usuario
-        created_service0 = create_service(token)
-        created_service1 = create_service(token)
+        created_service0 = create_service(user)
+        created_service1 = create_service(user)
         created_service0.save()
         created_service1.save()
 
@@ -84,15 +84,16 @@ class TestListServices(APITestCase):
 
         # Registramos un servicio por otro usuario
         other_user, other_token = create_authenticated_user()
-        Service(service_name="other_user_service", token=other_token).save()
+        Service(name="other_user_service",
+                owner=other_user).save()
 
         # Creamos un usario autenticado
         user, token = create_authenticated_user()
         force_authenticate(request, user, token)
 
         # Creamos varios servicios a nombre del usuario user
-        created_service0 = create_service(token)
-        created_service1 = create_service(token)
+        created_service0 = create_service(user)
+        created_service1 = create_service(user)
         created_service0.save()
         created_service1.save()
 

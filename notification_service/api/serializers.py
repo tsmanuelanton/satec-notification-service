@@ -5,22 +5,22 @@ from .models import Conector, Subscription, Service
 class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ["id", "service_id", "conector_id",
+        fields = ["id", "service", "conector",
                   "subscription_data"]
 
         extra_kwargs = {
-            "conector_id": {
+            "conector": {
                 "error_messages": {
                     "does_not_exist": "Unknown conector"
                 }
-            }, "service_id": {"error_messages": {
+            }, "service": {"error_messages": {
                 "does_not_exist": "Unknown service"}}}
 
 
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ["id", "service_name", "token"]
+        fields = ["id", "name", "owner"]
 
 
 class ConectorsSerializer(serializers.ModelSerializer):
@@ -33,5 +33,5 @@ class MessageSerializer(serializers.Serializer):
     '''
     Valida que el cuerpo del mensaje POST esté bien formado
     '''
-    service_id = serializers.IntegerField()
+    service = serializers.IntegerField()
     message = serializers.JSONField()

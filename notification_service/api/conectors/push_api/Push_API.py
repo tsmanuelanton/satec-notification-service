@@ -8,11 +8,16 @@ from rest_framework import serializers
 
 class PushAPIConector(IConector):
 
-    def notify(self, data) -> bool:
-        '''
-        Envía notificaciones a los navegadores de los suscriptores y
-        devuelve True si ha tenido éxito la operación
-        '''
+    def getDetails():
+        return {
+            "name": "Push API - Navegadores",
+            "description": "Permite enviar notificacion a los clientes a través de los navegadores mediante la API PUSH",
+            "meta": {
+                "ApplicationServerKey": environ.get("PUSH_API_APP_SERVER_KEY")
+            }
+        }
+
+    def notify(data) -> bool:
         serializer = NotificationSerializer(data=data)
 
         if not serializer.is_valid():
@@ -42,5 +47,5 @@ class PushAPIConector(IConector):
 
         return True
 
-    def get_subscription_serializer(self):
+    def get_subscription_serializer():
         return SubscriptionDataSerializer

@@ -17,12 +17,12 @@ class TestUpdateServices(APITestCase):
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_authenticated_user()
-        my_service = create_service(token)
+        my_service = create_service(user)
         my_service.save()
 
-        # Apuntamos el endpoint con el método put y el campo service_name actualizado
+        # Apuntamos el endpoint con el método put y el campo name actualizado
         request = self.factory.put(f'{endpoint}/{my_service.id}', {
-            "service_name": "name",
+            "name": "name",
         })
 
         force_authenticate(request, user, token)
@@ -33,7 +33,7 @@ class TestUpdateServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            dict(response.data)["service_name"], "name")
+            dict(response.data)["name"], "name")
 
     def test_services_update_empty(self):
         '''Comprueba que no se actualiza el servíco cuando no se modifica ningún campo'''
@@ -42,7 +42,7 @@ class TestUpdateServices(APITestCase):
         user, token = create_authenticated_user()
 
         # Creamos el servicio a actualizar
-        service = create_service(token)
+        service = create_service(user)
         service.save()
 
         # Apuntamos el endpoint con el método put y un cuerpo vacío
@@ -62,17 +62,17 @@ class TestUpdateServices(APITestCase):
 
         # Creamos otro usuario con un servicio
         other_user, other_token = create_authenticated_user()
-        not_owned_service = create_service(other_token)
+        not_owned_service = create_service(other_user)
         not_owned_service.save()
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_authenticated_user()
-        my_service = create_service(token)
+        my_service = create_service(user)
         my_service.save()
 
         # Apuntamos el endpoint con el método put a un servicio que no somos dueños
         request = self.factory.get(f'{endpoint}/{not_owned_service.id}', {
-            "service_name": "name",
+            "name": "name",
         })
 
         force_authenticate(request, user, token)
