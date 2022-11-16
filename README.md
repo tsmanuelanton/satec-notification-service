@@ -13,6 +13,7 @@ El sistema ofrece una API desarrollada con Django Rest Framework para gestionar 
 El servicio ofrece, actualmente, los siguientes medios para recibir las notificaciones/mensajes.
 
 >- **Navegador web**: Los suscriptores de esta plataforma reciben los mensajes en su navegador web gracias a la tecnología web [Push API](https://developer.mozilla.org/es/docs/Web/API/Push_API).
+>- **Slack**: Obtén notificaciones en tu chat de [Slack]("https://slack.com/intl/es-es/") mediante este conector.
 
 
 ### Rutas de la API

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.conectors.push_api.Push_API import PushAPIConector
+from api.conectors.slack_api.Slack_API import SlackAPIConector
 from api.views.services_views import get_service
 from .util import has_permissions
 
@@ -51,7 +52,6 @@ def notify_subscriptors(msg, subscriptions):
             "subscription_data": subscription.subscription_data,
             "message":  json.dumps(msg)
         }
-
         sendDataToConector(
             data, subscription.conector)
 
@@ -59,3 +59,5 @@ def notify_subscriptors(msg, subscriptions):
 def sendDataToConector(data, conector: Conector):
     if getattr(conector, "name") == 'Push API - Navegadores':
         PushAPIConector.notify(data)
+    elif getattr(conector, "name") == 'Slack API':
+        SlackAPIConector.notify(data)
