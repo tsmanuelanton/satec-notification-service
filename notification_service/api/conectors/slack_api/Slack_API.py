@@ -13,12 +13,10 @@ class SlackAPIConector(IConector):
 
     def notify(data) -> bool:
 
-        # TODO validar campos del data
-
         try:
             body = {
                 "channel": data['subscription_data']["channel"],
-                "text": data['message']
+                "text": data['message']["body"],
             }
 
             headers = {

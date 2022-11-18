@@ -40,6 +40,7 @@ class NotificationsApiView(APIView):
             notify_subscriptors(msgSerializer["message"].value, subscriptions)
 
         except BaseException as e:
+            print(e)
             return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
@@ -50,7 +51,7 @@ def notify_subscriptors(msg, subscriptions):
         data = {
             "subscription_id": subscription.id,
             "subscription_data": subscription.subscription_data,
-            "message":  json.dumps(msg)
+            "message":  msg
         }
         sendDataToConector(
             data, subscription.conector)

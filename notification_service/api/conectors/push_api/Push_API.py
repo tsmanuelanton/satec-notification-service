@@ -1,3 +1,4 @@
+import json
 from api.models import Subscription
 from api.conectors.IConector import IConector
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
@@ -26,7 +27,7 @@ class PushAPIConector(IConector):
         try:
             webpush(
                 subscription_info=data['subscription_data'],
-                data=data['message'],
+                data=json.dumps(data["message"]),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
                 vapid_claims={
                     'sub': 'mailto:manuel.anton@satec.es'
