@@ -1,5 +1,6 @@
 from api.conectors.IConector import IConector
 import requests
+from .serilizers import SubcriptionDataSlack
 
 
 class SlackAPIConector(IConector):
@@ -34,4 +35,4 @@ class SlackAPIConector(IConector):
         return True
 
     def get_subscription_serializer():
-        pass
+        return SubcriptionDataSlack

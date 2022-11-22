@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import SubscriptionsSerializer
 from api.conectors.push_api.Push_API import PushAPIConector
+from api.conectors.slack_api.Slack_API import SlackAPIConector
 from api.models import Service
 from .util import has_permissions
 
@@ -141,5 +142,7 @@ def from_conector_get_subscription_serializer(conector: Conector):
     '''
     if conector.name == 'Push API - Navegadores':
         return PushAPIConector.get_subscription_serializer()
+    elif conector.name == "Slack API":
+        return SlackAPIConector.get_subscription_serializer()
     else:
         return None
