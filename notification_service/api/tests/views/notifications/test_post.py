@@ -18,7 +18,7 @@ class TestPostNotifications(APITestCase):
         # Cuerpo del POST sin el campo service_id
         data = {
             "message": {
-                "Type": "Test",
+                "title": "Test",
                 "body": "TestBody"
             }
         }
@@ -69,7 +69,7 @@ class TestPostNotifications(APITestCase):
         data = {
             "service": 0,
             "message": {
-                "Type": "Test",
+                "title": "Test",
                 "body": "TestBody"
             }
         }
@@ -101,7 +101,7 @@ class TestPostNotifications(APITestCase):
         data = {
             "service": service.id,
             "message": {
-                "Type": "Test",
+                "title": "Test",
                 "body": "TestBody"
             }
         }
