@@ -12,16 +12,17 @@ class SlackAPIConector(IConector):
             }
         }
 
-    def notify(data) -> bool:
+    def notify(data, meta={}) -> bool:
 
         try:
             body = {
                 "channel": data['subscription_data']["channel"],
-                "text": data['message']["body"],
+                "text": data['message']["title"] + "\n" + data['message']["body"],
+                **meta
             }
 
             headers = {
-                "Authorization": f"Bearer " + data['subscription_data']["token"]
+                "Authorization": "Bearer " + data['subscription_data']["token"]
             }
             res = requests.post("https://slack.com/api/chat.postMessage",
                                 json=body, headers=headers)

@@ -29,9 +29,15 @@ class ConectorsSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "meta"]
 
 
+class MessageFieldsSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    body = serializers.CharField()
+
+
 class MessageSerializer(serializers.Serializer):
     '''
     Valida que el cuerpo del mensaje POST esté bien formado
     '''
     service = serializers.IntegerField()
-    message = serializers.JSONField()
+    message = MessageFieldsSerializer()
+    meta = serializers.JSONField(required=False)

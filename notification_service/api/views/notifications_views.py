@@ -36,7 +36,8 @@ class NotificationsApiView(APIView):
         subscriptions = Subscription.objects.filter(service=service)
 
         try:
-            notify_subscriptors(msgSerializer["message"].value, subscriptions)
+            notify_subscriptors(
+                msgSerializer["message"].value, msgSerializer["meta"].value, subscriptions)
 
         except BaseException as e:
             print(e)
@@ -45,19 +46,24 @@ class NotificationsApiView(APIView):
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
 
 
-def notify_subscriptors(msg, subscriptions):
+def notify_subscriptors(msg, meta, subscriptions):
     for subscription in subscriptions:
         data = {
             "subscription_id": subscription.id,
             "subscription_data": subscription.subscription_data,
-            "message":  msg
+            "message":  msg,
+            "meta": meta
         }
         sendDataToConector(
             data, subscription.conector)
 
 
 def sendDataToConector(data, conector: Conector):
-    if getattr(conector, "name") == 'Push API - Navegadores':
-        PushAPIConector.notify(data)
-    elif getattr(conector, "name") == 'Slack API':
-        SlackAPIConector.notify(data)
+    conector_id = getattr(conector, "id")
+    conector_name = getattr(conector, "name")
+
+    meta = data["meta"].get(str(conector_id), {})
+    if conector_name == 'Push API - Navegadores':
+        PushAPIConector.notify(data, meta)
+    elif conector_name == 'Slack API':
+        SlackAPIConector.notify(data, meta)

@@ -10,7 +10,7 @@ class IConector(ABC):
         '''Devuelve un diccionario con los detalles del conector'''
 
     @abstractmethod
-    def notify(data):
+    def notify(data, meta={}):
         '''Envía notificaciones a los navegadores de los suscriptores y
         devuelve True si ha tenido éxito la operación'''
         pass
