@@ -1,3 +1,4 @@
+import json
 from api.models import Subscription
 from api.conectors.IConector import IConector
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
@@ -17,16 +18,15 @@ class PushAPIConector(IConector):
             }
         }
 
-    def notify(data) -> bool:
+    def notify(data, meta={}) -> bool:
         serializer = NotificationSerializer(data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
-
         try:
             webpush(
                 subscription_info=data['subscription_data'],
-                data=data['message'],
+                data=json.dumps(data["message"] | meta),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
                 vapid_claims={
                     'sub': 'mailto:manuel.anton@satec.es'

@@ -1,10 +1,10 @@
-import json
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.conectors.push_api.Push_API import PushAPIConector
+from api.conectors.slack_api.Slack_API import SlackAPIConector
 from api.views.services_views import get_service
 from .util import has_permissions
 
@@ -36,26 +36,34 @@ class NotificationsApiView(APIView):
         subscriptions = Subscription.objects.filter(service=service)
 
         try:
-            notify_subscriptors(msgSerializer["message"].value, subscriptions)
+            notify_subscriptors(
+                msgSerializer["message"].value, msgSerializer["meta"].value, subscriptions)
 
         except BaseException as e:
+            print(e)
             return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
 
 
-def notify_subscriptors(msg, subscriptions):
+def notify_subscriptors(msg, meta, subscriptions):
     for subscription in subscriptions:
         data = {
             "subscription_id": subscription.id,
             "subscription_data": subscription.subscription_data,
-            "message":  json.dumps(msg)
+            "message":  msg,
+            "meta": meta
         }
-
         sendDataToConector(
             data, subscription.conector)
 
 
 def sendDataToConector(data, conector: Conector):
-    if getattr(conector, "name") == 'Push API - Navegadores':
-        PushAPIConector.notify(data)
+    conector_id = getattr(conector, "id")
+    conector_name = getattr(conector, "name")
+
+    meta = data["meta"].get(str(conector_id), {})
+    if conector_name == 'Push API - Navegadores':
+        PushAPIConector.notify(data, meta)
+    elif conector_name == 'Slack API':
+        SlackAPIConector.notify(data, meta)
