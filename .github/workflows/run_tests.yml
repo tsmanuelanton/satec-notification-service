@@ -30,6 +30,6 @@ jobs:
       env:
         PUSH_API_PRIVATE_KEY: ${{ secrets.push_api_private_key_testing }}
       run: |
-        cd notification_service
+        cd src
         python manage.py migrate
         python manage.py test
