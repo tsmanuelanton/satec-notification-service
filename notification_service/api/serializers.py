@@ -40,4 +40,4 @@ class MessageSerializer(serializers.Serializer):
     '''
     service = serializers.IntegerField()
     message = MessageFieldsSerializer()
-    meta = serializers.JSONField(required=False)
+    meta = serializers.JSONField(required=False, default={})
