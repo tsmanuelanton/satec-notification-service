@@ -14,6 +14,7 @@ El servicio ofrece, actualmente, los siguientes medios para recibir las notifica
 
 >- **Navegador web**: Los suscriptores de esta plataforma reciben los mensajes en su navegador web gracias a la tecnología web [Push API](https://developer.mozilla.org/es/docs/Web/API/Push_API).
 >- **Slack**: Obtén notificaciones en tu chat de [Slack]("https://slack.com/intl/es-es/") mediante este conector.
+>- **Microsoft Teams**: Recibe las notificaciones directamente en [Microsoft Teams]("https://www.microsoft.com/es-es/microsoft-teams/group-chat-software").
 
 
 ### Rutas de la API
@@ -32,10 +33,10 @@ El servicio ofrece, actualmente, los siguientes medios para recibir las notifica
 Creamos un directorio e inicilizamos un entorno virtual de python dentro.
 Depués, ejecutamos los siguientes comandos
 ```
-git clone https://github.com/manuel-anton-satec/satec-notification-service`git
+git clone https://github.com/manuel-anton-satec/satec-notification-service.git
 cd satec-notification-service
 pip install -r requirements.txt
-cd notification_service
+cd src
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
