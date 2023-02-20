@@ -26,7 +26,7 @@ class PushAPIConector(IConector):
         try:
             webpush(
                 subscription_info=data['subscription_data'],
-                data=json.dumps(data["message"] | meta),
+                data=json.dumps({**data["message"], **meta}),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
                 vapid_claims={
                     'sub': 'mailto:manuel.anton@satec.es'

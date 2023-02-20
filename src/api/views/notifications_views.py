@@ -41,8 +41,7 @@ class NotificationsApiView(APIView):
                 msgSerializer["message"].value, msgSerializer["meta"].value, subscriptions)
 
         except BaseException as e:
-            print(e)
-            return Response({"res": "Se ha producido un error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"res": f"Se ha producido un error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
 
