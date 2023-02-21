@@ -15,13 +15,15 @@ class ApiConfig(AppConfig):
         from api.conectors.push_api.Push_API import PushAPIConector
         from api.conectors.slack_api.Slack_API import SlackAPIConector
         from api.conectors.teams.Teams import TeamsConector
+        from api.conectors.telegram.Telegram import TelegramConector
 
         def register_conectors(sender, **kwargs):
             '''Registra los conectores que tenemos en la BD'''
             conectors = [
                 PushAPIConector.getDetails(),
                 SlackAPIConector.getDetails(),
-                TeamsConector.getDetails()
+                TeamsConector.getDetails(),
+                TelegramConector.getDetails()
             ]
 
             for conector in conectors:

@@ -7,6 +7,7 @@ from api.conectors.push_api.Push_API import PushAPIConector
 from api.conectors.slack_api.Slack_API import SlackAPIConector
 from api.views.services_views import get_service
 from api.conectors.teams.Teams import TeamsConector
+from api.conectors.telegram.Telegram import TelegramConector
 from .util import has_permissions
 
 
@@ -69,3 +70,5 @@ def sendDataToConector(data, conector: Conector):
         SlackAPIConector.notify(data, meta)
     elif conector_name == 'Microsoft Teams Conector':
         TeamsConector.notify(data, meta)
+    elif conector_name == 'Telegram Conector':
+        TelegramConector.notify(data, meta)
