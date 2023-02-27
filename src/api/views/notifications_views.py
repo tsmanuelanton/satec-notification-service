@@ -3,12 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
-from api.conectors.push_api.Push_API import PushAPIConector
-from api.conectors.slack_api.Slack_API import SlackAPIConector
+from api.util import has_permissions, import_conectors
 from api.views.services_views import get_service
-from api.conectors.teams.Teams import TeamsConector
-from api.conectors.telegram.Telegram import TelegramConector
-from .util import has_permissions
 
 
 class NotificationsApiView(APIView):
@@ -55,20 +51,14 @@ def notify_subscriptors(msg, meta, subscriptions):
             "message":  msg,
             "meta": meta
         }
-        sendDataToConector(
+        send_data_to_conector(
             data, subscription.conector)
 
 
-def sendDataToConector(data, conector: Conector):
-    conector_id = getattr(conector, "id")
-    conector_name = getattr(conector, "name")
+def send_data_to_conector(data, conector: Conector):
 
-    meta = data["meta"].get(str(conector_id), {})
-    if conector_name == 'Push API - Navegadores':
-        PushAPIConector.notify(data, meta)
-    elif conector_name == 'Slack API':
-        SlackAPIConector.notify(data, meta)
-    elif conector_name == 'Microsoft Teams Conector':
-        TeamsConector.notify(data, meta)
-    elif conector_name == 'Telegram Conector':
-        TelegramConector.notify(data, meta)
+    meta = data["meta"].get(str(conector.id), {})
+    available_conectors = import_conectors("api\conectors")
+    for available_con in available_conectors:
+        if conector.name == available_con.getDetails().get("name"):
+            available_con.notify(data, meta)

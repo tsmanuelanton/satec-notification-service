@@ -4,12 +4,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import SubscriptionsSerializer
-from api.conectors.push_api.Push_API import PushAPIConector
-from api.conectors.slack_api.Slack_API import SlackAPIConector
-from api.conectors.teams.Teams import TeamsConector
-from api.conectors.telegram.Telegram import TelegramConector
 from api.models import Service
-from .util import has_permissions
+from api.util import has_permissions, import_conectors
 
 
 class SubscriptionsListApiView(APIView):
@@ -142,13 +138,8 @@ def from_conector_get_subscription_serializer(conector: Conector):
     '''
     Devuelve el serializador del subscription_data del conector
     '''
-    if conector.name == 'Push API - Navegadores':
-        return PushAPIConector.get_subscription_serializer()
-    elif conector.name == "Slack API":
-        return SlackAPIConector.get_subscription_serializer()
-    elif conector.name == "Microsoft Teams Conector":
-        return TeamsConector.get_subscription_serializer()
-    elif conector.name == "Telegram Conector":
-        return TelegramConector.get_subscription_serializer()
-    else:
-        return None
+
+    available_conectors = import_conectors("api\conectors")
+    for available_con in available_conectors:
+        if conector.name == available_con.getDetails().get("name"):
+            return available_con.get_subscription_serializer()
