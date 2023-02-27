@@ -25,7 +25,7 @@ class ApiConfig(AppConfig):
                 raise e
 
 
-def register_conectors():
+def register_conectors(**kwargs):
     from api.models import Conector
     from api.serializers import ConectorsSerializer
 
