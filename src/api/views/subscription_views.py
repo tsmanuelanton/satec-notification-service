@@ -139,7 +139,7 @@ def from_conector_get_subscription_serializer(conector: Conector):
     Devuelve el serializador del subscription_data del conector
     '''
 
-    available_conectors = import_conectors("api\conectors")
+    available_conectors = import_conectors("api/conectors")
     for available_con in available_conectors:
         if conector.name == available_con.getDetails().get("name"):
             return available_con.get_subscription_serializer()

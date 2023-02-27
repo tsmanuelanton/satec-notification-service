@@ -58,7 +58,7 @@ def notify_subscriptors(msg, meta, subscriptions):
 def send_data_to_conector(data, conector: Conector):
 
     meta = data["meta"].get(str(conector.id), {})
-    available_conectors = import_conectors("api\conectors")
+    available_conectors = import_conectors("api/conectors")
     for available_con in available_conectors:
         if conector.name == available_con.getDetails().get("name"):
             available_con.notify(data, meta)

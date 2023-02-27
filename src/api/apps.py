@@ -29,7 +29,7 @@ def register_conectors():
     from api.models import Conector
     from api.serializers import ConectorsSerializer
 
-    CONECTORS_DIR = "api\conectors"
+    CONECTORS_DIR = "api/conectors"
     conectors = import_conectors(CONECTORS_DIR)
     for conector in conectors:
         serialized = ConectorsSerializer(

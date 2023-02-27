@@ -18,8 +18,8 @@ def import_conectors(path):
         if file.is_dir():
             conectors = conectors + import_conectors(file)
         if file.suffix == ".py" and not file.name.startswith("__"):
-            # Eliminamos la extensión .py
-            module_path = str(file)[:-3].replace("\\", ".")
+            # Eliminamos la extensión .py y sustituimos el separador / por .
+            module_path = file.as_posix()[:-3].replace("/", ".")
             module = importlib.import_module(module_path)
             for name in dir(module):
                 obj = getattr(module, name)
