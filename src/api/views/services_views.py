@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from api.models import Service
 from api.serializers import ServicesSerializer
-from .util import has_permissions
 
 
 class ServicesListApiView(APIView):
