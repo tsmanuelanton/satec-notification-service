@@ -15,6 +15,7 @@ El servicio ofrece, actualmente, los siguientes medios para recibir las notifica
 >- **Navegador web**: Los suscriptores de esta plataforma reciben los mensajes en su navegador web gracias a la tecnología web [Push API](https://developer.mozilla.org/es/docs/Web/API/Push_API).
 >- **Slack**: Obtén notificaciones en tu chat de [Slack]("https://slack.com/intl/es-es/") mediante este conector.
 >- **Microsoft Teams**: Recibe las notificaciones directamente en [Microsoft Teams]("https://www.microsoft.com/es-es/microsoft-teams/group-chat-software").
+>- **Telegram**: Recibe notificaciones en la plataforma de mensajería [Telegram]("https://web.telegram.org/z/").
 
 
 ### Rutas de la API
