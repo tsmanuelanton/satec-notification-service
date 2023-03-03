@@ -8,14 +8,15 @@ class IConector(ABC):
     @abstractmethod
     def getDetails():
         '''Devuelve un diccionario con los detalles del conector'''
+        raise NotImplementedError
 
     @abstractmethod
     def notify(data, meta={}):
         '''Envía notificaciones a los navegadores de los suscriptores y
         devuelve True si ha tenido éxito la operación'''
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_subscription_serializer() -> Serializer:
         '''Devuelve el serializador para la suscripción de este conector'''
-        pass
+        raise NotImplementedError

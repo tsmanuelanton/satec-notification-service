@@ -1,5 +1,4 @@
 import json
-from api.models import Subscription
 from api.conectors.IConector import IConector
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
 from pywebpush import webpush, WebPushException
@@ -8,6 +7,12 @@ from rest_framework import serializers
 
 
 class PushAPIConector(IConector):
+
+    # Dict que asigna a errores de HTTP una descripción fácil de enteder
+    res_des = {
+        401: "Clavé publica y privada no coinciden",
+        410: "El usuario ha eliminado su suscripción manualmente"
+    }
 
     def getDetails():
         return {
@@ -24,7 +29,7 @@ class PushAPIConector(IConector):
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
         try:
-            webpush(
+            a = webpush(
                 subscription_info=data['subscription_data'],
                 data=json.dumps({**data["message"], **meta}),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
@@ -33,19 +38,17 @@ class PushAPIConector(IConector):
                 }
             )
 
+            return True, None
+
         except WebPushException as e:
             # Si el Push Service lanza un error Gone 410 es que el usuario ya no está suscrito
             # Si el Push Service lanza un error Gone 401 es que no coinciden la key pública y la privada del servidor
-            if e.response.status_code == 410 or e.response.status_code == 401:
-                # Borramos la suscripción de nuestra BD
-                subscription = Subscription.objects.get(
-                    id=data['subscription_id'])
-                subscription.delete()
-                return False
+            if e.response != None:
+                description = PushAPIConector.res_des.get(
+                    e.response.status_code) or e.message
+                return False, {"description": description}
             else:
-                raise e
-
-        return True
+                return False, {"description": e.message}
 
     def get_subscription_serializer():
         return SubscriptionDataSerializer

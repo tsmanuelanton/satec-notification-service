@@ -14,26 +14,21 @@ class SlackAPIConector(IConector):
 
     def notify(data, meta={}) -> bool:
 
-        try:
-            body = {
-                "channel": data['subscription_data']["channel"],
-                "text": data['message']["title"] + "\n" + data['message']["body"],
-                **meta
-            }
+        body = {
+            "channel": data['subscription_data']["channel"],
+            "text": data['message']["title"] + "\n" + data['message']["body"],
+            **meta
+        }
 
-            headers = {
-                "Authorization": "Bearer " + data['subscription_data']["token"]
-            }
-            res = requests.post("https://slack.com/api/chat.postMessage",
-                                json=body, headers=headers)
-            if not res.ok:
-                print(res.json())
-                return res.json()
-
-        except BaseException as e:
-            print(e)
-            raise e
-        return True
+        headers = {
+            "Authorization": "Bearer " + data['subscription_data']["token"]
+        }
+        res = requests.post("https://slack.com/api/chat.postMessage",
+                            json=body, headers=headers)
+        res_json = res.json()
+        if not res_json.get("ok", False):
+            return False, {"description": {res_json.get("error"), res_json.get("warning")}}
+        return True, {}
 
     def get_subscription_serializer():
         return SubcriptionDataSlack
