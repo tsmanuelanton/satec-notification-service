@@ -79,7 +79,7 @@ class ServicesDetailsApiView(APIView):
         service = get_service(service_id)
         if not service:
             logger.error(
-                f"Error al eliminar el servicio {service_id} - Servicio con id {service_id} no existe.")
+                f"Error al actualizar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
                 {"res": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND

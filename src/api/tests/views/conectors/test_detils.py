@@ -29,7 +29,7 @@ class TestDetailsConectors(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"res": f"Conector con id 1 no existe"})
+            response.data, {"res": f"Conector con id 1 no existe."})
 
     def test_conectors_details_valid(self):
         '''Comprueba que se muestran los datos cuando el conector existe'''

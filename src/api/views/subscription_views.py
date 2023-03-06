@@ -7,6 +7,9 @@ from api.serializers import SubscriptionsSerializer
 from api.models import Service
 from api.util import has_permissions, import_conectors
 
+import logging
+logger = logging.getLogger("file_logger")
+
 
 class SubscriptionsListApiView(APIView):
 
@@ -35,6 +38,8 @@ class SubscriptionsListApiView(APIView):
 
         serializer = SubscriptionsSerializer(data=request.data)
         if not serializer.is_valid():
+            logger.error(
+                f"Error al registrar suscripción nueva - {serializer.errors}.")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         conector = Conector.objects.get(id=request.data.get('conector'))
@@ -48,9 +53,13 @@ class SubscriptionsListApiView(APIView):
             serialized = subscription_data_serializer(
                 data=request.data.get('subscription_data'))
             if not serialized.is_valid():
+                logger.error(
+                    f"Error al registrar suscripción nueva - {serialized.errors}.")
                 return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
+        subscription = serializer.save()
+        logger.info(
+            f"Suscripción nueva con id {subscription.id} registrada al servicio '{subscription.service.name.upper()}' con id {subscription.service.id}.")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -64,13 +73,13 @@ class SubscriptionsDetailsApiView(APIView):
         subscription = get_subscription(subscription_id)
         if not subscription:
             return Response(
-                {"res": f"Suscripción con id {subscription_id} no existe"},
+                {"res": f"Suscripción con id {subscription_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not has_permissions(request, subscription.service.owner):
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -84,14 +93,18 @@ class SubscriptionsDetailsApiView(APIView):
 
         subscription = get_subscription(subscription_id)
         if not subscription:
+            logger.error(
+                f"Error al actualizar la suscripción {subscription_id} - Suscripción con id {subscription_id} no existe.")
             return Response(
-                {"res": f"Suscripción con id {subscription_id} no existe"},
+                {"res": f"Suscripción con id {subscription_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not has_permissions(request, subscription.service.owner):
+            logger.error(
+                f"Error al actualizar la suscripción {subscription_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -99,6 +112,8 @@ class SubscriptionsDetailsApiView(APIView):
             instance=subscription, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            logger.info(
+                f"Suscripción {subscription_id} actualizado.")
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -111,17 +126,22 @@ class SubscriptionsDetailsApiView(APIView):
         subscription = get_subscription(subscription_id)
 
         if not subscription:
-            return Response({"res": f"Suscripción con id {subscription_id} no existe"}, status=status.HTTP_404_NOT_FOUND)
+            logger.error(
+                f"Error al eliminar la suscripción {subscription_id} - Suscripción con id {subscription_id} no existe.")
+            return Response({"res": f"Suscripción con id {subscription_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription.service.owner):
+            logger.error(
+                f"Error al eliminar la suscripción {subscription_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         subscription.delete()
-
-        return Response({"res": "Suscripción eliminada"})
+        logger.info(
+            f"Suscripción {subscription_id} eliminada correctamente.")
+        return Response({"res": "Suscripción eliminada."})
 
 
 def get_subscription(subscription_id):

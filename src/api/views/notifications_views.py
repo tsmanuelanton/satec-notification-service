@@ -25,11 +25,11 @@ class NotificationsApiView(APIView):
 
         service = get_service(service_id)
         if not service:
-            return Response({"res": "Unknown service"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"res": "Unknown service."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not has_permissions(request, service.owner):
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -62,18 +62,18 @@ class NotificationsApiView(APIView):
                 else:
                     not_successfull_msgs += 1
                     logger.error(
-                        f"Error al notificar - {service_info | notification_context |response}")
+                        f"Error al notificar - {service_info | notification_context |response}.")
                     fails.append(notification_context | response)
 
             except BaseException as e:
                 logger.error(
                     f"Error al notificar - {service_info | notification_context} - {e}")
-                return Response({"res": "Se ha producido un error interno"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"res": "Se ha producido un error interno."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.")
 
-        return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}, Fallos: {fails}"}, status=status.HTTP_200_OK)
+        return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}, Fallos: {fails}."}, status=status.HTTP_200_OK)
 
 
 def send_data_to_conector(data, conector: Conector):

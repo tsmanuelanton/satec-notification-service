@@ -143,4 +143,4 @@ class TestUpdateSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data, {"res": f"No tienes permisos"})
+            response.data, {"res": f"No tienes permisos."})
