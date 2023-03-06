@@ -62,7 +62,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
             return Response(
                 {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
@@ -85,7 +85,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
@@ -119,7 +119,7 @@ class ServicesDetailsApiView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
             logger.error(
                 f"Error al eliminar servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(

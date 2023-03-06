@@ -17,7 +17,7 @@ class TestDeleteServices(APITestCase):
         request = self.factory.delete(endpoint)
 
         # Creamos otro usario con un servicio
-        other_user, other_token = create_authenticated_user()
+        other_user, _ = create_authenticated_user()
         not_owner_service = create_service(other_user)
         not_owner_service.save()
 
@@ -31,7 +31,7 @@ class TestDeleteServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data, {"res": f"No tienes permisos"})
+            response.data, {"res": f"No tienes permisos."})
 
     def test_services_delete_null(self):
         '''Comprueba que se lanza un error al intentar borrar un servicio que no existe'''
@@ -49,7 +49,7 @@ class TestDeleteServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"res": f"Servicio con id {service_id} no existe"})
+            response.data, {"res": f"Servicio con id {service_id} no existe."})
 
     def test_services_delete_valid(self):
         '''Comprueba que se borra el servicio correctamente'''
@@ -69,4 +69,4 @@ class TestDeleteServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data, {"res": "Servicio eliminado"})
+            response.data, {"res": "Servicio eliminado."})

@@ -53,7 +53,7 @@ class TestDetailsServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data, {"res": f"No tienes permisos"})
+            response.data, {"res": f"No tienes permisos."})
 
     def test_services_details_null(self):
         '''Comprueba que se lanza un error cuando no existe el servicio'''
@@ -71,4 +71,4 @@ class TestDetailsServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"res": f"Servicio con id 1 no existe"})
+            response.data, {"res": f"Servicio con id 1 no existe."})

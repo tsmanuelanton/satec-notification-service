@@ -30,7 +30,6 @@ class TestUpdateServices(APITestCase):
         # Llamamos a la vista
         response = ServicesDetailsApiView.as_view()(
             request, service_id=my_service.id)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             dict(response.data)["name"], "name")
@@ -83,4 +82,4 @@ class TestUpdateServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data, {"res": f"No tienes permisos"})
+            response.data, {"res": f"No tienes permisos."})
