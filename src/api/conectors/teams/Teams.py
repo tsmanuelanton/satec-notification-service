@@ -13,40 +13,42 @@ class TeamsConector(IConector):
 
     def notify(data, meta={}) -> bool:
 
-        try:
-            body = {
-                "body": {
-                    "content": data['message']["title"] + "\n" + data['message']["body"]
-                },
-                **meta
-            }
+        body = {
+            "body": {
+                "content": data['message']["title"] + "\n" + data['message']["body"]
+            },
+            **meta
+        }
 
-            tenant_id = data['subscription_data']['tenant_id']
-            client_id = data['subscription_data']['client_id']
-            email = data['subscription_data']['email']
-            password = data['subscription_data']['password']
+        tenant_id = data['subscription_data']['tenant_id']
+        client_id = data['subscription_data']['client_id']
+        email = data['subscription_data']['email']
+        password = data['subscription_data']['password']
 
-            token = TeamsConector.get_token(
-                email, password, client_id,  tenant_id)
+        res_token = TeamsConector.get_token(
+            email, password, client_id,  tenant_id)
+        if not res_token.ok:
+            return False, {"description": res_token.json()}
 
-            headers = {
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json"
-            }
+        token = res_token.json()
 
-            team_id = data['subscription_data']['team_id']
-            channel_id = data['subscription_data']['channel_id']
-            endpoint = f'https://graph.microsoft.com/v1.0/teams/{team_id}/channels/{channel_id}/messages'
+        headers = {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        }
 
-            res = requests.post(endpoint, json=body, headers=headers)
-            if not res.ok:
-                print(res.json())
-            return res.json()
+        team_id = data['subscription_data']['team_id']
+        channel_id = data['subscription_data']['channel_id']
+        endpoint = f'https://graph.microsoft.com/v1.0/teams/{team_id}/channels/{channel_id}/messages'
 
-        except BaseException as e:
-            print(e)
-            raise e
-        return True
+        res = requests.post(endpoint, json=body, headers=headers)
+        if not res.ok:
+            res_json = res.json()
+            error = res_json.get("error")
+            if error:
+                return False, {"description": error["message"]}
+
+        return True, None
 
     def get_subscription_serializer():
         return SubcriptionDataTeams
@@ -69,8 +71,4 @@ class TeamsConector(IConector):
 
         url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
         res = requests.post(url, body, headers=headers)
-
-        if res.ok:
-            return res.json().get("access_token")
-
-        raise BaseException(res.json())
+        return res

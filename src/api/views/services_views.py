@@ -5,6 +5,9 @@ from rest_framework.response import Response
 from api.models import Service
 from api.serializers import ServicesSerializer
 
+import logging
+logger = logging.getLogger("file_logger")
+
 
 class ServicesListApiView(APIView):
 
@@ -35,9 +38,13 @@ class ServicesListApiView(APIView):
 
         serializer = ServicesSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            service = serializer.save()
+            logger.info(
+                f"El usuario {data.get('owner')} ha registrado el servicio '{data.get('name').upper()}' con id {service.id}.")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+        logger.error(
+            f"Error al registrar servicio por el usuario {data.get('owner')} - {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -51,13 +58,13 @@ class ServicesDetailsApiView(APIView):
         service = get_service(service_id)
         if not service:
             return Response(
-                {"res": f"Servicio con id {service_id} no existe"},
+                {"res": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -71,14 +78,18 @@ class ServicesDetailsApiView(APIView):
 
         service = get_service(service_id)
         if not service:
+            logger.error(
+                f"Error al actualizar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe"},
+                {"res": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
+            logger.error(
+                f"Error al actualizar el servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -86,8 +97,12 @@ class ServicesDetailsApiView(APIView):
             instance=service, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            logger.info(
+                f"Servicio {service_id} actualizado.")
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        logger.error(
+            f"Error al actualizar servicio {service_id} - {serializer.errors}.")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, service_id, *args, **kwargs):
@@ -97,21 +112,26 @@ class ServicesDetailsApiView(APIView):
 
         service = get_service(service_id)
         if not service:
+            logger.error(
+                f"Error al eliminar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe"},
+                {"res": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user.is_staff or request.user != service.owner:
+        if not request.user.is_staff and request.user != service.owner:
+            logger.error(
+                f"Error al eliminar servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         service.delete()
-
+        logger.info(
+            f"Servicio {service_id} eliminado correctamente.")
         return Response(
-            {"res": "Servicio eliminado"},
+            {"res": "Servicio eliminado."},
             status=status.HTTP_200_OK
         )
 

@@ -13,29 +13,24 @@ class TelegramConector(IConector):
 
     def notify(data, meta={}) -> bool:
 
-        try:
-            body = {
-                "chat_id": data['subscription_data']['chat_id'],
-                "text": data['message']["title"] + "\n" + data['message']["body"]
-            }
+        body = {
+            "chat_id": data['subscription_data']['chat_id'],
+            "text": data['message']["title"] + "\n" + data['message']["body"]
+        }
 
-            bot_token = data['subscription_data']['bot_token']
+        bot_token = data['subscription_data']['bot_token']
 
-            headers = {
-                "Content-Type": "application/json"
-            }
+        headers = {
+            "Content-Type": "application/json"
+        }
 
-            endpoint = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        endpoint = f'https://api.telegram.org/bot{bot_token}/sendMessage'
 
-            res = requests.post(endpoint, json=body, headers=headers)
-            if not res.ok:
-                print(res.json())
-            return res.json()
-
-        except BaseException as e:
-            print(e)
-            raise e
-        return True
+        res = requests.post(endpoint, json=body, headers=headers)
+        if not res.ok:
+            res_json = res.json()
+            return False, res_json["description"]
+        return True, None
 
     def get_subscription_serializer():
         return SubcriptionDataTelegram

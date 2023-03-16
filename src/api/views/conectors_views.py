@@ -48,7 +48,7 @@ class ConectorsDetailsApiView(APIView):
         conector = get_conector(conector_id)
         if not conector:
             return Response(
-                {"res": f"Conector con id {conector_id} no existe"},
+                {"res": f"Conector con id {conector_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND)
 
         serializer = ConectorsSerializer(conector)

@@ -12,7 +12,7 @@ class Conector(models.Model):
     name = models.CharField(max_length=45)
     description = models.TextField()
     # JSON distinto para campos exclusivos del conector
-    meta = models.JSONField()
+    meta = models.JSONField(blank=True, default=dict)
 
 
 class Subscription(models.Model):

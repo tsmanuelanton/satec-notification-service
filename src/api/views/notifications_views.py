@@ -6,6 +6,9 @@ from api.serializers import MessageSerializer
 from api.util import has_permissions, import_conectors
 from api.views.services_views import get_service
 
+import logging
+logger = logging.getLogger("file_logger")
+
 
 class NotificationsApiView(APIView):
 
@@ -22,37 +25,61 @@ class NotificationsApiView(APIView):
 
         service = get_service(service_id)
         if not service:
-            return Response({"res": "Unknown service"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"res": "Unknown service."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not has_permissions(request, service.owner):
             return Response(
-                {"res": f"No tienes permisos"},
+                {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         # Obtenemos los suscriptores asociados a este servicio
         subscriptions = Subscription.objects.filter(service=service)
 
-        try:
-            notify_subscriptors(
-                msgSerializer["message"].value, msgSerializer["meta"].value, subscriptions)
+        successfull_msgs = 0
+        not_successfull_msgs = 0
 
-        except BaseException as e:
-            return Response({"res": f"Se ha producido un error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        fails = []
+        for subscription in subscriptions:
+            conector = subscription.conector
+            service_info = {"service_name": service.name,
+                            "service_id": service.id}
+            notification_context = {"subscription_id": subscription.id,
+                                    "conector_name": conector.name}
+            try:
+                data = {
+                    "subscription_id": subscription.id,
+                    "subscription_data": subscription.subscription_data,
+                    "message":  msgSerializer["message"].value,
+                    "meta": msgSerializer["meta"].value
+                }
 
-        return Response({"res": "Éxito"}, status=status.HTTP_200_OK)
+                success, error_info = send_data_to_conector(
+                    data, subscription.conector)
 
+                if success:
+                    successfull_msgs += 1
+                else:
+                    not_successfull_msgs += 1
+                    info = service_info | notification_context | {
+                        "description": error_info}
+                    logger.error(
+                        f"Error al notificar - {info}.")
+                    fails.append(notification_context | {
+                                 "description": str(error_info)})
 
-def notify_subscriptors(msg, meta, subscriptions):
-    for subscription in subscriptions:
-        data = {
-            "subscription_id": subscription.id,
-            "subscription_data": subscription.subscription_data,
-            "message":  msg,
-            "meta": meta
-        }
-        send_data_to_conector(
-            data, subscription.conector)
+            except BaseException as e:
+                not_successfull_msgs += 1
+                info = service_info | notification_context | {"description": e}
+                logger.error(
+                    f"Error al notificar - {info}")
+                fails.append(notification_context | {"description": str(e)})
+
+        logger.info(
+            f"El servicio {service.name} con id {service.id} ha enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.")
+
+        return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.",
+                         "fallos": fails}, status=status.HTTP_200_OK)
 
 
 def send_data_to_conector(data, conector: Conector):
@@ -61,4 +88,4 @@ def send_data_to_conector(data, conector: Conector):
     available_conectors = import_conectors("api/conectors")
     for available_con in available_conectors:
         if conector.name == available_con.getDetails().get("name"):
-            available_con.notify(data, meta)
+            return available_con.notify(data, meta)
