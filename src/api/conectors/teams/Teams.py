@@ -25,8 +25,12 @@ class TeamsConector(IConector):
         email = data['subscription_data']['email']
         password = data['subscription_data']['password']
 
-        token = TeamsConector.get_token(
+        res_token = TeamsConector.get_token(
             email, password, client_id,  tenant_id)
+        if not res_token.ok:
+            return False, {"description": res_token.json()}
+
+        token = res_token.json()
 
         headers = {
             "Authorization": "Bearer " + token,
@@ -67,8 +71,4 @@ class TeamsConector(IConector):
 
         url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
         res = requests.post(url, body, headers=headers)
-
-        if res.ok:
-            return res.json().get("access_token")
-
-        raise BaseException(res.json())
+        return res

@@ -46,9 +46,9 @@ class PushAPIConector(IConector):
             if e.response != None:
                 description = PushAPIConector.res_des.get(
                     e.response.status_code) or e.message
-                return False, {"description": description}
+                return False, description
             else:
-                return False, {"description": e.message}
+                return False, e.message
 
     def get_subscription_serializer():
         return SubscriptionDataSerializer

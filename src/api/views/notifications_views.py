@@ -54,26 +54,32 @@ class NotificationsApiView(APIView):
                     "meta": msgSerializer["meta"].value
                 }
 
-                success, response = send_data_to_conector(
+                success, error_info = send_data_to_conector(
                     data, subscription.conector)
 
                 if success:
                     successfull_msgs += 1
                 else:
                     not_successfull_msgs += 1
+                    info = service_info | notification_context | {
+                        "description": error_info}
                     logger.error(
-                        f"Error al notificar - {service_info | notification_context |response}.")
-                    fails.append(notification_context | response)
+                        f"Error al notificar - {info}.")
+                    fails.append(notification_context | {
+                                 "description": str(error_info)})
 
             except BaseException as e:
+                not_successfull_msgs += 1
+                info = service_info | notification_context | {"description": e}
                 logger.error(
-                    f"Error al notificar - {service_info | notification_context} - {e}")
-                return Response({"res": "Se ha producido un error interno."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    f"Error al notificar - {info}")
+                fails.append(notification_context | {"description": str(e)})
 
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.")
 
-        return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}, Fallos: {fails}."}, status=status.HTTP_200_OK)
+        return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.",
+                         "fallos": fails}, status=status.HTTP_200_OK)
 
 
 def send_data_to_conector(data, conector: Conector):

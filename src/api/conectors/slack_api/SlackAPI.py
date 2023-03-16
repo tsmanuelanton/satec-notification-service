@@ -27,7 +27,7 @@ class SlackAPIConector(IConector):
                             json=body, headers=headers)
         res_json = res.json()
         if not res_json.get("ok", False):
-            return False, {"description": {res_json.get("error"), res_json.get("warning")}}
+            return False, [res_json.get("error"), res_json.get("warning")]
         return True, {}
 
     def get_subscription_serializer():

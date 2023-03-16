@@ -29,7 +29,7 @@ class TelegramConector(IConector):
         res = requests.post(endpoint, json=body, headers=headers)
         if not res.ok:
             res_json = res.json()
-            return False, {"description": res_json["description"]}
+            return False, res_json["description"]
         return True, None
 
     def get_subscription_serializer():

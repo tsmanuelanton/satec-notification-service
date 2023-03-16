@@ -16,6 +16,7 @@ El servicio ofrece, actualmente, los siguientes medios para recibir las notifica
 >- **Slack**: Obtén notificaciones en tu chat de [Slack]("https://slack.com/intl/es-es/") mediante este conector.
 >- **Microsoft Teams**: Recibe las notificaciones directamente en [Microsoft Teams]("https://www.microsoft.com/es-es/microsoft-teams/group-chat-software").
 >- **Telegram**: Recibe notificaciones en la plataforma de mensajería [Telegram]("https://web.telegram.org/z/").
+>- **Email**: Permite enviar mensajes a la bandeja de correo que quieras.
 
 
 ### Rutas de la API
