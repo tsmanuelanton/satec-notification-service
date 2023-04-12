@@ -1,4 +1,4 @@
-name: Tests CI
+name:  satec-notification-service CI
 
 on:
   push:
@@ -7,8 +7,7 @@ on:
     branches: [ "main", "dev" ]
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -33,3 +32,15 @@ jobs:
         cd src
         python manage.py migrate
         python manage.py test
+  docker-push:
+    name: Push code Docker Image to Github Packages
+    runs-on: ubuntu-lastest
+    needs: [build-and-test]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      with:
+        name: manuel-anton-satec/satec-notification-service
+        token: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
