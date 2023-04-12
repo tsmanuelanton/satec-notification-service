@@ -42,6 +42,9 @@ class NotificationsApiView(APIView):
         fails = []
         for subscription in subscriptions:
             conector = subscription.conector
+            if len(msgSerializer.data["restricted_to"]) > 0:
+                if conector.id not in msgSerializer.data["restricted_to"]:
+                    continue
             service_info = {"service_name": service.name,
                             "service_id": service.id}
             notification_context = {"subscription_id": subscription.id,
