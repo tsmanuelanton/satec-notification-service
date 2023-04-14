@@ -43,3 +43,6 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
+
+### Recomendaciones 
+Python 3.8 o superior. El servicio podría no funcionar para versiones anteriores.
