@@ -29,7 +29,7 @@ jobs:
       env:
         PUSH_API_PRIVATE_KEY: ${{ secrets.push_api_private_key_testing }}
       run: |
-        cd src
+        cd app
         python manage.py migrate
         python manage.py test
   docker-push:
