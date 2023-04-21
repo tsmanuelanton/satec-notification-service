@@ -37,9 +37,12 @@ Depués, ejecutamos los siguientes comandos
 ```
 git clone https://github.com/manuel-anton-satec/satec-notification-service.git
 cd satec-notification-service
+cd app
 pip install -r requirements.txt
-cd src
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
+
+### Recomendaciones 
+Python 3.8 o superior. El servicio podría no funcionar para versiones anteriores.

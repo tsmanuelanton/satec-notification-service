@@ -42,6 +42,9 @@ class NotificationsApiView(APIView):
         fails = []
         for subscription in subscriptions:
             conector = subscription.conector
+            if len(msgSerializer.data["restricted_to"]) > 0:
+                if conector.id not in msgSerializer.data["restricted_to"]:
+                    continue
             service_info = {"service_name": service.name,
                             "service_id": service.id}
             notification_context = {"subscription_id": subscription.id,
@@ -61,19 +64,20 @@ class NotificationsApiView(APIView):
                     successfull_msgs += 1
                 else:
                     not_successfull_msgs += 1
-                    info = service_info | notification_context | {
-                        "description": error_info}
+                    info = {**service_info, **notification_context,
+                            "description": error_info}
                     logger.error(
                         f"Error al notificar - {info}.")
-                    fails.append(notification_context | {
+                    fails.append({**notification_context,
                                  "description": str(error_info)})
 
             except BaseException as e:
                 not_successfull_msgs += 1
-                info = service_info | notification_context | {"description": e}
+                info = {**service_info, **
+                        notification_context, "description": e}
                 logger.error(
                     f"Error al notificar - {info}")
-                fails.append(notification_context | {"description": str(e)})
+                fails.append({**notification_context, "description": str(e)})
 
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.")

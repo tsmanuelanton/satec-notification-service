@@ -41,3 +41,4 @@ class MessageSerializer(serializers.Serializer):
     service = serializers.IntegerField()
     message = MessageFieldsSerializer()
     meta = serializers.JSONField(required=False, default={})
+    restricted_to = serializers.ListField(required=False, default=list)
