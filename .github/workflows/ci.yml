@@ -29,8 +29,9 @@ jobs:
       env:
         PUSH_API_PRIVATE_KEY: ${{ secrets.push_api_private_key_testing }}
       run: |
-        python ./app/manage.py migrate
-        python ./app/manage.py test
+        cd app
+        python manage.py migrate
+        python manage.py test
   docker-push:
     name: Push code Docker Image to Github Packages
     runs-on: ubuntu-latest
@@ -40,7 +41,8 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: manuel-anton-satec/satec-notification-service
+        context: ./app
+        name: UO276213/satec-notification-service
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
