@@ -24,14 +24,13 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r ./app/requirements.txt
     - name: Run Tests
       env:
         PUSH_API_PRIVATE_KEY: ${{ secrets.push_api_private_key_testing }}
       run: |
-        cd app
-        python manage.py migrate
-        python manage.py test
+        python ./app/manage.py migrate
+        python ./app/manage.py test
   docker-push:
     name: Push code Docker Image to Github Packages
     runs-on: ubuntu-latest
