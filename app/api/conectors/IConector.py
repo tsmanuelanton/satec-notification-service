@@ -11,9 +11,9 @@ class IConector(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def notify(data, meta={}):
+    async def notify(data, meta={}) -> dict or None:
         '''Envía notificaciones a los navegadores de los suscriptores y
-        devuelve True si ha tenido éxito la operación'''
+        devuelve un dic si se ha producido un error'''
         raise NotImplementedError
 
     @abstractmethod

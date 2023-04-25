@@ -11,7 +11,7 @@ class TeamsConector(IConector):
             "meta": {}
         }
 
-    def notify(data, meta={}) -> bool:
+    async def notify(data, meta={}) -> dict or None:
 
         body = {
             "body": {
@@ -46,9 +46,9 @@ class TeamsConector(IConector):
             res_json = res.json()
             error = res_json.get("error")
             if error:
-                return False, {"description": error["message"]}
+                return {"description": error["message"]}
 
-        return True, None
+        return None
 
     def get_subscription_serializer():
         return SubcriptionDataTeams

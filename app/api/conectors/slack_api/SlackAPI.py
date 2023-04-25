@@ -1,7 +1,7 @@
 from api.conectors.IConector import IConector
-import requests
 from .serilizers import SubcriptionDataSlack
 
+import requests
 
 class SlackAPIConector(IConector):
     def getDetails():
@@ -12,7 +12,7 @@ class SlackAPIConector(IConector):
             }
         }
 
-    def notify(data, meta={}) -> bool:
+    async def notify(data, meta={}) -> dict or None:
 
         body = {
             "channel": data['subscription_data']["channel"],
@@ -27,8 +27,8 @@ class SlackAPIConector(IConector):
                             json=body, headers=headers)
         res_json = res.json()
         if not res_json.get("ok", False):
-            return False, [res_json.get("error"), res_json.get("warning")]
-        return True, {}
+            return [res_json.get("error"), res_json.get("warning")]
+        return None
 
     def get_subscription_serializer():
         return SubcriptionDataSlack

@@ -11,7 +11,7 @@ class TelegramConector(IConector):
             "meta": {}
         }
 
-    def notify(data, meta={}) -> bool:
+    async def notify(data, meta={}) -> dict or None:
 
         body = {
             "chat_id": data['subscription_data']['chat_id'],
@@ -28,9 +28,8 @@ class TelegramConector(IConector):
 
         res = requests.post(endpoint, json=body, headers=headers)
         if not res.ok:
-            res_json = res.json()
-            return False, res_json["description"]
-        return True, None
+            return res.json()["description"]
+        return None
 
     def get_subscription_serializer():
         return SubcriptionDataTelegram

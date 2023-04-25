@@ -1,9 +1,10 @@
-import json
 from api.conectors.IConector import IConector
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
+from rest_framework import serializers
+
 from pywebpush import webpush, WebPushException
 from os import environ
-from rest_framework import serializers
+import json
 
 
 class PushAPIConector(IConector):
@@ -23,13 +24,13 @@ class PushAPIConector(IConector):
             }
         }
 
-    def notify(data, meta={}) -> bool:
+    async def notify(data, meta={}) -> dict or None:
         serializer = NotificationSerializer(data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
         try:
-            a = webpush(
+            webpush(
                 subscription_info=data['subscription_data'],
                 data=json.dumps({**data["message"], **meta}),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
@@ -38,7 +39,7 @@ class PushAPIConector(IConector):
                 }
             )
 
-            return True, None
+            return None
 
         except WebPushException as e:
             # Si el Push Service lanza un error Gone 410 es que el usuario ya no está suscrito
@@ -46,9 +47,9 @@ class PushAPIConector(IConector):
             if e.response != None:
                 description = PushAPIConector.res_des.get(
                     e.response.status_code) or e.message
-                return False, description
+                return description
             else:
-                return False, e.message
+                return e.message
 
     def get_subscription_serializer():
         return SubscriptionDataSerializer
