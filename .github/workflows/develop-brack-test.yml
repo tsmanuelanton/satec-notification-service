@@ -1,9 +1,9 @@
-name:  CI satec-notification-service 
+name:  CI Develop Branch
 
 on:
   push:
     branches: 
-    - "main"
+    - "dev"
 
 jobs:
   build-and-test:
@@ -29,17 +29,3 @@ jobs:
         cd app
         python manage.py migrate
         python manage.py test
-  docker-push:
-    name: Push code Docker Image to Github Packages
-    runs-on: ubuntu-latest
-    needs: [build-and-test]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@v5
-      with:
-        context: ./app
-        name: UO276213/satec-notification-service
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: ghcr.io
