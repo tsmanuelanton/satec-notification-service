@@ -7,13 +7,13 @@ import aiosmtplib
 class EmailConector(IConector):
     '''Implementa la interfaz IConector para permitir enviar emails.'''
 
-    def getDetails():
+    def getDetails() -> dict:
         return {
             'name': 'Email Conector',
             'description': 'Permite obtener notificaciones en tu bandeja de correos.'
         }
 
-    async def notify(data, meta={}) -> dict:
+    async def notify(data, options={}) -> dict:
         email = EmailMessage()
         email['From'] = data['subscription_data']['From']
         email['To'] = data['subscription_data']['To']

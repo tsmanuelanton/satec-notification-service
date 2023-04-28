@@ -4,7 +4,7 @@ from .serilizers import SubcriptionDataSlack
 import requests
 
 class SlackAPIConector(IConector):
-    def getDetails():
+    def getDetails() -> dict:
         return {
             "name": "Slack API",
             "description": "Permite obtener notificaciones por tu chat de Slack",
@@ -12,12 +12,12 @@ class SlackAPIConector(IConector):
             }
         }
 
-    async def notify(data, meta={}) -> dict or None:
+    async def notify(data, options={}) -> dict or None:
 
         body = {
             "channel": data['subscription_data']["channel"],
             "text": data['message']["title"] + "\n" + data['message']["body"],
-            **meta
+            **options
         }
 
         headers = {

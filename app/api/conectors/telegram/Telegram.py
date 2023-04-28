@@ -4,14 +4,14 @@ from .serializers import SubcriptionDataTelegram
 
 
 class TelegramConector(IConector):
-    def getDetails():
+    def getDetails() -> dict:
         return {
             "name": "Telegram Conector",
             "description": "Permite obtener notificaciones a través de Telegram",
             "meta": {}
         }
 
-    async def notify(data, meta={}) -> dict or None:
+    async def notify(data, options={}) -> dict or None:
 
         body = {
             "chat_id": data['subscription_data']['chat_id'],

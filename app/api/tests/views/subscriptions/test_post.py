@@ -32,6 +32,9 @@ class TestPostSubscriptions(APITestCase):
             "service": service.id,
             "conector": conector.id,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data
@@ -64,6 +67,9 @@ class TestPostSubscriptions(APITestCase):
             "service": 1,
             "conector": conector.id,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data
@@ -92,6 +98,9 @@ class TestPostSubscriptions(APITestCase):
             "service": service.id,
             "conector": 1,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data

@@ -21,3 +21,4 @@ class Subscription(models.Model):
     conector = models.ForeignKey(
         Conector, on_delete=models.CASCADE)
     subscription_data = models.JSONField()
+    meta = models.JSONField(blank=True, default=dict)

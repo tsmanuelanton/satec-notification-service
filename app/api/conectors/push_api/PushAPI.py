@@ -15,7 +15,7 @@ class PushAPIConector(IConector):
         410: "El usuario ha eliminado su suscripción manualmente"
     }
 
-    def getDetails():
+    def getDetails() -> dict:
         return {
             "name": "Push API - Navegadores",
             "description": "Permite enviar notificacion a los clientes a través de los navegadores mediante la API PUSH",
@@ -24,7 +24,7 @@ class PushAPIConector(IConector):
             }
         }
 
-    async def notify(data, meta={}) -> dict or None:
+    async def notify(data, options={}) -> dict or None:
         serializer = NotificationSerializer(data=data)
 
         if not serializer.is_valid():
@@ -32,7 +32,7 @@ class PushAPIConector(IConector):
         try:
             webpush(
                 subscription_info=data['subscription_data'],
-                data=json.dumps({**data["message"], **meta}),
+                data=json.dumps({**data["message"], **options}),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
                 vapid_claims={
                     'sub': 'mailto:manuel.anton@satec.es'

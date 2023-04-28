@@ -49,12 +49,11 @@ class NotificationsApiView(APIView):
 async def send_data_to_conector(data, conector: Conector):
     '''Obtinene los conectores cargados y envía los datos al conector adecuado'''
     try:
-        print(f"start {conector.name} at {time.strftime('%X')}")
-        meta = data["meta"].get(str(conector.id), {})
+        options = data["options"].get(str(conector.id), {})
         available_conectors = import_conectors("api/conectors")
         for available_con in available_conectors:
             if conector.name == available_con.getDetails().get("name"):
-                return (await available_con.notify(data, meta)), conector
+                return (await available_con.notify(data, options)), conector
     except BaseException as e:
         return str(e), conector
         
@@ -78,7 +77,7 @@ async def notify_subscriptors(msgSerializer, service):
             "subscription_id": subscription.id,
             "subscription_data": subscription.subscription_data,
             "message":  msgSerializer["message"].value,
-            "meta": msgSerializer["meta"].value
+            "options": msgSerializer["options"].value
         }
 
         coroutine = send_data_to_conector(data, conector)

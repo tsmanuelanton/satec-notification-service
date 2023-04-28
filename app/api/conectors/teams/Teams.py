@@ -4,20 +4,20 @@ from .serializers import SubcriptionDataTeams
 
 
 class TeamsConector(IConector):
-    def getDetails():
+    def getDetails() -> dict:
         return {
             "name": "Microsoft Teams Conector",
             "description": "Permite obtener notificaciones a través de Microsoft Teams",
             "meta": {}
         }
 
-    async def notify(data, meta={}) -> dict or None:
+    async def notify(data, options={}) -> dict or None:
 
         body = {
             "body": {
                 "content": data['message']["title"] + "\n" + data['message']["body"]
             },
-            **meta
+            **options
         }
 
         tenant_id = data['subscription_data']['tenant_id']

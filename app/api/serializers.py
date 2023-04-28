@@ -6,7 +6,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ["id", "service", "conector",
-                  "subscription_data"]
+                  "subscription_data", "meta"]
 
         extra_kwargs = {
             "conector": {
@@ -40,5 +40,5 @@ class MessageSerializer(serializers.Serializer):
     '''
     service = serializers.IntegerField()
     message = MessageFieldsSerializer()
-    meta = serializers.JSONField(required=False, default={})
+    options = serializers.JSONField(required=False, default={})
     restricted_to = serializers.ListField(required=False, default=list)
