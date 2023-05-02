@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import serializers
 from .models import Conector, Subscription, Service
 
@@ -5,9 +6,7 @@ from .models import Conector, Subscription, Service
 class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ["id", "service", "conector",
-                  "subscription_data", "meta"]
-
+        fields = "__all__"
         extra_kwargs = {
             "conector": {
                 "error_messages": {
@@ -15,12 +14,22 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
                 }
             }, "service": {"error_messages": {
                 "does_not_exist": "Unknown service"}}}
+        
+    # Cuando se crea la subscripción, se añade el campo created_at al meta
+    def create(self, validated_data):
+        validated_data = add_createat_field(validated_data)
+        return super().create(validated_data)
 
 
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ["id", "name", "owner"]
+        fields = "__all__"
+    
+    # Cuando se crea el servicio, se añade el campo created_at al meta
+    def create(self, validated_data):
+        validated_data = add_createat_field(validated_data)
+        return super().create(validated_data)
 
 
 class ConectorsSerializer(serializers.ModelSerializer):
@@ -42,3 +51,11 @@ class MessageSerializer(serializers.Serializer):
     message = MessageFieldsSerializer()
     options = serializers.JSONField(required=False, default={})
     restricted_to = serializers.ListField(required=False, default=list)
+
+def add_createat_field(validated_data):
+    created__at = {"created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    if validated_data.get("meta") and type(validated_data.get("meta")) == dict: # Si ya existe el campo meta añadir created_at
+        validated_data["meta"].update(created__at)
+    else: # Si no existe el campo meta, crearlo con created_at
+        validated_data["meta"] = created__at
+    return validated_data

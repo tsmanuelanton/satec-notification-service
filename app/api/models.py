@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Service(models.Model):
     name = models.CharField(max_length=60)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    meta = models.JSONField(null=True, blank=True, default=dict)
 
 class Conector(models.Model):
     name = models.CharField(max_length=45)
