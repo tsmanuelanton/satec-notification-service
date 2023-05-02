@@ -27,8 +27,7 @@ jobs:
     - name: Run Tests
       run: |
         cd app
-        python manage.py migrate
-        python manage.py test
+        python manage.py test --parallel
   docker-push:
     name: Push code Docker Image to Github Packages
     runs-on: ubuntu-latest
