@@ -1,4 +1,4 @@
-[![Tests](https://github.com/manuel-anton-satec/satec-notification-service/actions/workflows/run_tests.yml/badge.svg)](https://github.com/manuel-anton-satec/satec-notification-service/actions/workflows/run_tests.yml)
+[![CI Develop Branch](https://github.com/UO276213/satec-notification-service/actions/workflows/develop-brack-test.yml/badge.svg?branch=dev)](https://github.com/UO276213/satec-notification-service/actions/workflows/develop-brack-test.yml)
 
 # satec-notification-service
 
@@ -41,6 +41,7 @@ cd app
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
+python manage.py manageconectors add
 python manage.py runserver
 ```
 
