@@ -11,22 +11,24 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # Environment variables
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default="NON_SECRET_KEY")
-DEBUG = int(os.environ.get("DJANGO_DEBUG", default=1))
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="NON_SECRET_KEY")
+DEBUG = int(env("DJANGO_DEBUG", default=1))
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default="").split(" ")
-
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="").split(" ")
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
