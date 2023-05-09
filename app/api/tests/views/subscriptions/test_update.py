@@ -82,7 +82,7 @@ class TestUpdateSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data, {"id": subscription.id, **data})
+            response.data, {"id": subscription.id, **data, "meta": {}})
 
     def test_services_update_empty(self):
         '''Comprueba que no se actualiza la suscripción cuando no se modifica ningún campo'''

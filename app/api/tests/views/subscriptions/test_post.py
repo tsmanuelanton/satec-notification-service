@@ -32,6 +32,9 @@ class TestPostSubscriptions(APITestCase):
             "service": service.id,
             "conector": conector.id,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data
@@ -41,13 +44,13 @@ class TestPostSubscriptions(APITestCase):
         # Llamamos a la vista
         response = SubscriptionsListApiView.as_view()(request)
 
-        # Obtenermos el servicio creado (el único por eso get())
-        subscription_saved = Subscription.objects.get()
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # Comprobamos que indica el error
-        self.assertEqual(
-            response.data, {"id": subscription_saved.id, **data})
+        # Comprobamos que se guardan los datos y se añade el campo created_at
+        *except_meta, _ = data
+        for key in except_meta:
+            self.assertEqual(response.data[key], data[key])
+        self.assertEqual(response.data["meta"]["user"], data["meta"]["user"])
+        self.assertTrue(response.data["meta"].get("created_at", False), "missing created_at")
 
     def test_subscriptions_post_invalid_service(self):
         '''Comprueba que se lanza un error si el servicio no existe'''
@@ -64,6 +67,9 @@ class TestPostSubscriptions(APITestCase):
             "service": 1,
             "conector": conector.id,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data
@@ -92,6 +98,9 @@ class TestPostSubscriptions(APITestCase):
             "service": service.id,
             "conector": 1,
             "subscription_data": {"key": "Value"},
+            "meta": {
+                "user": "user1"
+            }
         }
 
         # POST  del data

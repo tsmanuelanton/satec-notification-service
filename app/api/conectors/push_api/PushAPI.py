@@ -1,9 +1,10 @@
-import json
 from api.conectors.IConector import IConector
 from .serializers import NotificationSerializer, SubscriptionDataSerializer
+from rest_framework import serializers
+
 from pywebpush import webpush, WebPushException
 from os import environ
-from rest_framework import serializers
+import json
 
 
 class PushAPIConector(IConector):
@@ -14,7 +15,7 @@ class PushAPIConector(IConector):
         410: "El usuario ha eliminado su suscripción manualmente"
     }
 
-    def getDetails():
+    def getDetails() -> dict:
         return {
             "name": "Push API - Navegadores",
             "description": "Permite enviar notificacion a los clientes a través de los navegadores mediante la API PUSH",
@@ -23,22 +24,22 @@ class PushAPIConector(IConector):
             }
         }
 
-    def notify(data, meta={}) -> bool:
+    async def notify(data, options={}) -> dict or None:
         serializer = NotificationSerializer(data=data)
 
         if not serializer.is_valid():
             raise serializers.ValidationError(serializer.errors)
         try:
-            a = webpush(
+            webpush(
                 subscription_info=data['subscription_data'],
-                data=json.dumps({**data["message"], **meta}),
+                data=json.dumps({**data["message"], **options}),
                 vapid_private_key=environ.get("PUSH_API_PRIVATE_KEY"),
                 vapid_claims={
                     'sub': 'mailto:manuel.anton@satec.es'
                 }
             )
 
-            return True, None
+            return None
 
         except WebPushException as e:
             # Si el Push Service lanza un error Gone 410 es que el usuario ya no está suscrito
@@ -46,9 +47,9 @@ class PushAPIConector(IConector):
             if e.response != None:
                 description = PushAPIConector.res_des.get(
                     e.response.status_code) or e.message
-                return False, description
+                return description
             else:
-                return False, e.message
+                return e.message
 
     def get_subscription_serializer():
         return SubscriptionDataSerializer

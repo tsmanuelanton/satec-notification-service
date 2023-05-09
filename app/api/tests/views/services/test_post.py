@@ -39,10 +39,10 @@ class TestPostServices(APITestCase):
         '''Comprueba que se registra un servicio válido'''
 
         # Cuerpo del POST
-        data = {"name": "service_0"}
+        data = {"name": "service_0", "meta":{"description": "Brief description"}}
 
         # POST  del data
-        request = self.factory.post(endpoint, data)
+        request = self.factory.post(endpoint, data, format="json")
 
         # Creamos un nuevo usario autenticado
         user, token = create_authenticated_user()
@@ -57,6 +57,12 @@ class TestPostServices(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Comprobamos que se registra el serivico
         self.assertEqual(service_from_db.name, "service_0")
+
+        # Comprobamos que se guardan los datos y se añade el campo created_at
+        self.assertEqual(response.data["name"], data["name"])
+        self.assertEqual(response.data["meta"].get("description"), data["meta"]["description"])
+        self.assertTrue(response.data["meta"].get("created_at", False), "missing created_at")
+
         # Comprobamos que la respuesta del post sea el servicio creado
         self.assertEqual(
             response.data, ServicesSerializer(service_from_db).data)

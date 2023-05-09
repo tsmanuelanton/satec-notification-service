@@ -33,7 +33,8 @@ class ServicesListApiView(APIView):
 
         data = {
             'name': request.data.get('name'),
-            'owner': request.user.id
+            'owner': request.user.id, 
+            'meta': request.data.get('meta', {})
         }
 
         serializer = ServicesSerializer(data=data)

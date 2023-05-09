@@ -9,6 +9,9 @@ from api.views.services_views import get_service
 import logging
 logger = logging.getLogger("file_logger")
 
+import asyncio
+from asgiref.sync import async_to_sync
+import time
 
 class NotificationsApiView(APIView):
 
@@ -32,64 +35,72 @@ class NotificationsApiView(APIView):
                 {"res": f"No tienes permisos."},
                 status=status.HTTP_403_FORBIDDEN
             )
-
-        # Obtenemos los suscriptores asociados a este servicio
-        subscriptions = Subscription.objects.filter(service=service)
-
-        successfull_msgs = 0
-        not_successfull_msgs = 0
-
-        fails = []
-        for subscription in subscriptions:
-            conector = subscription.conector
-            if len(msgSerializer.data["restricted_to"]) > 0:
-                if conector.id not in msgSerializer.data["restricted_to"]:
-                    continue
-            service_info = {"service_name": service.name,
-                            "service_id": service.id}
-            notification_context = {"subscription_id": subscription.id,
-                                    "conector_name": conector.name}
-            try:
-                data = {
-                    "subscription_id": subscription.id,
-                    "subscription_data": subscription.subscription_data,
-                    "message":  msgSerializer["message"].value,
-                    "meta": msgSerializer["meta"].value
-                }
-
-                success, error_info = send_data_to_conector(
-                    data, subscription.conector)
-
-                if success:
-                    successfull_msgs += 1
-                else:
-                    not_successfull_msgs += 1
-                    info = {**service_info, **notification_context,
-                            "description": error_info}
-                    logger.error(
-                        f"Error al notificar - {info}.")
-                    fails.append({**notification_context,
-                                 "description": str(error_info)})
-
-            except BaseException as e:
-                not_successfull_msgs += 1
-                info = {**service_info, **
-                        notification_context, "description": e}
-                logger.error(
-                    f"Error al notificar - {info}")
-                fails.append({**notification_context, "description": str(e)})
-
+        
+        # Enviamos las notificaciones a los suscriptores
+        successfull_msgs, not_successfull_msgs, fails = notify_subscriptors(
+            msgSerializer, service)
+        
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.")
 
         return Response({"res": f"Se han enviado {successfull_msgs} notificaciones exitosas y han fallado {not_successfull_msgs}.",
                          "fallos": fails}, status=status.HTTP_200_OK)
+    
+async def send_data_to_conector(data, conector: Conector):
+    '''Obtinene los conectores cargados y envía los datos al conector adecuado'''
+    try:
+        options = data["options"].get(str(conector.id), {})
+        available_conectors = import_conectors("api/conectors")
+        for available_con in available_conectors:
+            if conector.name == available_con.getDetails().get("name"):
+                return (await available_con.notify(data, options)), conector
+    except BaseException as e:
+        return str(e), conector
+        
 
+@async_to_sync
+async def notify_subscriptors(msgSerializer, service):
+    '''Envía las notificaciones a los suscriptores del servicio'''
+    fails = []
+    tasks = [] # Almacena las tareas send_data_to_conector
+    successfull_msgs, not_successfull_msgs = 0, 0
 
-def send_data_to_conector(data, conector: Conector):
+    subscriptions = Subscription.objects.filter(
+        service=service).select_related("conector") # Obtenemos las suscripciones del servicio y sus conectores
+    
+    async for subscription in subscriptions:
+        conector = subscription.conector
+        if len(msgSerializer.data["restricted_to"]) > 0:
+            if conector.id not in msgSerializer.data["restricted_to"]:
+                continue
+        data = {
+            "subscription_id": subscription.id,
+            "subscription_data": subscription.subscription_data,
+            "message":  msgSerializer["message"].value,
+            "options": msgSerializer["options"].value
+        }
 
-    meta = data["meta"].get(str(conector.id), {})
-    available_conectors = import_conectors("api/conectors")
-    for available_con in available_conectors:
-        if conector.name == available_con.getDetails().get("name"):
-            return available_con.notify(data, meta)
+        coroutine = send_data_to_conector(data, conector)
+        tasks.append(asyncio.create_task(coroutine))
+    
+    for task in asyncio.as_completed(tasks):
+        error_info, conector =  await task # Obtenemos el resultado de la tarea send_data_to_conector
+        if not error_info:
+            successfull_msgs += 1
+        else:
+            not_successfull_msgs += 1
+            notification_context = {
+                "subscription_id": subscription.id,
+                "conector_name": conector.name
+            }
+            info = {
+                "service_name": service.name,
+                "service_id": service.id,
+                **notification_context,
+                "description": error_info
+            }
+
+            logger.error(f"Error al notificar - {info}")
+            fails.append({**notification_context, "description": error_info})
+
+    return successfull_msgs, not_successfull_msgs, fails
