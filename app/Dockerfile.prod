@@ -3,8 +3,11 @@ LABEL org.opencontainers.image.source https://github.com/manuel-anton-satec/sate
 COPY . /app
 WORKDIR /app
 
+#Expose port 8000
+EXPOSE 8000 
+
 # set environment variables
-##Prevents Python from buffering stdout and stderr
+#Prevents Python from buffering stdout and stderr
 ENV PYTHONDONTWRITEBYTECODE 1
 #Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
