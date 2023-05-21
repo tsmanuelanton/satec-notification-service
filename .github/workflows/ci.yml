@@ -28,7 +28,7 @@ jobs:
       run: |
         cd app
         python manage.py test --parallel
-  docker-push:
+  docker-push-for-develop:
     name: Push code Docker Image to Github Packages
     runs-on: ubuntu-latest
     needs: [build-and-test]
@@ -42,3 +42,19 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
+        dockerfile: Dockerfile
+  docker-push-gunicorn+nginx:
+    name: Push Docker Image to Github Packages with Gunicorn and Nginx for production
+      runs-on: ubuntu-latest
+      needs: [build-and-test]
+      steps:
+      - uses: actions/checkout@v3
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          context: ./app
+          name: UO276213/satec-notification-service-prod
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: Dockerfile.prod
