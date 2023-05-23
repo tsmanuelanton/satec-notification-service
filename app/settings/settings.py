@@ -24,8 +24,8 @@ environ.Env.read_env()
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # Environment variables
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="NON_SECRET_KEY")
-DEBUG = int(env("DJANGO_DEBUG", default=1))
+DEBUG = int(env("DJANGO_DEBUG", default=True))
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="NOT_SECRET_KEY" if DEBUG else None)
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="").split(" ")
@@ -161,7 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

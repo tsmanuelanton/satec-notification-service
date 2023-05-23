@@ -1,0 +1,42 @@
+FROM python:3.8
+LABEL org.opencontainers.image.source https://github.com/manuel-anton-satec/satec-notification-service
+COPY . /app
+WORKDIR /app
+
+#Expose port 8000
+EXPOSE 8000 
+
+# set environment variables
+#Prevents Python from buffering stdout and stderr
+ENV PYTHONDONTWRITEBYTECODE 1
+#Prevents Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED 1
+
+#Install the dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.prod.txt
+
+# set environment variables
+ENV DJANGO_DEBUG=0
+
+ARG DJANGO_SUPERUSER_PASSWORD
+ENV DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
+
+ARG DJANGO_SECRET_KEY
+ENV DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+
+ARG DJANGO_ALLOWED_HOSTS
+ENV DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
+
+ARG DJANGO_SUPERUSER_USERNAME=admin
+ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME
+
+ARG DJANGO_SUPERUSER_EMAIL=admin@email.com
+ENV DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
+
+RUN python manage.py collectstatic && \
+    python manage.py migrate && \
+    python manage.py manageconectors add && \
+    python manage.py createsuperuser --noinput \
+        --username $DJANGO_SUPERUSER_USERNAME \
+        --email $DJANGO_SUPERUSER_EMAIL
