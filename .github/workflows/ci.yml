@@ -74,6 +74,6 @@ jobs:
           wget --header="Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://raw.githubusercontent.com/UO276213/satec-notification-service/main/nginx.conf
           wget --header="Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://raw.githubusercontent.com/UO276213/satec-notification-service/main/docker-compose.deploy.yml -O docker-compose.yml
           sudo docker-compose stop
-          docker-compose rm -f
-          docker-compose pull   
+          sudo docker-compose rm -f
+          sudo docker-compose pull   
           sudo docker-compose up -d
