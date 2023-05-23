@@ -42,7 +42,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
-        dockerfile: Dockerfile
+        dockerfile: app/Dockerfile
   docker-push-gunicorn-nginx:
     name: Push Docker Image to Github Packages with Gunicorn and Nginx for production
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
-        dockerfile: Dockerfile.prod
+        dockerfile: app/Dockerfile.prod
         
   deploy:
     name: Deploy production code over SSH to azure
