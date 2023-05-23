@@ -16,13 +16,14 @@ services:
     expose:
       - 8000
   nginx:
-    build: ./nginx
-    volumes:
+    image: nginx
+    volumes: 
       - static_volume:/app/staticfiles
-    ports:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports: 
       - 80:80
-    depends_on:
-      - web
-  
+    depends_on: 
+      - satec-notification-service
+
 volumes:
   static_volume:
