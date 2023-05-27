@@ -36,7 +36,8 @@ ENV DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
 
 RUN python manage.py collectstatic && \
     python manage.py migrate && \
-    python manage.py manageconectors add && \
-    python manage.py createsuperuser --noinput \
-        --username $DJANGO_SUPERUSER_USERNAME \
-        --email $DJANGO_SUPERUSER_EMAIL
+    python manage.py manageconectors add
+
+CMD python manage.py createsuperuser --noinput \
+    --username $DJANGO_SUPERUSER_USERNAME \
+    --email $DJANGO_SUPERUSER_EMAIL
