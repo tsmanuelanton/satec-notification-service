@@ -14,6 +14,6 @@ ENV PYTHONUNBUFFERED 1
 
 #Install the dependencies
 RUN pip install --upgrade pip && \
-    pip install -r requirements.prod.txt
+    pip install -r requirements.txt
 
 CMD [ "python", "manage.py", "runserver", "127.0.0.1:8000" ]
