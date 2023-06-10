@@ -3,23 +3,13 @@ services:
     image: ghcr.io/uo276213/satec-notification-service-prod:latest
     container_name: satec-notification-service
     volumes:
-      - ./app/:/app/
       - static_volume:/app/staticfiles
-    expose: 
+      - database:/app/database
+    expose:
       - 8000
-    environment:
-      - DJANGO_DEBUG=0
-      - DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME
-      - DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
-      - DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
-      - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+    command: gunicorn --bind 0.0.0.0:8000 settings.asgi -w 4 -k uvicorn.workers.UvicornWorker
+    enviroment:
       - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
-    command:
-      - /bin/bash
-      - -c
-      - |
-        python manage.py createsuperuser --noinput --username $DJANGO_SUPERUSER_USERNAME --email $DJANGO_SUPERUSER_EMAIL
-        gunicorn --bind 0.0.0.0:8000 settings.asgi -w 4 -k uvicorn.workers.UvicornWorker
   nginx:
     image: nginx
     volumes: 
@@ -32,3 +22,4 @@ services:
 
 volumes:
   static_volume:
+  database:
