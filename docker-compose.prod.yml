@@ -1,5 +1,5 @@
 services:
-  web:
+  satec-notification-service:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
@@ -8,11 +8,13 @@ services:
         - DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
         - DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
         - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-        - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
+        - DJANGO_DATABASE=$DJANGO_DATABASE
+    environment:
+      - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
     command: gunicorn --bind 0.0.0.0:8000 settings.asgi -w 4 -k uvicorn.workers.UvicornWorker
     volumes:
-      - ./app/:/app/
       - static_volume:/app/staticfiles
+      - database:/app/database
     expose:
       - 8000
   nginx:
@@ -27,3 +29,4 @@ services:
 
 volumes:
   static_volume:
+  database:
