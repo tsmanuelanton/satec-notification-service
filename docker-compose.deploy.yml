@@ -7,9 +7,18 @@ services:
       - database:/app/database
     expose:
       - 8000
-    command: gunicorn --bind 0.0.0.0:8000 settings.asgi -w 4 -k uvicorn.workers.UvicornWorker
-    enviroment:
+    environment:
+      - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
       - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
+      - DJANGO_DATABASE=$DJANGO_DATABASE
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py collectstatic --noinput && \
+        python manage.py migrate && \
+        python manage.py manageconectors add && \
+        gunicorn --bind 0.0.0.0:8000 settings.asgi -w 4 -k uvicorn.workers.UvicornWorker
   nginx:
     image: nginx
     volumes: 

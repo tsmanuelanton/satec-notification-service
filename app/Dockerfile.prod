@@ -19,21 +19,15 @@ RUN pip install --upgrade pip && \
 # set environment variables
 ENV DJANGO_DEBUG=0
 
-ARG DJANGO_SECRET_KEY
+ARG DJANGO_SECRET_KEY=default_secret_key
 ENV DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
 
-ARG DJANGO_SUPERUSER_USERNAME
-ARG DJANGO_SUPERUSER_EMAIL
+ARG DJANGO_ALLOWED_HOSTS=127.0.0.1 [::1]
+ENV DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
 
-ARG DJANGO_SUPERUSER_PASSWORD
-ENV DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
-
-ARG DJANGO_DATABASE
+ARG DJANGO_DATABASE=/app/db.sqlite3
 ENV DJANGO_DATABASE=$DJANGO_DATABASE
-RUN echo $DJANGO_SUPERUSER_USERNAME $DJANGO_SUPERUSER_EMAIL $DJANGO_SUPERUSER_PASSWORD $DJANGO_DATABASE
-RUN python manage.py collectstatic && \
+
+CMD python manage.py collectstatic --noinput && \
     python manage.py migrate && \
-    python manage.py manageconectors add && \
-    python manage.py createsuperuser --noinput \
-    --username $DJANGO_SUPERUSER_USERNAME \
-    --email $DJANGO_SUPERUSER_EMAIL
+    python manage.py manageconectors add
