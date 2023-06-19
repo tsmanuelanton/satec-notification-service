@@ -1,6 +1,6 @@
 from datetime import datetime
 from rest_framework import serializers
-from .models import Conector, Subscription, Service
+from .models import Conector, Subscription, Service, SubscriptionGroup
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
@@ -20,6 +20,20 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         validated_data = add_createat_field(validated_data)
         return super().create(validated_data)
 
+class SubscriptionGroupsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionGroup
+        fields = "__all__"
+        
+    # Cuando se crea el grupo, se añade el campo created_at al meta
+    def create(self, validated_data):
+        validated_data = add_createat_field(validated_data)
+        return super().create(validated_data)
+    
+    def to_representation(self,instance):
+        representation = super().to_representation(instance)
+        representation["subscriptions"] = SubscriptionsSerializer(Subscription.objects.filter(group=instance.id), many=True).data
+        return representation
 
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:

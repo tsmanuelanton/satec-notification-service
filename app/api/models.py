@@ -15,10 +15,18 @@ class Conector(models.Model):
     meta = models.JSONField(blank=True, default=dict)
 
 
+class SubscriptionGroup(models.Model):
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE)
+    name = models.CharField(max_length=45)
+    meta = models.JSONField(blank=True, default=dict)
+
 class Subscription(models.Model):
     service = models.ForeignKey(
         Service, on_delete=models.CASCADE)
     conector = models.ForeignKey(
         Conector, on_delete=models.CASCADE)
+    group = models.ForeignKey(
+        SubscriptionGroup, on_delete=models.SET_NULL, null=True)
     subscription_data = models.JSONField()
     meta = models.JSONField(blank=True, default=dict)
