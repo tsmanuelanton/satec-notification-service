@@ -1,10 +1,9 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.subscription_views import SubscriptionsListApiView
+from api.views.subscriptions import SubscriptionsList
 from api.tests.views.util import create_authenticated_user
 from rest_framework import status
 from rest_framework.serializers import ErrorDetail
 
-from api.models import Subscription
 from api.tests.views.util import create_conector, create_service
 
 endpoint = "/v1/subscriptions"
@@ -42,7 +41,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Comprobamos que se guardan los datos y se añade el campo created_at
@@ -77,7 +76,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
@@ -108,7 +107,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
@@ -136,7 +135,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
@@ -163,7 +162,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error
@@ -193,7 +192,7 @@ class TestPostSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # Comprobamos que indica el error

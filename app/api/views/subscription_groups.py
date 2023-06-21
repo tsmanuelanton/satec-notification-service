@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from api.models import Subscription, SubscriptionGroup
+from api.models import SubscriptionGroup
 from api.serializers import SubscriptionGroupsSerializer
 from api.models import Service
 from api.util import has_permissions
@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger("file_logger")
 
 
-class SubscriptionGroupListApiView(APIView):
+class SubscriptionGroupsList(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
@@ -48,7 +48,7 @@ class SubscriptionGroupListApiView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class SubscriptionsGroupDetailsApiView(APIView):
+class SubscriptionGroupDetails(APIView):
 
     def get(self, request, group_id, *args, **kwargs):
         '''

@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.notifications_views import NotificationsApiView
+from api.views.notifications import NotificationDetails
 from api.tests.views.util import create_authenticated_user, create_service
 from rest_framework import status
 from rest_framework.serializers import ErrorDetail
@@ -31,7 +31,7 @@ class TestPostNotifications(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = NotificationsApiView.as_view()(request)
+        response = NotificationDetails.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -56,7 +56,7 @@ class TestPostNotifications(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = NotificationsApiView.as_view()(request)
+        response = NotificationDetails.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -82,7 +82,7 @@ class TestPostNotifications(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = NotificationsApiView.as_view()(request)
+        response = NotificationDetails.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -114,7 +114,7 @@ class TestPostNotifications(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = NotificationsApiView.as_view()(request)
+        response = NotificationDetails.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(

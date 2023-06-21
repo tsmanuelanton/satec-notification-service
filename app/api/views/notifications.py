@@ -4,16 +4,15 @@ from rest_framework.response import Response
 from api.models import Conector, Subscription
 from api.serializers import MessageSerializer
 from api.util import has_permissions, import_conectors
-from api.views.services_views import get_service
+from api.views.services import get_service
 
 import logging
 logger = logging.getLogger("file_logger")
 
 import asyncio
 from asgiref.sync import async_to_sync
-import time
 
-class NotificationsApiView(APIView):
+class NotificationDetails(APIView):
 
     def post(self, request, *args, **kwargs):
         '''

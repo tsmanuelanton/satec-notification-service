@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.subscription_views import SubscriptionsListApiView, SubscriptionsDetailsApiView
+from api.views.subscriptions import SubscriptionsList, SubscriptionDetails
 from api.models import Service, Subscription, Conector
 from api.tests.views.util import create_authenticated_user, create_service, create_subscription, create_conector
 from api.serializers import SubscriptionsSerializer
@@ -33,7 +33,7 @@ class TestDetailsSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -62,7 +62,7 @@ class TestDetailsSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista con la suscripción que no nos pertenece
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=other_subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -81,7 +81,7 @@ class TestDetailsSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(request, subscription_id=1)
+        response = SubscriptionDetails.as_view()(request, subscription_id=1)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(

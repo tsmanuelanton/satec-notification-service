@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.services_views import ServicesDetailsApiView
+from api.views.services import ServiceDetails
 from api.tests.views.util import create_authenticated_user, create_service
 from rest_framework import status
 
@@ -27,7 +27,7 @@ class TestDeleteServices(APITestCase):
 
         # Intentamos realizar un delete con el id del servicio que no poseemos
         service_id = not_owner_service.id
-        response = ServicesDetailsApiView.as_view()(request, service_id=service_id)
+        response = ServiceDetails.as_view()(request, service_id=service_id)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
@@ -45,7 +45,7 @@ class TestDeleteServices(APITestCase):
         service_id = 1
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=service_id)
+        response = ServiceDetails.as_view()(request, service_id=service_id)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
@@ -65,7 +65,7 @@ class TestDeleteServices(APITestCase):
         service.save()
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=service.id)
+        response = ServiceDetails.as_view()(request, service_id=service.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(

@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger("file_logger")
 
 
-class SubscriptionsListApiView(APIView):
+class SubscriptionsList(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
@@ -63,7 +63,7 @@ class SubscriptionsListApiView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class SubscriptionsDetailsApiView(APIView):
+class SubscriptionDetails(APIView):
 
     def get(self, request, subscription_id, *args, **kwargs):
         '''

@@ -5,7 +5,7 @@ from api.serializers import ConectorsSerializer
 from api.models import Conector
 
 
-class ConectorsListApiView(APIView):
+class ConectorsList(APIView):
 
     def get(self, request, *args, **kwargs):
         '''
@@ -38,7 +38,7 @@ class ConectorsListApiView(APIView):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ConectorsDetailsApiView(APIView):
+class ConectorDetails(APIView):
 
     def get(self, request, conector_id, *args, **kwargs):
         '''

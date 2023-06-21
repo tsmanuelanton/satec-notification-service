@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.services_views import ServicesListApiView
+from api.views.services import ServicesList
 from api.models import Service
 from api.tests.views.util import create_authenticated_user, create_service
 from api.serializers import ServicesSerializer
@@ -23,7 +23,7 @@ class TestListServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = ServicesListApiView.as_view()(request)
+        response = ServicesList.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [])
@@ -43,7 +43,7 @@ class TestListServices(APITestCase):
         created_service.save()
 
         # Llamamos a la vista
-        response = ServicesListApiView.as_view()(request)
+        response = ServicesList.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
@@ -67,7 +67,7 @@ class TestListServices(APITestCase):
         created_service1.save()
 
         # Llamamos a la vista
-        response = ServicesListApiView.as_view()(request)
+        response = ServicesList.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
@@ -98,7 +98,7 @@ class TestListServices(APITestCase):
         created_service1.save()
 
         # Llamamos a la vista
-        response = ServicesListApiView.as_view()(request)
+        response = ServicesList.as_view()(request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)

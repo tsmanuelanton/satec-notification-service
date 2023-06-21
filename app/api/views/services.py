@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger("file_logger")
 
 
-class ServicesListApiView(APIView):
+class ServicesList(APIView):
 
     def get(self, request: Request, *args, **kwargs):
         '''
@@ -49,7 +49,7 @@ class ServicesListApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ServicesDetailsApiView(APIView):
+class ServiceDetails(APIView):
 
     def get(self, request, service_id, *args, **kwargs):
         '''

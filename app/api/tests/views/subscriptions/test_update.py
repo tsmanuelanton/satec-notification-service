@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.subscription_views import SubscriptionsDetailsApiView
+from api.views.subscriptions import SubscriptionDetails
 from rest_framework import status
 from api.tests.views.util import create_service, create_authenticated_user, create_conector, create_subscription
 from api.serializers import SubscriptionsSerializer
@@ -37,7 +37,7 @@ class TestUpdateSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -77,7 +77,7 @@ class TestUpdateSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -104,7 +104,7 @@ class TestUpdateSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -138,7 +138,7 @@ class TestUpdateSubscriptions(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsDetailsApiView.as_view()(
+        response = SubscriptionDetails.as_view()(
             request, subscription_id=not_owned_subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

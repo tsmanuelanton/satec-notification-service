@@ -1,5 +1,5 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.services_views import ServicesDetailsApiView
+from api.views.services import ServiceDetails
 from rest_framework import status
 from api.tests.views.util import create_service, create_authenticated_user
 from api.serializers import ServicesSerializer
@@ -28,7 +28,7 @@ class TestUpdateServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(
+        response = ServiceDetails.as_view()(
             request, service_id=my_service.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -50,7 +50,7 @@ class TestUpdateServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=service.id)
+        response = ServiceDetails.as_view()(request, service_id=service.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -77,7 +77,7 @@ class TestUpdateServices(APITestCase):
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(
+        response = ServiceDetails.as_view()(
             request, service_id=not_owned_service.id)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
