@@ -46,11 +46,8 @@ class TestPostSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Comprobamos que se guardan los datos y se añade el campo created_at
-        *except_meta, _ = data
-        for key in except_meta:
-            self.assertEqual(response.data[key], data[key])
-        self.assertEqual(response.data["meta"]["user"], data["meta"]["user"])
-        self.assertTrue(response.data["meta"].get("created_at", False), "missing created_at")
+        self.assertDictContainsSubset(data, response.data)
+        self.assertTrue(response.data.get("created_at", False), "missing created_at")
 
     def test_not_valid(self):
         '''Comprueba que se lanza un error mostrando los errores cuando el serializador encuentra errores'''

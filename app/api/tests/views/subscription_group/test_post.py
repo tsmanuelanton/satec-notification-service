@@ -77,6 +77,8 @@ class TestPostSubscriptionGroup(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(SubscriptionGroup.objects.all().count(), 1)
         self.assertEqual(json.loads(response.content), {"service":[f"Invalid pk \"{service.id + 1}\" - object does not exist."]})
+        self.assertTrue(response.data.get("created_at", False), "missing created_at")
+
 
     def test_authenticated_missing_service(self):
         '''Comprueba que se lanza un error cuando falta el servicio en la petición'''

@@ -33,9 +33,11 @@ class TestUpdateServices(APITestCase):
         # Llamamos a la vista
         response = ServiceDetails.as_view()(
             request, service_id=my_service.id)
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            dict(response.data)["name"], "name")
+        self.assertEqual(response.data["name"], data["name"])
+        self.assertEqual(response.data.get("created_at"), my_service.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+        
 
     def test_invalid(self):
         '''Comprueba que se lanza un error cuando el usuario está autenticado, es el dueño y hay errores'''

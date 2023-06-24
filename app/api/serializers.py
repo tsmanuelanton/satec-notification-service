@@ -1,28 +1,21 @@
-import asyncio
 from datetime import datetime
 from rest_framework import serializers
 from .models import Conector, Subscription, Service, SubscriptionGroup
-
+from rest_framework.validators import UniqueValidator
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
+    # Cuando se crea la suscripción, se registra la fecha de creación
+    created_at = serializers.CreateOnlyDefault(datetime.now)
     class Meta:
         model = Subscription
         fields = "__all__"
-        
-    # Cuando se crea la subscripción, se añade el campo created_at al meta
-    def create(self, validated_data):
-        validated_data = add_createat_field(validated_data)
-        return super().create(validated_data)
 
 class SubscriptionGroupsSerializer(serializers.ModelSerializer):
+    # Cuando se crea el grupo, se registra la fecha de creación
+    created_at = serializers.CreateOnlyDefault(datetime.now)
     class Meta:
         model = SubscriptionGroup
         fields = "__all__"
-        
-    # Cuando se crea el grupo, se añade el campo created_at al meta
-    def create(self, validated_data):
-        validated_data = add_createat_field(validated_data)
-        return super().create(validated_data)
     
     def to_representation(self,instance):
         representation = super().to_representation(instance)
@@ -30,14 +23,11 @@ class SubscriptionGroupsSerializer(serializers.ModelSerializer):
         return representation
 
 class ServicesSerializer(serializers.ModelSerializer):
+    # Cuando se crea el servicio, se registra la fecha de creación
+    created_at = serializers.CreateOnlyDefault(datetime.now)
     class Meta:
         model = Service
         fields = "__all__"
-    
-    # Cuando se crea el servicio, se añade el campo created_at al meta
-    def create(self, validated_data):
-        validated_data = add_createat_field(validated_data)
-        return super().create(validated_data)
 
 
 class ConectorsSerializer(serializers.ModelSerializer):
@@ -61,6 +51,7 @@ class MessageSerializer(serializers.Serializer):
     restricted_to_groups = serializers.ListSerializer(required=False, child=serializers.IntegerField(), default=[])
 
     async def is_valid(self, raise_exception=False):
+        # Validamos que si está restringido a grupos, los grupos existan en el servicio
         valid = super().is_valid(raise_exception=raise_exception)
         restricted_to_groups = self.validated_data.get('restricted_to_groups')
 
@@ -74,11 +65,3 @@ class MessageSerializer(serializers.Serializer):
         if len(fails) > 0:
             self._errors["restricted_to_groups"] = fails
         return valid
-
-def add_createat_field(validated_data):
-    created__at = {"created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-    if validated_data.get("meta") and type(validated_data.get("meta")) == dict: # Si ya existe el campo meta añadir created_at
-        validated_data["meta"].update(created__at)
-    else: # Si no existe el campo meta, crearlo con created_at
-        validated_data["meta"] = created__at
-    return validated_data

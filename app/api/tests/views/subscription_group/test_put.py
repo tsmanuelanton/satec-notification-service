@@ -53,6 +53,8 @@ class TestPutSubscriptionGroup(APITestCase):
                 "field": "value"
             })
         self.assertEqual(response.data["subscriptions"], [SubscriptionsSerializer(subscription_in_group).data])
+        self.assertEqual(response.data.get("updated_at"), group.created_at)
+
     
     def test_authenticated_service_non_existent(self):
         '''Comprueba se lanza un error si el servicio no existe'''

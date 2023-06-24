@@ -4,6 +4,7 @@ from api.views.conectors import ConectorDetails, ConectorsList
 from rest_framework import status
 from api.tests.views.util import create_conector, create_authenticated_user
 from api.serializers import ConectorsSerializer
+from api.models import Conector
 
 endpoint = "/v1/conectors/"
 
@@ -13,7 +14,7 @@ class TestDetailsServices(APITestCase):
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
-    def test_empty(self):
+    def test_many(self):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y hay varios conectores'''
 
         # Creamos un nuevo usario autenticado

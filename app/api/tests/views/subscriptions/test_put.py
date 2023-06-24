@@ -54,11 +54,13 @@ class TestUpdateSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        # self.assertContains(response.data, {"subscription_data": {"key": "Value"},
-        #     "group": group2.id,
-        #     "meta": {
-        #         "user": "user1"
-        #     }})
+        self.assertDictContainsSubset({"subscription_data": {"key": "Value"},
+            "group": group2.id,
+            "meta": {
+                "user": "user1"
+            }}, response.data)
+        
+        self.assertEqual(response.data.get("created_at"), subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
 
     def test_not_valid(self):
         '''Comprueba que se lanza un error mostrando los errores cuando el serializador encuentra errores'''

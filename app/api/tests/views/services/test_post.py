@@ -62,7 +62,7 @@ class TestPostServices(APITestCase):
         # Comprobamos que se guardan los datos y se añade el campo created_at
         self.assertEqual(response.data["name"], data["name"])
         self.assertEqual(response.data["meta"].get("description"), data["meta"]["description"])
-        self.assertTrue(response.data["meta"].get("created_at", False), "missing created_at")
+        self.assertTrue(response.data.get("created_at", False), "missing created_at")
 
         # Comprobamos que la respuesta del post sea el servicio creado
         self.assertEqual(
