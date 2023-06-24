@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 from rest_framework import serializers
 from .models import Conector, Subscription, Service, SubscriptionGroup
@@ -7,13 +8,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = "__all__"
-        extra_kwargs = {
-            "conector": {
-                "error_messages": {
-                    "does_not_exist": "Unknown conector"
-                }
-            }, "service": {"error_messages": {
-                "does_not_exist": "Unknown service"}}}
         
     # Cuando se crea la subscripción, se añade el campo created_at al meta
     def create(self, validated_data):
@@ -64,7 +58,22 @@ class MessageSerializer(serializers.Serializer):
     service = serializers.IntegerField()
     message = MessageFieldsSerializer()
     options = serializers.JSONField(required=False, default={})
-    restricted_to = serializers.ListField(required=False, default=list)
+    restricted_to_groups = serializers.ListSerializer(required=False, child=serializers.IntegerField(), default=[])
+
+    async def is_valid(self, raise_exception=False):
+        valid = super().is_valid(raise_exception=raise_exception)
+        restricted_to_groups = self.validated_data.get('restricted_to_groups')
+
+        service = self.validated_data.get('service')
+        fails = []
+        if restricted_to_groups:
+            for group_id in restricted_to_groups:
+                if not await SubscriptionGroup.objects.filter(id=group_id, service_id=service).aexists():
+                    fails.append(f"El grupo con {group_id} no existe")
+                    valid = False
+        if len(fails) > 0:
+            self._errors["restricted_to_groups"] = fails
+        return valid
 
 def add_createat_field(validated_data):
     created__at = {"created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}

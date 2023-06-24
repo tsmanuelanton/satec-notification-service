@@ -9,38 +9,38 @@ logger = logging.getLogger("file_logger")
 
 import asyncio
 from adrf.views import APIView
-
+from rest_framework.permissions import IsAuthenticated
 class NotificationDetails(APIView):
-
+    
+    permission_classes = [IsAuthenticated]
     async def post(self, request,  *args, **kwargs):
         '''
         Envía el mensaje recibido al conector aducado
         '''
 
         msgSerializer = MessageSerializer(data=request.data)
-        if not msgSerializer.is_valid():
+        if not await msgSerializer.is_valid():
             return Response(msgSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         service_id = request.data.get('service')
         service = await Service.objects.select_related().aget(id=service_id)
         if not service:
-            return Response({"res": "Unknown service."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Unknown service."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not has_permissions(request, service.owner):
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
         
         # Enviamos las notificaciones a los suscriptores
         successful, fails = await notify_subscriptors(
-            msgSerializer.data,
+            msgSerializer.validated_data,
                 service)
 
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.")
 
-        return Response({"res": f"Se han enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.",
+        return Response({"detail": f"Se han enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.",
                             "enviados": successful,
                             "fallos": fails}, status=status.HTTP_200_OK)
 
@@ -69,7 +69,6 @@ async def notify_subscriptors(notification_req, service):
         service=service).select_related("conector", "group") # Obtenemos las suscripciones del servicio y sus conectores
     
     tasks = [] # Almacena las tareas send_data_to_conector
-
     async for subscription in subscriptions:
         if len(notification_req["restricted_to_groups"]) > 0:
             if subscription.group == None or subscription.group.id not in notification_req["restricted_to_groups"]:

@@ -73,13 +73,13 @@ class SubscriptionDetails(APIView):
         subscription = get_subscription(subscription_id)
         if not subscription:
             return Response(
-                {"res": f"Suscripción con id {subscription_id} no existe."},
+                {"detail": f"Suscripción con id {subscription_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not has_permissions(request, subscription.service.owner):
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -96,7 +96,7 @@ class SubscriptionDetails(APIView):
             logger.error(
                 f"Error al actualizar la suscripción {subscription_id} - Suscripción con id {subscription_id} no existe.")
             return Response(
-                {"res": f"Suscripción con id {subscription_id} no existe."},
+                {"detail": f"Suscripción con id {subscription_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -104,7 +104,7 @@ class SubscriptionDetails(APIView):
             logger.error(
                 f"Error al actualizar la suscripción {subscription_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -128,20 +128,20 @@ class SubscriptionDetails(APIView):
         if not subscription:
             logger.error(
                 f"Error al eliminar la suscripción {subscription_id} - Suscripción con id {subscription_id} no existe.")
-            return Response({"res": f"Suscripción con id {subscription_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": f"Suscripción con id {subscription_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription.service.owner):
             logger.error(
                 f"Error al eliminar la suscripción {subscription_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         subscription.delete()
         logger.info(
             f"Suscripción {subscription_id} eliminada correctamente.")
-        return Response({"res": "Suscripción eliminada."})
+        return Response({"detail": "Suscripción eliminada."})
 
 
 def get_subscription(subscription_id):

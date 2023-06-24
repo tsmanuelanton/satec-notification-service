@@ -22,7 +22,7 @@ class ConectorsList(APIView):
     #     '''
 
     #     if not request.user.is_superuser:
-    #         return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
+    #         return Response({"detail": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
 
     #     data = {
     #         'name': request.data.get('name'),
@@ -48,7 +48,7 @@ class ConectorDetails(APIView):
         conector = get_conector(conector_id)
         if not conector:
             return Response(
-                {"res": f"Conector con id {conector_id} no existe."},
+                {"detail": f"Conector con id {conector_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND)
 
         serializer = ConectorsSerializer(conector)
@@ -60,12 +60,12 @@ class ConectorDetails(APIView):
     #     '''
 
     #     if not request.user.is_superuser:
-    #         return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
+    #         return Response({"detail": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
 
     #     conector = get_conector(conector_id)
     #     if not conector:
     #         return Response(
-    #             {"res": f"Conector con id {conector_id} no existe"},
+    #             {"detail": f"Conector con id {conector_id} no existe"},
     #             status=status.HTTP_404_NOT_FOUND)
 
     #     serializer = ConectorsSerializer(
@@ -82,17 +82,17 @@ class ConectorDetails(APIView):
     #     '''
 
     #     if not request.user.is_superuser:
-    #         return Response({"res": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
+    #         return Response({"detail": "Permisos insuficientes"}, status.HTTP_403_FORBIDDEN)
 
     #     conector = get_conector(conector_id)
     #     if not conector:
     #         return Response(
-    #             {"res": f"Conector con id {conector_id} no existe"},
+    #             {"detail": f"Conector con id {conector_id} no existe"},
     #             status=status.HTTP_404_NOT_FOUND)
 
     #     conector.delete()
 
-    #     return Response({"res": f"Conector {conector_id} eliminado"})
+    #     return Response({"detail": f"Conector {conector_id} eliminado"})
 
 
 def get_conector(conector_id):

@@ -57,13 +57,13 @@ class SubscriptionGroupDetails(APIView):
         subscription_group = get_group(group_id)
         if not subscription_group:
             return Response(
-                {"res": f"Grupo con id {subscription_group} no existe."},
+                {"detail": f"Grupo con id {group_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not has_permissions(request, subscription_group.service.owner):
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -78,9 +78,9 @@ class SubscriptionGroupDetails(APIView):
         subscription_group = get_group(group_id)
         if not subscription_group:
             logger.error(
-                f"Error al actualizar el grupo {subscription_group} - Grupo de suscriptores con id {subscription_group} no existe.")
+                f"Error al actualizar el grupo {group_id} - Grupo de suscriptores con id {group_id} no existe.")
             return Response(
-                {"res": f"Grupo de suscriptores con id {subscription_group} no existe."},
+                {"detail": f"Grupo de suscriptores con id {group_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -88,11 +88,11 @@ class SubscriptionGroupDetails(APIView):
             logger.error(
                 f"Error al actualizar el grupo de suscripción {subscription_group} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = SubscriptionGroup(
+        serializer = SubscriptionGroupsSerializer(
             instance=subscription_group, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -112,20 +112,20 @@ class SubscriptionGroupDetails(APIView):
         if not subscription_group:
             logger.error(
                 f"Error al eliminar el grupo de suscripción {group_id} - Grupo de suscripción con id {group_id} no existe.")
-            return Response({"res": f"Grupo de suscripción con id {group_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": f"Grupo de suscripción con id {group_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription_group.service.owner):
             logger.error(
                 f"Error al eliminar el grupo de suscripción {group_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         subscription_group.delete()
         logger.info(
             f"Grupo de suscripción {group_id} eliminada correctamente.")
-        return Response({"res": "Suscripción eliminada."})
+        return Response({"detail": "Grupo de suscripción eliminada."})
 
 
 def get_group(group_id):

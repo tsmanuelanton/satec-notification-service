@@ -59,13 +59,13 @@ class ServiceDetails(APIView):
         service = get_service(service_id)
         if not service:
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not request.user.is_staff and request.user != service.owner:
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -82,7 +82,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -90,7 +90,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -116,7 +116,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al eliminar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Servicio con id {service_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -124,7 +124,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al eliminar servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -132,7 +132,7 @@ class ServiceDetails(APIView):
         logger.info(
             f"Servicio {service_id} eliminado correctamente.")
         return Response(
-            {"res": "Servicio eliminado."},
+            {"detail": "Servicio eliminado."},
             status=status.HTTP_200_OK
         )
 

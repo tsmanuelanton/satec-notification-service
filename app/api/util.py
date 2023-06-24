@@ -9,7 +9,7 @@ def has_permissions(request, user):
     return request.user.is_staff or request.user == user
 
 
-def import_conectors(path):
+def import_conectors(path = "api/conectors"):
     '''Detecta los conectores disponibles y los importa y devuelve la lista de conectores'''
 
     path = Path(path)
