@@ -4,3 +4,4 @@ pywebpush == 1.14.0
 django-cors-headers == 3.13.0
 aiosmtplib == 2.0.1
 django-environ == 0.10.0
+adrf == 0.1.1
