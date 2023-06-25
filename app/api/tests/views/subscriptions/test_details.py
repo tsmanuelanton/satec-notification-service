@@ -33,7 +33,10 @@ class TestDetailsSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data, SubscriptionsSerializer(subscription).data)
+            response.data, SubscriptionsSerializer(subscription, context={"show_details": True}).data)
+        self.assertEqual(response.data.get("subscription_data"), subscription.subscription_data)
+        self.assertEqual(response.data.get("meta"), subscription.meta)
+        self.assertEqual(response.data.get("created_at"), subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
 
     def test_not_owner(self):
         '''Comprueba que se lanza un error cuando la suscripción no pertene al usuario'''

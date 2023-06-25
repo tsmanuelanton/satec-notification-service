@@ -36,7 +36,7 @@ class SubscriptionGroupsList(APIView):
         Registra un grupo en el sistema.
         '''
 
-        serializer = SubscriptionGroupsSerializer(data=request.data)
+        serializer = SubscriptionGroupsSerializer(data=request.data, context={"show_details": True})
         if not serializer.is_valid():
             logger.error(
                 f"Error al registrar el grupo - {serializer.errors}.")
@@ -67,7 +67,7 @@ class SubscriptionGroupDetails(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = SubscriptionGroupsSerializer(subscription_group)
+        serializer = SubscriptionGroupsSerializer(subscription_group, context={"show_details": True})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, group_id, *args, **kwargs):
@@ -93,7 +93,7 @@ class SubscriptionGroupDetails(APIView):
             )
 
         serializer = SubscriptionGroupsSerializer(
-            instance=subscription_group, data=request.data, partial=True)
+            instance=subscription_group, data=request.data, partial=True, context={"show_details": True})
         if serializer.is_valid():
             serializer.save()
             logger.info(

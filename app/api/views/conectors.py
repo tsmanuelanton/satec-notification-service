@@ -29,5 +29,5 @@ class ConectorDetails(APIView):
                 {"detail": f"Conector con id {conector_id} no existe."},
                 status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ConectorsSerializer(conector)
+        serializer = ConectorsSerializer(conector, context={"show_details": True})
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -35,12 +35,8 @@ class TestDetailsServices(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(
                 response.data, [ConectorsSerializer(conector1).data, ConectorsSerializer(conector2).data])
-            
-            # Comprobamos que se muestra la interfaz del conector para la suscripción
-            declared_fields = FakeSerializer.__dict__["_declared_fields"]
-            field_pairs = {key:value for key, value in declared_fields.items()}
-            self.assertEqual(
-                response.data[0]["interface"], str(field_pairs))
+            # Comprobamos que se NO muestra la interfaz del conector para la suscripción
+            self.assertIsNone(response.data[0].get("interface"))
 
     def test_empty(self):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y no hay conectores'''

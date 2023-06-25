@@ -36,7 +36,7 @@ class SubscriptionsList(APIView):
         Registra una suscripción en el sistema.
         '''
 
-        serializer = SubscriptionsSerializer(data=request.data)
+        serializer = SubscriptionsSerializer(data=request.data, context={"show_details": True})
         if not serializer.is_valid():
             logger.error(
                 f"Error al registrar suscripción nueva - {serializer.errors}.")
@@ -68,7 +68,7 @@ class SubscriptionDetails(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = SubscriptionsSerializer(subscription)
+        serializer = SubscriptionsSerializer(subscription, context={"show_details": True})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, subscription_id, *args, **kwargs):
@@ -94,7 +94,7 @@ class SubscriptionDetails(APIView):
             )
 
         serializer = SubscriptionsSerializer(
-            instance=subscription, data=request.data, partial=True)
+            instance=subscription, data=request.data, partial=True, context={"show_details": True})
         if serializer.is_valid():
             serializer.save()
             logger.info(
