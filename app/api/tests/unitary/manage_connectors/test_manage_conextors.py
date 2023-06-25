@@ -34,7 +34,7 @@ class TestManageConectors(APITestCase):
             self.assertEqual(Conector.objects.count(), 1)
     
     def test_delete_one(self):
-        '''Comprueba que se elimina el conector si está registrado'''
+        '''Comprueba que se elimina el conector si está registrado y  se indica'''
             
         conector = Conector.objects.create(name="Conector1", description="PreviousConector")
         conector.save()
@@ -46,10 +46,21 @@ class TestManageConectors(APITestCase):
             )
         self.assertEqual(Conector.objects.count(), 0)
     
+    def test_delete_none(self):
+        '''Comprueba que no se elimina ningún conector si no se indica'''
+            
+        conector = Conector.objects.create(name="Conector1", description="PreviousConector")
+        conector.save()
+        out = StringIO()
+        call_command('manageconectors', '-d', stdout=out)
+        self.assertEqual(Conector.objects.count(), 1)
+    
     def test_delete_multiple(self):
-        '''Comprueba que se eliminan los conectores si están registrados'''
+        '''Comprueba que se eliminan los conectores indicados por el usuario'''
+        conector0 = Conector.objects.create(name="Conector0", description="PreviousConector")
         conector1 = Conector.objects.create(name="Conector1", description="PreviousConector")
         conector2 = Conector.objects.create(name="Conector2", description="PreviousConector")
+        conector0.save()
         conector1.save()
         conector2.save()
         out = StringIO()
@@ -58,7 +69,7 @@ class TestManageConectors(APITestCase):
             f'Successfully deleted 2 conector(s) - {conector1.name}, {conector2.name}',
                 out.getvalue()
             )
-        self.assertEqual(Conector.objects.count(), 0)
+        self.assertEqual(Conector.objects.count(), 1)
     
     def test_delete_not_registered(self):
         '''Comprueba que no se elimina el conector si no está registrado'''
