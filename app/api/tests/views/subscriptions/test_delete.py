@@ -1,6 +1,6 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionDetails
-from api.tests.views.util import create_authenticated_user, create_service, create_subscription, create_conector
+from api.tests.views.util import create_user, create_service, create_subscription, create_conector
 from rest_framework import status
 
 
@@ -18,7 +18,7 @@ class TestDeleteSubscriptions(APITestCase):
         request = self.factory.delete(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         conector = create_conector()
@@ -45,7 +45,7 @@ class TestDeleteSubscriptions(APITestCase):
         conector = create_conector()
 
         # Creamos otro usario con una suscripción
-        other_user, other_token = create_authenticated_user()
+        other_user, other_token = create_user()
         not_owner_service = create_service(other_user)
 
         other_subscription = create_subscription(not_owner_service, conector)
@@ -55,7 +55,7 @@ class TestDeleteSubscriptions(APITestCase):
         other_subscription.save()
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Intentamos realizar un delete con el id que no poseemos
@@ -72,7 +72,7 @@ class TestDeleteSubscriptions(APITestCase):
         request = self.factory.delete(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista

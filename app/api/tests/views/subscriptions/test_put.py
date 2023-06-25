@@ -2,9 +2,10 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionDetails
 from rest_framework import status
-from api.tests.views.util import create_service, create_authenticated_user, create_conector, create_subscription, create_subscription_group
+from api.tests.views.util import FakeSerializer, ConectorForTest, create_service, create_user, create_conector, create_subscription, create_subscription_group
 from api.serializers import SubscriptionsSerializer
 from api.models import Subscription
+from unittest import mock
 
 endpoint = "/v1/subscriptions"
 
@@ -19,9 +20,9 @@ class TestUpdateSubscriptions(APITestCase):
             servicio existe,conector existe, la suscripción es válida, y el grupo existe.'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
-        conector = create_conector()
+        conector = create_conector(ConectorForTest.name)
         service = create_service(user)
         service2 = create_service(user)
         group1 = create_subscription_group(service)
@@ -38,7 +39,7 @@ class TestUpdateSubscriptions(APITestCase):
 
         # Cuerpo del PUT
         data = {
-            "subscription_data": {"key": "Value"},
+            "subscription_data": {"field_required": "Value"},
             "group": group2.id,
             "meta": {
                 "user": "user1"
@@ -49,24 +50,26 @@ class TestUpdateSubscriptions(APITestCase):
         request = self.factory.put(f"{endpoint}/{subscription.id}", data, format="json")
         force_authenticate(request, user, token)
 
-        # Llamamos a la vista
-        response = SubscriptionDetails.as_view()(request, subscription_id=subscription.id)
+        with mock.patch("api.serializers.get_subscription_data_serializer") as mock_get_serializer:
+            mock_get_serializer.return_value = FakeSerializer
+            # Llamamos a la vista
+            response = SubscriptionDetails.as_view()(request, subscription_id=subscription.id)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
-        self.assertDictContainsSubset({"subscription_data": {"key": "Value"},
-            "group": group2.id,
-            "meta": {
-                "user": "user1"
-            }}, response.data)
-        
-        self.assertEqual(response.data.get("created_at"), subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            
+            self.assertDictContainsSubset({"subscription_data": {"field_required": "Value"},
+                "group": group2.id,
+                "meta": {
+                    "user": "user1"
+                }}, response.data)
+            
+            self.assertEqual(response.data.get("created_at"), subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
 
     def test_not_valid(self):
         '''Comprueba que se lanza un error mostrando los errores cuando el serializador encuentra errores'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         subscription = create_subscription(service, conector)
@@ -102,8 +105,8 @@ class TestUpdateSubscriptions(APITestCase):
     def test_not_owner(self):
         '''Comprueba que se lanza un error cuando el usuario no es el dueño de la suscripción'''
 
-        user, token = create_authenticated_user()
-        other_user, _ = create_authenticated_user()
+        user, token = create_user()
+        other_user, _ = create_user()
         service_not_owned = create_service(other_user)
         conector = create_conector()
         subscription_not_owned = create_subscription(service_not_owned, conector)

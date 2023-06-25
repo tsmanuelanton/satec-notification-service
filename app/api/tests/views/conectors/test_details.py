@@ -2,7 +2,7 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.conectors import ConectorDetails
 from rest_framework import status
-from api.tests.views.util import create_conector, create_authenticated_user
+from api.tests.views.util import create_conector, create_user
 from api.serializers import ConectorsSerializer
 
 endpoint = "/v1/conectors"
@@ -18,7 +18,7 @@ class TestDetailsServices(APITestCase):
 
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         conector = create_conector("Conector1")
         conector.save()
@@ -39,7 +39,7 @@ class TestDetailsServices(APITestCase):
         '''Comprueba que se lanza un error cuando no existe el conector'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint + "/1")

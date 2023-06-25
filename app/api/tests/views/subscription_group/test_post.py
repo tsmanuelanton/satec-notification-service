@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from rest_framework import status
-from api.tests.views.util import create_conector, create_service, create_authenticated_user, create_subscription, create_subscription_group
+from api.tests.views.util import create_conector, create_service, create_user, create_subscription, create_subscription_group
 from api.views.subscription_groups import SubscriptionGroupsList
 from api.models import SubscriptionGroup
 
@@ -15,7 +15,7 @@ class TestPostSubscriptionGroup(APITestCase):
     def test_authenticated_service_exists(self):
         '''Comprueba que se crea el grupo cuando el usuario está autenticado y existe el servicio'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         subscription= create_subscription(service, conector)
@@ -47,7 +47,7 @@ class TestPostSubscriptionGroup(APITestCase):
     def test_authenticated_service_no_exists(self):
         '''Comprueba que se lanza un error cuando el usuario está autenticado y no existe el servicio'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         subscription= create_subscription(service, conector)
@@ -83,7 +83,7 @@ class TestPostSubscriptionGroup(APITestCase):
     def test_authenticated_missing_service(self):
         '''Comprueba que se lanza un error cuando falta el servicio en la petición'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         new_group = {
             "name": "Grupo de prueba",
@@ -106,7 +106,7 @@ class TestPostSubscriptionGroup(APITestCase):
     def test_authenticated_missing_name_and_optionals(self):
         '''Comprueba que se lanza un error cuando falta el campo nombre y otros opcionales'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         service.save()
 
@@ -128,7 +128,7 @@ class TestPostSubscriptionGroup(APITestCase):
     def test_not_authenticated(self):
         '''Comprueba que se lanza un error cuando el usuario no está autenticado'''
 
-        user, _ = create_authenticated_user()
+        user, _ = create_user()
         service = create_service(user)
         service.save()
 

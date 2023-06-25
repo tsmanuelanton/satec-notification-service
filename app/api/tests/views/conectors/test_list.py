@@ -2,7 +2,7 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.conectors import ConectorDetails, ConectorsList
 from rest_framework import status
-from api.tests.views.util import create_conector, create_authenticated_user
+from api.tests.views.util import create_conector, create_user
 from api.serializers import ConectorsSerializer
 from api.models import Conector
 
@@ -18,7 +18,7 @@ class TestDetailsServices(APITestCase):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y hay varios conectores'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         conector1 = create_conector("Conector1")
         conector2 = create_conector("Conector2")
@@ -40,7 +40,7 @@ class TestDetailsServices(APITestCase):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y no hay conectores'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint)

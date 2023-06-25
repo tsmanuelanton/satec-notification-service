@@ -2,7 +2,7 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.services import ServiceDetails
 from rest_framework import status
-from api.tests.views.util import create_service, create_authenticated_user
+from api.tests.views.util import create_service, create_user
 from api.serializers import ServicesSerializer
 
 endpoint = "/v1/services"
@@ -17,7 +17,7 @@ class TestUpdateServices(APITestCase):
         '''Comprueba que se actualiza el servicio cuando el usuario está autenticado, es el dueño y no hay errores'''
 
         # Creamos un nuevo usario autenticado con un servicio
-        user, token = create_authenticated_user()
+        user, token = create_user()
         my_service = create_service(user)
         my_service.save()
 
@@ -43,7 +43,7 @@ class TestUpdateServices(APITestCase):
         '''Comprueba que se lanza un error cuando el usuario está autenticado, es el dueño y hay errores'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Creamos el servicio a actualizar
         service = create_service(user)
@@ -68,12 +68,12 @@ class TestUpdateServices(APITestCase):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''
 
         # Creamos otro usuario con un servicio
-        other_user, other_token = create_authenticated_user()
+        other_user, other_token = create_user()
         not_owned_service = create_service(other_user)
         not_owned_service.save()
 
         # Creamos un nuevo usario autenticado con un servicio
-        user, token = create_authenticated_user()
+        user, token = create_user()
         my_service = create_service(user)
         my_service.save()
 
@@ -96,7 +96,7 @@ class TestUpdateServices(APITestCase):
 
     def test_not_exist(self):
         '''Comprueba que se lanza un error cuando el servicio no existe'''
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.put(f'{endpoint}/{1}')

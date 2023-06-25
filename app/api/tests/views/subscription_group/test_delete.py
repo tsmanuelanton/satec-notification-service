@@ -1,7 +1,7 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.services import ServiceDetails
 from rest_framework import status
-from api.tests.views.util import create_conector, create_service, create_authenticated_user, create_subscription, create_subscription_group
+from api.tests.views.util import create_conector, create_service, create_user, create_subscription, create_subscription_group
 from api.views.subscription_groups import SubscriptionGroupDetails
 
 endpoint = "/v1/groups"
@@ -14,7 +14,7 @@ class TestGetSubscriptionGroup(APITestCase):
     def test_all_ok(self):
         '''Comprueba que se borra el grupo si el usuario es dueño y el grupo existe'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         subscription= create_subscription(service, conector)
@@ -41,8 +41,8 @@ class TestGetSubscriptionGroup(APITestCase):
     def test_not_owner(self):
         '''Comprueba que se muestra error de permisos  cuando el usuario no es el dueño'''
 
-        user, token = create_authenticated_user()
-        another_user, _ = create_authenticated_user()
+        user, token = create_user()
+        another_user, _ = create_user()
         service = create_service(another_user)
         group = create_subscription_group(service)
 
@@ -63,8 +63,8 @@ class TestGetSubscriptionGroup(APITestCase):
     def test_not_exist(self):
         '''Comprueba que se indica que no se ha encontrado el grupo cuando no existe'''
 
-        user, token = create_authenticated_user()
-        another_user, _ = create_authenticated_user()
+        user, token = create_user()
+        another_user, _ = create_user()
         service = create_service(another_user)
         group = create_subscription_group(service)
 
@@ -85,7 +85,7 @@ class TestGetSubscriptionGroup(APITestCase):
     def test_not_authenticated(self):
         '''Comprueba que se muestran un error cuando el usuario no está autenticado'''
 
-        user, _ = create_authenticated_user()
+        user, _ = create_user()
         service = create_service(user)
         group = create_subscription_group(service)
 

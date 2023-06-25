@@ -35,7 +35,7 @@ def gen_random_word(length=5) -> string:
     return ''.join(random.choice(letters) for i in range(length_name))
 
 
-def create_authenticated_user():
+def create_user():
     '''Devuelve un nuevo usuario con un token asociado'''
 
     # Genera un nombre un aleatorio

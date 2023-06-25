@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionsList
-from api.tests.views.util import create_authenticated_user
+from api.tests.views.util import create_user
 from rest_framework import status
 
 from api.tests.views.util import create_conector, create_service
@@ -19,7 +19,7 @@ class TestPostSubscriptions(APITestCase):
             servicio existe,conector existe, la suscripción es válida, y el grupo existe.'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         conector = create_conector()
         service = create_service(user)
@@ -53,7 +53,7 @@ class TestPostSubscriptions(APITestCase):
         '''Comprueba que se lanza un error mostrando los errores cuando el serializador encuentra errores'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         conector = create_conector()
 

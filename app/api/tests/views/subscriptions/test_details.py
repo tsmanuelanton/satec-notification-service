@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionDetails
-from api.tests.views.util import create_authenticated_user, create_service, create_subscription, create_conector
+from api.tests.views.util import create_user, create_service, create_subscription, create_conector
 from api.serializers import SubscriptionsSerializer
 from rest_framework import status
 
@@ -16,7 +16,7 @@ class TestDetailsSubscriptions(APITestCase):
         '''Comprueba que se muestran los datos cuando el servicio pertenece al usuario'''
 
         # Creamos un nuevo usario autenticado con un servicio
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         conector = create_conector()
         service = create_service(user)
@@ -43,7 +43,7 @@ class TestDetailsSubscriptions(APITestCase):
         '''Comprueba que se lanza un error cuando la suscripción no pertene al usuario'''
 
         # Creamos otro usuario una suscipción asociada
-        other_user, _ = create_authenticated_user()
+        other_user, _ = create_user()
         conector = create_conector()
         not_owned_service = create_service(other_user)
         not_owned_service.save()
@@ -56,7 +56,7 @@ class TestDetailsSubscriptions(APITestCase):
         request = self.factory.get(f'{endpoint}/{other_subscription.id}')
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         force_authenticate(request, user, token)
 
@@ -72,7 +72,7 @@ class TestDetailsSubscriptions(APITestCase):
         '''Comprueba que se lanza un error cuando no existe la suscripción'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint + "/1")

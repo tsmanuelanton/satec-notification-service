@@ -2,7 +2,7 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.services import ServicesList
 from api.models import Service
-from api.tests.views.util import create_authenticated_user, create_service
+from api.tests.views.util import create_user, create_service
 from api.serializers import ServicesSerializer
 from rest_framework import status
 
@@ -21,7 +21,7 @@ class TestListServices(APITestCase):
         request = self.factory.get(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -37,12 +37,12 @@ class TestListServices(APITestCase):
         request = self.factory.get(endpoint)
 
         # Registramos un servicio por otro usuario
-        other_user, _ = create_authenticated_user()
+        other_user, _ = create_user()
         Service(name="other_user_service",
                 owner=other_user).save()
 
         # Creamos un usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Creamos varios servicios a nombre del usuario user

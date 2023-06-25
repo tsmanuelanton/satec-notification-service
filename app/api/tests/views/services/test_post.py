@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.services import ServicesList
-from api.tests.views.util import create_authenticated_user
+from api.tests.views.util import create_user
 from rest_framework import status
 from rest_framework.serializers import ErrorDetail
 
@@ -26,7 +26,7 @@ class TestPostServices(APITestCase):
         request = self.factory.post(endpoint, data)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -46,7 +46,7 @@ class TestPostServices(APITestCase):
         request = self.factory.post(endpoint, data, format="json")
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista

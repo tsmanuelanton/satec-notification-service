@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.services import ServiceDetails
-from api.tests.views.util import create_authenticated_user, create_service
+from api.tests.views.util import create_user, create_service
 from rest_framework import status
 
 endpoint = "/v1/services/"
@@ -16,7 +16,7 @@ class TestDeleteServices(APITestCase):
         '''Comprueba que se elimina el servicio cuando pertenece al usuario'''
 
         # Creamos un nuevo usario autenticado con un servicio
-        user, token = create_authenticated_user()
+        user, token = create_user()
         my_service = create_service(user)
         my_service.save()
 
@@ -36,14 +36,14 @@ class TestDeleteServices(APITestCase):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''
 
         # Creamos otro usuario con un servicio
-        other_user, _ = create_authenticated_user()
+        other_user, _ = create_user()
         not_owned_service = create_service(other_user)
         not_owned_service.save()
 
         request = self.factory.delete(f'{endpoint}/{not_owned_service.id}')
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -59,7 +59,7 @@ class TestDeleteServices(APITestCase):
         '''Comprueba que se lanza un error cuando no existe el servicio'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.delete(endpoint + "/1")

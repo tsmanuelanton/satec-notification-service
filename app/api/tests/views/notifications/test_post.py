@@ -2,7 +2,7 @@ import asyncio
 import json
 from rest_framework.test import APIRequestFactory, force_authenticate, APITransactionTestCase
 from api.views.notifications import NotificationDetails
-from api.tests.views.util import ConectorForTest, create_authenticated_user, create_conector, create_service, create_subscription, create_subscription_group
+from api.tests.views.util import ConectorForTest, create_user, create_conector, create_service, create_subscription, create_subscription_group
 from rest_framework import status
 from unittest import mock
 from rest_framework.authtoken.models import Token
@@ -20,7 +20,7 @@ class TestPostNotifications(APITransactionTestCase):
         '''Comprueba que se envían las notificaciones a un grupo concreto'''
 
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
+        user, token = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
@@ -72,7 +72,7 @@ class TestPostNotifications(APITransactionTestCase):
     def test_restricted_two_group(self):
         '''Comprueba que se envían las notificaciones a un grupo concreto'''
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
+        user, token = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
@@ -125,7 +125,7 @@ class TestPostNotifications(APITransactionTestCase):
     def test_restricted_invalid_group(self):
         '''Comprueba que se envían las notificaciones a un grupo concreto'''
             # Creamos un nuevo usario
-        user, token = create_authenticated_user()
+        user, token = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
@@ -168,7 +168,7 @@ class TestPostNotifications(APITransactionTestCase):
         '''Comprueba que se envían las notificaciones  a todos los suscriptores del servicio'''
 
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
+        user, token = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
@@ -215,8 +215,8 @@ class TestPostNotifications(APITransactionTestCase):
         '''Comprueba que se muestra un error si el servicio no pertenece al usuario autenticado'''
 
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
-        other_user, _ = create_authenticated_user()
+        user, token = create_user()
+        other_user, _ = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)
@@ -247,8 +247,8 @@ class TestPostNotifications(APITransactionTestCase):
         '''Comprueba que se muestra un error si falta un campo requerido'''
 
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
-        other_user, _ = create_authenticated_user()
+        user, token = create_user()
+        other_user, _ = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)
@@ -278,8 +278,8 @@ class TestPostNotifications(APITransactionTestCase):
         '''Comprueba que se muestra un error si el servicio no pertenece al usuario autenticado'''
 
          # Creamos un nuevo usario
-        user, token = create_authenticated_user()
-        other_user, _ = create_authenticated_user()
+        user, token = create_user()
+        other_user, _ = create_user()
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)

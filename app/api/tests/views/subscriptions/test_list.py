@@ -2,7 +2,7 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionsList
 from api.models import Service
-from api.tests.views.util import create_authenticated_user, create_service, create_subscription, create_conector
+from api.tests.views.util import create_user, create_service, create_subscription, create_conector
 from api.serializers import SubscriptionsSerializer
 from rest_framework import status
 
@@ -21,7 +21,7 @@ class TestListSubscriptions(APITestCase):
         request = self.factory.get(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -33,7 +33,7 @@ class TestListSubscriptions(APITestCase):
     def test_not_owned(self):
         '''Comprueba que no se devuelven subscripciones de otros usuarios'''
 
-        other_user, _ = create_authenticated_user()
+        other_user, _ = create_user()
         conector = create_conector()
         service_not_owned = create_service(other_user)
         subscription_not_owned = create_subscription(service_not_owned, conector)
@@ -46,7 +46,7 @@ class TestListSubscriptions(APITestCase):
         request = self.factory.get(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -68,7 +68,7 @@ class TestListSubscriptions(APITestCase):
         conector2.save()
 
        # Registramos un servicio por otro usuario
-        other_user, _ = create_authenticated_user()
+        other_user, _ = create_user()
         other_service = Service(
             name="other_user_service", owner=other_user)
         other_service.save()
@@ -77,7 +77,7 @@ class TestListSubscriptions(APITestCase):
         other_subscription.save()
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Creamos un servicio a nombre del usuario

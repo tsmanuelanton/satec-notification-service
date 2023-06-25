@@ -1,7 +1,7 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from rest_framework import status
-from api.tests.views.util import create_conector, create_service, create_authenticated_user, create_subscription, create_subscription_group
+from api.tests.views.util import create_conector, create_service, create_user, create_subscription, create_subscription_group
 from api.views.subscription_groups import SubscriptionGroupDetails
 from api.serializers import SubscriptionsSerializer
 
@@ -15,7 +15,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_modify_all(self):
         '''Comprueba que se modifica el grupo cuando el usuario está autenticado e introduce todos los campos'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         group = create_subscription_group(service)
@@ -59,7 +59,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_service_non_existent(self):
         '''Comprueba se lanza un error si el servicio no existe'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         group = create_subscription_group(service)
@@ -94,7 +94,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_missing_name(self):
         '''Comprueba que se actualiza el grupo a pesar de faltar un campo obligatorio'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         group = create_subscription_group(service)
@@ -134,7 +134,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_missing_all(self):
         '''Comprueba no se produce ningún error ni cambio si no se introducen campos'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         group = create_subscription_group(service)
@@ -166,8 +166,8 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_not_owner(self):
         '''Comprueba no se produce ningún error ni cambio si no se introducen campos'''
 
-        user, token = create_authenticated_user()
-        another_user, _ = create_authenticated_user()
+        user, token = create_user()
+        another_user, _ = create_user()
         service = create_service(another_user)
         conector = create_conector()
         group = create_subscription_group(service)
@@ -198,7 +198,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_authenticated_group_non_existent(self):
         '''Comprueba no se produce ningún error ni cambio si no se introducen campos'''
 
-        user, token = create_authenticated_user()
+        user, token = create_user()
        
         data = {
             "name": "Grupo de prueba",
@@ -220,7 +220,7 @@ class TestPutSubscriptionGroup(APITestCase):
     def test_not_authenticated(self):
         '''Comprueba que se lanza un error cuando el usuario no está autenticado'''
 
-        user, _ = create_authenticated_user()
+        user, _ = create_user()
         service = create_service(user)
         group = create_subscription_group(service)
         
