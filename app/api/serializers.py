@@ -1,7 +1,8 @@
 from datetime import datetime
 from rest_framework import serializers
 from .models import Conector, Subscription, Service, SubscriptionGroup
-from rest_framework.validators import UniqueValidator
+from api.util import import_conectors
+from api.models import Conector
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
     # Cuando se crea la suscripción, se registra la fecha de creación
@@ -9,6 +10,20 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = "__all__"
+    
+    def is_valid(self, raise_exception=False):
+        valid = super().is_valid(raise_exception=raise_exception)
+        if valid:
+            conector_id = self.initial_data.get("conector")
+            if conector_id:
+                # Comprobamos con el serializador específico del conector si los datos de la suscripción son válidos
+                conector = Conector.objects.get(id=self.initial_data.get("conector"))
+                subscription_serializer = get_subscription_data_serializer(conector)
+                if subscription_serializer and self.initial_data.get("subscription_data"):
+                    serializer = subscription_serializer(data=self.initial_data.get("subscription_data"))
+                    valid = serializer.is_valid()
+                    self._errors["subscription_data"] = [serializer.errors]
+        return valid
 
 class SubscriptionGroupsSerializer(serializers.ModelSerializer):
     # Cuando se crea el grupo, se registra la fecha de creación
@@ -65,3 +80,13 @@ class MessageSerializer(serializers.Serializer):
         if len(fails) > 0:
             self._errors["restricted_to_groups"] = fails
         return valid
+    
+
+def get_subscription_data_serializer(conector: Conector):
+    '''
+    Devuelve el serializador del subscription_data del conector
+    '''
+    available_conectors = import_conectors("api/conectors")
+    for available_con in available_conectors:
+        if conector.name == available_con.getDetails().get("name"):
+            return available_con.get_subscription_serializer()

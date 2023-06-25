@@ -2,10 +2,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-from api.models import Conector, Subscription
+from api.models import Subscription
 from api.serializers import SubscriptionsSerializer
 from api.models import Service
-from api.util import has_permissions, import_conectors
+from api.util import has_permissions
 
 import logging
 logger = logging.getLogger("file_logger")
@@ -41,21 +41,6 @@ class SubscriptionsList(APIView):
             logger.error(
                 f"Error al registrar suscripción nueva - {serializer.errors}.")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        conector = Conector.objects.get(id=request.data.get('conector'))
-
-        # Obtenemos si existe el validador de la suscripción del conector
-        subscription_data_serializer = from_conector_get_subscription_serializer(
-            conector)
-
-        if subscription_data_serializer:
-            # Validar el campo subscription_data con el conector específico
-            serialized = subscription_data_serializer(
-                data=request.data.get('subscription_data'))
-            if not serialized.is_valid():
-                logger.error(
-                    f"Error al registrar suscripción nueva - {serialized.errors}.")
-                return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
         subscription = serializer.save()
         logger.info(
@@ -153,13 +138,3 @@ def get_subscription(subscription_id):
     except Subscription.DoesNotExist:
         return None
 
-
-def from_conector_get_subscription_serializer(conector: Conector):
-    '''
-    Devuelve el serializador del subscription_data del conector
-    '''
-
-    available_conectors = import_conectors("api/conectors")
-    for available_con in available_conectors:
-        if conector.name == available_con.getDetails().get("name"):
-            return available_con.get_subscription_serializer()
