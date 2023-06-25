@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 from rest_framework import serializers
 from .models import Conector, Subscription, Service, SubscriptionGroup
@@ -49,6 +50,17 @@ class ConectorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conector
         fields = ["id", "name", "description", "meta"]
+    
+    def to_representation(self, instance):
+        # Añadimos el contrato del conector para las suscripciones
+        representation = super().to_representation(instance)
+        serializer = get_subscription_data_serializer(instance)
+        if not serializer:
+            raise ValueError(f"Conector {instance.name} no tiene definido un serializador para los datos de suscripción")
+        declared_fields = serializer.__dict__["_declared_fields"]
+        field_pairs = {key:value for key, value in declared_fields.items()}
+        representation["interface"] = str(field_pairs)
+        return representation
 
 
 class MessageFieldsSerializer(serializers.Serializer):

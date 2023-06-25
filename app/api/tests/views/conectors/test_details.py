@@ -1,8 +1,9 @@
 import json
+from unittest import mock
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.conectors import ConectorDetails
 from rest_framework import status
-from api.tests.views.util import create_conector, create_user
+from api.tests.views.util import FakeSerializer, create_conector, create_user
 from api.serializers import ConectorsSerializer
 
 endpoint = "/v1/conectors"
@@ -20,16 +21,24 @@ class TestDetailsServices(APITestCase):
         user, token = create_user()
         conector = create_conector("Conector1")
 
-        # Apuntamos el endpoint con el método get
-        request = self.factory.get(f'{endpoint}/{conector.id}')
-        force_authenticate(request, user, token)
+        with mock.patch("api.serializers.get_subscription_data_serializer") as mock_get_serializer:
 
-        # Llamamos a la vista
-        response = ConectorDetails.as_view()(request, conector_id=conector.id)
+            mock_get_serializer.return_value = FakeSerializer
+            # Apuntamos el endpoint con el método get
+            request = self.factory.get(f'{endpoint}/{conector.id}')
+            force_authenticate(request, user, token)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data, ConectorsSerializer(conector).data)
+            # Llamamos a la vista
+            response = ConectorDetails.as_view()(request, conector_id=conector.id)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(
+                response.data, ConectorsSerializer(conector).data)
+            
+            declared_fields = FakeSerializer.__dict__["_declared_fields"]
+            field_pairs = {key:value for key, value in declared_fields.items()}
+            self.assertEqual(
+                response.data["interface"], str(field_pairs))
 
 
     def test_not_exist(self):

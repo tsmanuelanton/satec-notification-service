@@ -1,10 +1,10 @@
 import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.conectors import ConectorDetails, ConectorsList
+from api.views.conectors import ConectorsList
 from rest_framework import status
-from api.tests.views.util import create_conector, create_user
+from api.tests.views.util import FakeSerializer, create_conector, create_user
 from api.serializers import ConectorsSerializer
-from api.models import Conector
+from unittest import mock
 
 endpoint = "/v1/conectors/"
 
@@ -22,16 +22,25 @@ class TestDetailsServices(APITestCase):
         conector1 = create_conector("Conector1")
         conector2 = create_conector("Conector2")
 
-        # Apuntamos el endpoint con el método get
-        request = self.factory.get(endpoint)
-        force_authenticate(request, user, token)
+        with mock.patch("api.serializers.get_subscription_data_serializer") as mock_get_serializer:
 
-        # Llamamos a la vista
-        response = ConectorsList.as_view()(request)
+            mock_get_serializer.return_value = FakeSerializer
+            # Apuntamos el endpoint con el método get
+            request = self.factory.get(endpoint)
+            force_authenticate(request, user, token)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data, [ConectorsSerializer(conector1).data, ConectorsSerializer(conector2).data])
+            # Llamamos a la vista
+            response = ConectorsList.as_view()(request)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(
+                response.data, [ConectorsSerializer(conector1).data, ConectorsSerializer(conector2).data])
+            
+            # Comprobamos que se muestra la interfaz del conector para la suscripción
+            declared_fields = FakeSerializer.__dict__["_declared_fields"]
+            field_pairs = {key:value for key, value in declared_fields.items()}
+            self.assertEqual(
+                response.data[0]["interface"], str(field_pairs))
 
     def test_empty(self):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y no hay conectores'''
