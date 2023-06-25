@@ -57,8 +57,8 @@ class TestPostNotifications(APITransactionTestCase):
             # # Llamamos a la vista
             response = asyncio.run(NotificationDetails.as_view()(request))
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(len(response.data["enviados"]), 2)
-            self.assertCountEqual(response.data["enviados"], [{'subscription_id': subscription_in_group1.id, 'conector_name': 'ConectorForTest'},
+            self.assertEqual(len(response.data["successful"]), 2)
+            self.assertCountEqual(response.data["successful"], [{'subscription_id': subscription_in_group1.id, 'conector_name': 'ConectorForTest'},
                                                                {'subscription_id': subscription2_in_group1.id, 'conector_name': 'ConectorForTest'}])
             
 
@@ -101,8 +101,8 @@ class TestPostNotifications(APITransactionTestCase):
             # # Llamamos a la vista
             response = asyncio.run(NotificationDetails.as_view()(request))
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(len(response.data["enviados"]), 3)
-            self.assertCountEqual(response.data["enviados"], [{'subscription_id': subscription_in_group1.id, 'conector_name': 'ConectorForTest'},
+            self.assertEqual(len(response.data["successful"]), 3)
+            self.assertCountEqual(response.data["successful"], [{'subscription_id': subscription_in_group1.id, 'conector_name': 'ConectorForTest'},
                                                                {'subscription_id':  subscription2_in_group1.id, 'conector_name': 'ConectorForTest'},
                                                                {'subscription_id':  subscription_in_group2.id, 'conector_name': 'ConectorForTest'}])
 
@@ -186,8 +186,8 @@ class TestPostNotifications(APITransactionTestCase):
             # # Llamamos a la vista
             response = asyncio.run(NotificationDetails.as_view()(request))
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(len(response.data["enviados"]), 3)
-            self.assertCountEqual(response.data["enviados"], [{'subscription_id': subscription_out_group.id, 'conector_name': 'ConectorForTest'},
+            self.assertEqual(len(response.data["successful"]), 3)
+            self.assertCountEqual(response.data["successful"], [{'subscription_id': subscription_out_group.id, 'conector_name': 'ConectorForTest'},
                                                               {'subscription_id': subscription_in_group1.id, 'conector_name': 'ConectorForTest'},
                                                               {'subscription_id': subscription2_in_group1.id, 'conector_name': 'ConectorForTest'}])
 

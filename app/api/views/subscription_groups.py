@@ -56,10 +56,7 @@ class SubscriptionGroupDetails(APIView):
         '''
         subscription_group = get_group(group_id)
         if not subscription_group:
-            return Response(
-                {"detail": f"Grupo con id {group_id} no existe."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"detail": f"Subscription group {group_id} not found."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription_group.service.owner):
             return Response(
@@ -79,10 +76,7 @@ class SubscriptionGroupDetails(APIView):
         if not subscription_group:
             logger.error(
                 f"Error al actualizar el grupo {group_id} - Grupo de suscriptores con id {group_id} no existe.")
-            return Response(
-                {"detail": f"Grupo de suscriptores con id {group_id} no existe."},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"detail": f"Subscription group {group_id} not found."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription_group.service.owner):
             logger.error(
@@ -112,7 +106,7 @@ class SubscriptionGroupDetails(APIView):
         if not subscription_group:
             logger.error(
                 f"Error al eliminar el grupo de suscripción {group_id} - Grupo de suscripción con id {group_id} no existe.")
-            return Response({"detail": f"Grupo de suscripción con id {group_id} no existe."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": f"Subscription group {group_id} not found."}, status=status.HTTP_404_NOT_FOUND)
 
         if not has_permissions(request, subscription_group.service.owner):
             logger.error(
@@ -125,4 +119,4 @@ class SubscriptionGroupDetails(APIView):
         subscription_group.delete()
         logger.info(
             f"Grupo de suscripción {group_id} eliminada correctamente.")
-        return Response({"detail": "Grupo de suscripción eliminada."})
+        return Response({"detail": f"Resource {group_id} deleted successfully."}, status=status.HTTP_204_NO_CONTENT)

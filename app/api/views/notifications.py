@@ -24,7 +24,7 @@ class NotificationDetails(APIView):
         service_id = request.data.get('service')
         service = await Service.objects.select_related().aget(id=service_id)
         if not service:
-            return Response({"detail": "Unknown service."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": f"Service {service_id} not found."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not has_permissions(request, service.owner):
             return Response(
@@ -40,9 +40,9 @@ class NotificationDetails(APIView):
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.")
 
-        return Response({"detail": f"Se han enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.",
-                            "enviados": successful,
-                            "fallos": fails}, status=status.HTTP_200_OK)
+        return Response({"detail": f"Sent {len(successful)} succesfull notifications and failed {len(fails)}.",
+                            "successful": successful,
+                            "fails": fails}, status=status.HTTP_200_OK)
 
     
 async def notify_subscriptor(subscription,message, options):

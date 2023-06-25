@@ -29,9 +29,9 @@ class TestDeleteSubscriptions(APITestCase):
         response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(
-            response.data, {"detail": "Suscripción eliminada."})
+            response.data, {"detail": f"Resource {subscription.id} deleted successfully."})
 
     def test_subscriptions_delete_forbidden(self):
         '''Comprueba que se lanza un error al intentar borrar una suscripción que no pertene al usuario'''
@@ -72,4 +72,4 @@ class TestDeleteSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"detail": f"Suscripción con id 0 no existe."})
+            response.data, {"detail": f"Subscription 0 not found."})

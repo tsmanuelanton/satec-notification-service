@@ -61,7 +61,7 @@ class ServiceDetails(APIView):
         service = get_service(service_id)
         if not service:
             return Response(
-                {"detail": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -84,7 +84,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"detail": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -118,7 +118,7 @@ class ServiceDetails(APIView):
             logger.error(
                 f"Error al eliminar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"detail": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -133,7 +133,5 @@ class ServiceDetails(APIView):
         service.delete()
         logger.info(
             f"Servicio {service_id} eliminado correctamente.")
-        return Response(
-            {"detail": "Servicio eliminado."},
-            status=status.HTTP_200_OK
-        )
+        return Response({"detail": f"Resource {service_id} deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    

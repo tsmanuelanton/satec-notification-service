@@ -78,7 +78,7 @@ class TestDetailsSubscriptions(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"detail": f"Suscripción con id 1 no existe."})
+            response.data, {"detail": f"Subscription 1 not found."})
 
     def test_not_authenticated(self):
         '''Comprueba que se lanza un error cuando el usuario no está autenticado'''

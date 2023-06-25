@@ -102,7 +102,7 @@ class TestUpdateServices(APITestCase):
         response.render()
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(json.loads(response.content), {"detail": f"Servicio con id 1 no existe."})
+        self.assertEqual(json.loads(response.content), {"detail": f"Service 1 not found."})
 
     def test_not_authenticated(self):
         '''Comprueba que se lanza un error cuando el usuario no está autenticado'''
