@@ -6,10 +6,12 @@ from api.models import Service
 from api.serializers import ServicesSerializer
 
 import logging
+
+from api.util import get_service
 logger = logging.getLogger("file_logger")
 
 
-class ServicesListApiView(APIView):
+class ServicesList(APIView):
 
     def get(self, request: Request, *args, **kwargs):
         '''
@@ -49,7 +51,7 @@ class ServicesListApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ServicesDetailsApiView(APIView):
+class ServiceDetails(APIView):
 
     def get(self, request, service_id, *args, **kwargs):
         '''
@@ -59,13 +61,13 @@ class ServicesDetailsApiView(APIView):
         service = get_service(service_id)
         if not service:
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         if not request.user.is_staff and request.user != service.owner:
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -82,7 +84,7 @@ class ServicesDetailsApiView(APIView):
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -90,7 +92,7 @@ class ServicesDetailsApiView(APIView):
             logger.error(
                 f"Error al actualizar el servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
@@ -116,7 +118,7 @@ class ServicesDetailsApiView(APIView):
             logger.error(
                 f"Error al eliminar el servicio {service_id} - Servicio con id {service_id} no existe.")
             return Response(
-                {"res": f"Servicio con id {service_id} no existe."},
+                {"detail": f"Service {service_id} not found."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -124,24 +126,12 @@ class ServicesDetailsApiView(APIView):
             logger.error(
                 f"Error al eliminar servicio {service_id} - Usuario {request.user.id} no tienes permisos.")
             return Response(
-                {"res": f"No tienes permisos."},
+                {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         service.delete()
         logger.info(
             f"Servicio {service_id} eliminado correctamente.")
-        return Response(
-            {"res": "Servicio eliminado."},
-            status=status.HTTP_200_OK
-        )
-
-
-def get_service(service_id):
-    '''
-    Busca en la BD un servicio concreto
-    '''
-    try:
-        return Service.objects.get(id=service_id)
-    except Service.DoesNotExist:
-        return None
+        return Response({"detail": f"Resource {service_id} deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    

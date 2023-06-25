@@ -1,8 +1,10 @@
+import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.subscription_views import SubscriptionsListApiView
+from api.views.subscriptions import SubscriptionsList
 from api.models import Service
-from api.tests.views.util import create_authenticated_user, create_service, create_subscription, create_conector
+from api.tests.views.util import create_user, create_service, create_subscription, create_conector
 from api.serializers import SubscriptionsSerializer
+from rest_framework import status
 
 endpoint = "/v1/subscriptions/"
 
@@ -19,54 +21,37 @@ class TestListSubscriptions(APITestCase):
         request = self.factory.get(endpoint)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
 
-    def test_subscriptions_list_one(self):
-        '''Comprueba que se devuelve sólo con la subscripcion asociada al servicio del usuario'''
+    def test_not_owned(self):
+        '''Comprueba que no se devuelven subscripciones de otros usuarios'''
+
+        other_user, _ = create_user()
+        conector = create_conector()
+        service_not_owned = create_service(other_user)
+        create_subscription(service_not_owned, conector) # subscription_not_owned
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint)
 
-        # Creamos un conector
-        conector = create_conector()
-        conector.save()
-
-        # Registramos un servicio por otro usuario
-        other_user, other_token = create_authenticated_user()
-        other_service = Service(
-            name="other_user_service", owner=other_user)
-        other_service.save()
-
-        other_subscription = create_subscription(other_service, conector)
-        other_subscription.save()
-
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
-        # Creamos un servicio a nombre del usuario
-        service = create_service(user)
-        service.save()
-
-        subscription = create_subscription(service, conector)
-        subscription.save()
-
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(
-            response.data[0], SubscriptionsSerializer(subscription).data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
 
-    def test_subscriptions_list_many(self):
+    def test_owned_and_not_owned(self):
         '''Comprueba que se devuelve una lista sólo con las subscripciones asociadas al servicio del usuario'''
 
         # Apuntamos el endpoint con el método get
@@ -75,38 +60,42 @@ class TestListSubscriptions(APITestCase):
         # Creamos un conector para cada suscripción
         conector1 = create_conector()
         conector2 = create_conector()
-        conector1.save()
-        conector2.save()
+
 
        # Registramos un servicio por otro usuario
-        other_user, other_token = create_authenticated_user()
-        other_service = Service(
-            name="other_user_service", owner=other_user)
-        other_service.save()
-
-        other_subscription = create_subscription(other_service, conector1)
-        other_subscription.save()
+        other_user, _ = create_user()
+        other_service = create_service(other_user)
+        _ = create_subscription(other_service, conector1)
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
         force_authenticate(request, user, token)
 
         # Creamos un servicio a nombre del usuario
         service = create_service(user)
-        service.save()
 
         # Creamos dos nuevas suscripciones para cada servicio
         subscription1 = create_subscription(service, conector1)
         subscription2 = create_subscription(service, conector2)
-        subscription1.save()
-        subscription2.save()
 
         # Llamamos a la vista
-        response = SubscriptionsListApiView.as_view()(request)
+        response = SubscriptionsList.as_view()(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(
             response.data[0], SubscriptionsSerializer(subscription1).data)
         self.assertEqual(
             response.data[1], SubscriptionsSerializer(subscription2).data)
+
+    def test_not_authenticated(self):
+        '''Comprueba que se lanza un error cuando el usuario no está autenticado'''
+
+        # Apuntamos el endpoint con el método get
+        request = self.factory.get(endpoint)
+
+        # Llamamos a la vista
+        response = SubscriptionsList.as_view()(request)
+        response.render()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(json.loads(response.content), {"detail": f"Authentication credentials were not provided."})

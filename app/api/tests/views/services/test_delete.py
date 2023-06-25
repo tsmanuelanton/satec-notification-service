@@ -1,6 +1,7 @@
+import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.services_views import ServicesDetailsApiView
-from api.tests.views.util import create_authenticated_user, create_service
+from api.views.services import ServiceDetails
+from api.tests.views.util import create_user, create_service
 from rest_framework import status
 
 endpoint = "/v1/services/"
@@ -11,62 +12,74 @@ class TestDeleteServices(APITestCase):
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
-    def test_services_delete_forbidden(self):
-        '''Comprueba que se lanza un error al intentar borrar un servicio que no pertene al usuario'''
+    def test_user_is_owner(self):
+        '''Comprueba que se elimina el servicio cuando pertenece al usuario'''
 
-        request = self.factory.delete(endpoint)
+        # Creamos un nuevo usario autenticado con un servicio
+        user, token = create_user()
+        my_service = create_service(user)
 
-        # Creamos otro usario con un servicio
-        other_user, _ = create_authenticated_user()
-        not_owner_service = create_service(other_user)
-        not_owner_service.save()
 
-        # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        # Apuntamos el endpoint con el método get
+        request = self.factory.delete(f'{endpoint}/{my_service.id}')
+
         force_authenticate(request, user, token)
 
-        # Intentamos realizar un delete con el id del servicio que no poseemos
-        service_id = not_owner_service.id
-        response = ServicesDetailsApiView.as_view()(request, service_id=service_id)
+        # Llamamos a la vista
+        response = ServiceDetails.as_view()(
+            request, service_id=my_service.id)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data, {"detail": f"Resource {my_service.id} deleted successfully."})
+
+    def test_not_owner(self):
+        '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''
+
+        # Creamos otro usuario con un servicio
+        other_user, _ = create_user()
+        not_owned_service = create_service(other_user)
+
+        request = self.factory.delete(f'{endpoint}/{not_owned_service.id}')
+
+        # Creamos un nuevo usario autenticado
+        user, token = create_user()
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = ServiceDetails.as_view()(
+            request, service_id=not_owned_service.id)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data, {"res": f"No tienes permisos."})
-
-    def test_services_delete_null(self):
-        '''Comprueba que se lanza un error al intentar borrar un servicio que no existe'''
-
-        request = self.factory.delete(endpoint)
+            response.data, {"detail": f"You do not have permission to perform this action."})
+        
+    
+    def test_service_not_exist(self):
+        '''Comprueba que se lanza un error cuando no existe el servicio'''
 
         # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
+        user, token = create_user()
+
+        # Apuntamos el endpoint con el método get
+        request = self.factory.delete(endpoint + "/1")
+
         force_authenticate(request, user, token)
 
-        service_id = 1
-
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=service_id)
+        response = ServiceDetails.as_view()(request, service_id=1)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            response.data, {"res": f"Servicio con id {service_id} no existe."})
+            response.data, {"detail": f"Service 1 not found."})
 
-    def test_services_delete_valid(self):
-        '''Comprueba que se borra el servicio correctamente'''
+    def test_not_authenticated(self):
+        '''Comprueba que se lanza un error cuando el usuario no está autenticado'''
 
-        request = self.factory.delete(endpoint)
-
-        # Creamos un nuevo usario autenticado
-        user, token = create_authenticated_user()
-        force_authenticate(request, user, token)
-
-        # Registramos un serivcio a este usuario
-        service = create_service(user)
-        service.save()
+        # Apuntamos el endpoint con el método delete
+        request = self.factory.delete(endpoint + "/1")
 
         # Llamamos a la vista
-        response = ServicesDetailsApiView.as_view()(request, service_id=service.id)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data, {"res": "Servicio eliminado."})
+        response = ServiceDetails.as_view()(request)
+        response.render()
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(json.loads(response.content), {"detail": f"Authentication credentials were not provided."})
