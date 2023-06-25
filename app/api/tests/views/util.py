@@ -14,6 +14,7 @@ class ConectorForTest(IConector):
     def getDetails() -> dict:
         return {
             'name': ConectorForTest.name,
+            'description': f"{ConectorForTest.name} description",
         }
 
     async def notify(data, options={}) -> dict or None:
