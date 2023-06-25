@@ -36,11 +36,7 @@ class TestListSubscriptions(APITestCase):
         other_user, _ = create_user()
         conector = create_conector()
         service_not_owned = create_service(other_user)
-        subscription_not_owned = create_subscription(service_not_owned, conector)
-        
-        conector.save()
-        service_not_owned.save()
-        subscription_not_owned.save()
+        create_subscription(service_not_owned, conector) # subscription_not_owned
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint)
@@ -64,17 +60,12 @@ class TestListSubscriptions(APITestCase):
         # Creamos un conector para cada suscripción
         conector1 = create_conector()
         conector2 = create_conector()
-        conector1.save()
-        conector2.save()
+
 
        # Registramos un servicio por otro usuario
         other_user, _ = create_user()
-        other_service = Service(
-            name="other_user_service", owner=other_user)
-        other_service.save()
-
-        other_subscription = create_subscription(other_service, conector1)
-        other_subscription.save()
+        other_service = create_service(other_user)
+        _ = create_subscription(other_service, conector1)
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
@@ -82,13 +73,10 @@ class TestListSubscriptions(APITestCase):
 
         # Creamos un servicio a nombre del usuario
         service = create_service(user)
-        service.save()
 
         # Creamos dos nuevas suscripciones para cada servicio
         subscription1 = create_subscription(service, conector1)
         subscription2 = create_subscription(service, conector2)
-        subscription1.save()
-        subscription2.save()
 
         # Llamamos a la vista
         response = SubscriptionsList.as_view()(request)

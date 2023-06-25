@@ -16,12 +16,9 @@ class TestDetailsServices(APITestCase):
     def test_exist(self):
         '''Comprueba que se muestra el conector cuando el usuario esta autenticado y existe'''
 
-
         # Creamos un nuevo usario autenticado
         user, token = create_user()
-
         conector = create_conector("Conector1")
-        conector.save()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{conector.id}')

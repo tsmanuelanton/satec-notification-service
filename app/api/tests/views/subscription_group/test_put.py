@@ -20,14 +20,8 @@ class TestPutSubscriptionGroup(APITestCase):
         conector = create_conector()
         group = create_subscription_group(service)
         subscription_in_group = create_subscription(service, conector, group)
-
-        service.save()
-        conector.save()
-        group.save()
-        subscription_in_group.save()
-
         new_service = create_service(user)
-        new_service.save()
+
         data = {
             "name": "Grupo de prueba",
             "service": new_service.id,
@@ -63,12 +57,7 @@ class TestPutSubscriptionGroup(APITestCase):
         service = create_service(user)
         conector = create_conector()
         group = create_subscription_group(service)
-        subscription_in_group = create_subscription(service, conector, group)
-
-        service.save()
-        conector.save()
-        group.save()
-        subscription_in_group.save()
+        create_subscription(service, conector, group) # subscription_in_group
 
         data = {
             "name": "Grupo de prueba",
@@ -100,13 +89,8 @@ class TestPutSubscriptionGroup(APITestCase):
         group = create_subscription_group(service)
         subscription_in_group = create_subscription(service, conector, group)
 
-        service.save()
-        conector.save()
-        group.save()
-        subscription_in_group.save()
-
         new_service = create_service(user)
-        new_service.save()
+
         data = {
             "service": new_service.id,
             "meta": {
@@ -139,11 +123,6 @@ class TestPutSubscriptionGroup(APITestCase):
         conector = create_conector()
         group = create_subscription_group(service)
         subscription_in_group = create_subscription(service, conector, group)
-
-        service.save()
-        conector.save()
-        group.save()
-        subscription_in_group.save()
         
         data = {
         }
@@ -171,12 +150,7 @@ class TestPutSubscriptionGroup(APITestCase):
         service = create_service(another_user)
         conector = create_conector()
         group = create_subscription_group(service)
-        subscription_in_group = create_subscription(service, conector, group)
-
-        service.save()
-        conector.save()
-        group.save()
-        subscription_in_group.save()
+        create_subscription(service, conector, group) # subscription_in_group
         
         data = {
             "name": "Grupo de prueba",
@@ -223,9 +197,6 @@ class TestPutSubscriptionGroup(APITestCase):
         user, _ = create_user()
         service = create_service(user)
         group = create_subscription_group(service)
-        
-        service.save()
-        group.save()
 
         data = {
             "name": "Grupo de prueba",

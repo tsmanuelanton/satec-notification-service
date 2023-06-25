@@ -19,7 +19,6 @@ class TestDetailsServices(APITestCase):
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_user()
         my_service = create_service(user)
-        my_service.save()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{my_service.id}')
@@ -38,9 +37,8 @@ class TestDetailsServices(APITestCase):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''
 
         # Creamos otro usuario con un servicio
-        other_user, other_token = create_user()
+        other_user, _ = create_user()
         not_owned_service = create_service(other_user)
-        not_owned_service.save()
 
         request = self.factory.get(f'{endpoint}/{not_owned_service.id}')
 

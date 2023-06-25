@@ -20,12 +20,8 @@ class TestPostSubscriptions(APITestCase):
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
-
         conector = create_conector()
         service = create_service(user)
-
-        conector.save()
-        service.save()
 
         # Cuerpo del POST
         data = {
@@ -54,10 +50,7 @@ class TestPostSubscriptions(APITestCase):
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
-
         conector = create_conector()
-
-        conector.save()
 
         # Cuerpo del POST
         data = {

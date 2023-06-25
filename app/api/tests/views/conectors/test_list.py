@@ -19,11 +19,8 @@ class TestDetailsServices(APITestCase):
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
-
         conector1 = create_conector("Conector1")
         conector2 = create_conector("Conector2")
-        conector1.save()
-        conector2.save()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint)

@@ -6,6 +6,8 @@ from api.models import Service
 from api.serializers import ServicesSerializer
 
 import logging
+
+from api.util import get_service
 logger = logging.getLogger("file_logger")
 
 
@@ -135,13 +137,3 @@ class ServiceDetails(APIView):
             {"detail": "Servicio eliminado."},
             status=status.HTTP_200_OK
         )
-
-
-def get_service(service_id):
-    '''
-    Busca en la BD un servicio concreto
-    '''
-    try:
-        return Service.objects.get(id=service_id)
-    except Service.DoesNotExist:
-        return None

@@ -10,7 +10,6 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que es válido un grupo con todos los campos y cuyo servicio existe'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
 
         data = {"name": "conectorNuevo", "service": service.id, "meta": {"key": "value"}}
         serializer = SubscriptionGroupsSerializer(data=data)
@@ -27,7 +26,6 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que se lanza un error indicando que falta el nombre'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
 
         data = {"service": service.id, "meta": {"key": "value"}}
         serializer = SubscriptionGroupsSerializer(data=data)
@@ -47,7 +45,6 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que es válido cuando falta el campo meta'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
 
         data = {"name": "conectorNuevo", "service": service.id}
         serializer = SubscriptionGroupsSerializer(data=data)

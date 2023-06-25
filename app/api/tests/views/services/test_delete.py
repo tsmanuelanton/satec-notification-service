@@ -18,7 +18,7 @@ class TestDeleteServices(APITestCase):
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_user()
         my_service = create_service(user)
-        my_service.save()
+
 
         # Apuntamos el endpoint con el método get
         request = self.factory.delete(f'{endpoint}/{my_service.id}')
@@ -38,7 +38,6 @@ class TestDeleteServices(APITestCase):
         # Creamos otro usuario con un servicio
         other_user, _ = create_user()
         not_owned_service = create_service(other_user)
-        not_owned_service.save()
 
         request = self.factory.delete(f'{endpoint}/{not_owned_service.id}')
 

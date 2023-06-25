@@ -38,8 +38,7 @@ class TestListServices(APITestCase):
 
         # Registramos un servicio por otro usuario
         other_user, _ = create_user()
-        Service(name="other_user_service",
-                owner=other_user).save()
+        create_service(other_user)
 
         # Creamos un usario autenticado
         user, token = create_user()
@@ -48,8 +47,6 @@ class TestListServices(APITestCase):
         # Creamos varios servicios a nombre del usuario user
         created_service0 = create_service(user)
         created_service1 = create_service(user)
-        created_service0.save()
-        created_service1.save()
 
         # Llamamos a la vista
         response = ServicesList.as_view()(request)

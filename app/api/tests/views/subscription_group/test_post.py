@@ -18,15 +18,10 @@ class TestPostSubscriptionGroup(APITestCase):
         user, token = create_user()
         service = create_service(user)
         conector = create_conector()
-        subscription= create_subscription(service, conector)
+        create_subscription(service, conector)
         group = create_subscription_group(service)
-        subscription_in_group = create_subscription(service, conector, group)
-
-        service.save()
-        conector.save()
-        subscription.save()
-        group.save()
-        subscription_in_group.save()
+        #subscription_in_group
+        create_subscription(service, conector, group)
 
         new_group = {
             "name": "Grupo de prueba",
@@ -50,13 +45,8 @@ class TestPostSubscriptionGroup(APITestCase):
         user, token = create_user()
         service = create_service(user)
         conector = create_conector()
-        subscription= create_subscription(service, conector)
-        group = create_subscription_group(service)
-
-        service.save()
-        conector.save()
-        subscription.save()
-        group.save()
+        create_subscription(service, conector)
+        create_subscription_group(service)
 
         new_group = {
             "name": "Grupo de prueba",
@@ -108,7 +98,6 @@ class TestPostSubscriptionGroup(APITestCase):
 
         user, token = create_user()
         service = create_service(user)
-        service.save()
 
         new_group = {
             "service": service.id,
@@ -130,7 +119,6 @@ class TestPostSubscriptionGroup(APITestCase):
 
         user, _ = create_user()
         service = create_service(user)
-        service.save()
 
         group = {
             "name": "Grupo de prueba",

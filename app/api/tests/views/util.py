@@ -44,6 +44,8 @@ def create_user():
     user = User.objects.create_user(
         new_name, f"{new_name}@test.com", f"passwd{new_name}")
     token = Token.objects.create(user=user)
+    user.save()
+    token.save()
 
     return user, token
 
@@ -52,7 +54,9 @@ def create_service(user):
     '''Devuelve un nuevo servicio y, opcionalmente, lo registra con el token pasado por parámetros'''
     # Genera un nombre un aleatorio
     new_name = gen_random_word()
-    return Service(name=new_name, owner=user)
+    service = Service(name=new_name, owner=user)
+    service.save()
+    return service
 
 
 def create_conector(name: str = None):
@@ -60,7 +64,9 @@ def create_conector(name: str = None):
     # Genera un nombre un aleatorio
     new_name = name or gen_random_word()
 
-    return Conector(name= name or new_name, description=f"Descripción de {new_name}", meta={"Key": new_name})
+    conector = Conector(name= name or new_name, description=f"Descripción de {new_name}", meta={"Key": new_name})
+    conector.save()
+    return conector
 
 
 def create_subscription(service: Service, conector: Conector, group : SubscriptionGroup = None) -> Subscription:
@@ -68,11 +74,15 @@ def create_subscription(service: Service, conector: Conector, group : Subscripti
     y conector que se pasan por parámetros'''
     # Genera un nombre un aleatorio
     value = gen_random_word()
-    return Subscription(service=service, conector=conector,
+    subscription = Subscription(service=service, conector=conector,
                          subscription_data={"Field": value}, group=group)
+    subscription.save()
+    return subscription
 
 def create_subscription_group(service: Service) -> Subscription:
     '''Devuelve un nuevo grupo de suscripción asociada al servicio que se pase por parámetros'''
     # Genera un nombre un aleatorio
     value = gen_random_word()
-    return SubscriptionGroup(service=service, name=value)
+    group = SubscriptionGroup(service=service, name=value)
+    group.save()
+    return group

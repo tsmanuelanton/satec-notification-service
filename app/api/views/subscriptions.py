@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from api.models import Subscription
 from api.serializers import SubscriptionsSerializer
 from api.models import Service
-from api.util import has_permissions
+from api.util import get_subscription, has_permissions
 
 import logging
 logger = logging.getLogger("file_logger")
@@ -127,14 +127,4 @@ class SubscriptionDetails(APIView):
         logger.info(
             f"Suscripción {subscription_id} eliminada correctamente.")
         return Response({"detail": "Suscripción eliminada."})
-
-
-def get_subscription(subscription_id):
-    '''
-    Busca en la BD la suscripción con id subscription_id
-    '''
-    try:
-        return Subscription.objects.get(id=subscription_id)
-    except Subscription.DoesNotExist:
-        return None
 

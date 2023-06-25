@@ -25,10 +25,6 @@ class TestDeleteSubscriptions(APITestCase):
         service = create_service(user)
         subscription = create_subscription(service, conector)
 
-        conector.save()
-        service.save()
-        subscription.save()
-
         # Llamamos a la vista
         response = SubscriptionDetails.as_view()(
             request, subscription_id=subscription.id)
@@ -45,14 +41,10 @@ class TestDeleteSubscriptions(APITestCase):
         conector = create_conector()
 
         # Creamos otro usario con una suscripción
-        other_user, other_token = create_user()
+        other_user, _ = create_user()
         not_owner_service = create_service(other_user)
 
         other_subscription = create_subscription(not_owner_service, conector)
-
-        conector.save()
-        not_owner_service.save()
-        other_subscription.save()
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()

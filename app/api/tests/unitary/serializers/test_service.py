@@ -9,7 +9,6 @@ class TestConectorSerializer(APITestCase):
     def test_user_exists(self):
         '''Comprueba que es válido un servicio con todos los campos y cuyo dueño existe'''
         user, _ = create_user()
-        user.save()
 
         data = {"name": "conectorNuevo", "owner": user.id, "meta": {"key": "value"}}
         serializer = ServicesSerializer(data=data)
@@ -25,7 +24,6 @@ class TestConectorSerializer(APITestCase):
     def test_missing_name(self):
         '''Comprueba que se lanza un error indicando que falta el nombre'''
         user, _ = create_user()
-        user.save()
 
         data = {"owner": user.id, "meta": {"key": "value"}}
         serializer = ServicesSerializer(data=data)
@@ -44,7 +42,6 @@ class TestConectorSerializer(APITestCase):
     def test_missing_meta(self):
         '''Comprueba que es válido cuando falta el campo meta'''
         user, _ = create_user()
-        user.save()
 
         data = {"name": "conectorNuevo", "owner": user.id}
         self.assertTrue(ServicesSerializer(data=data).is_valid())

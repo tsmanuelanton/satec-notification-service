@@ -25,23 +25,16 @@ class TestPostNotifications(APITransactionTestCase):
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
         
-        subscription_out_group = create_subscription(service, conector)
+        #subscription out group
+        create_subscription(service, conector)
         
         group1 = create_subscription_group(service)
         subscription_in_group1 = create_subscription(service, conector, group1)
         subscription2_in_group1 = create_subscription(service, conector, group1)
 
         group2 = create_subscription_group(service)
-        subscription_in_group2 = create_subscription(service, conector, group2)
-
-        conector.save()
-        service.save()
-        subscription_out_group.save()
-        group1.save()
-        group2.save()
-        subscription_in_group1.save()
-        subscription2_in_group1.save()
-        subscription_in_group2.save()
+        #subscription in group 2
+        create_subscription(service, conector, group2)
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -76,8 +69,8 @@ class TestPostNotifications(APITransactionTestCase):
         
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
-        
-        subscription_out_group = create_subscription(service, conector)
+        #subscription out group
+        create_subscription(service, conector)
         
         group1 = create_subscription_group(service)
         subscription_in_group1 = create_subscription(service, conector, group1)
@@ -86,14 +79,6 @@ class TestPostNotifications(APITransactionTestCase):
         group2 = create_subscription_group(service)
         subscription_in_group2 = create_subscription(service, conector, group2)
 
-        conector.save()
-        service.save()
-        subscription_out_group.save()
-        group1.save()
-        group2.save()
-        subscription_in_group1.save()
-        subscription2_in_group1.save()
-        subscription_in_group2.save()
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -132,13 +117,8 @@ class TestPostNotifications(APITransactionTestCase):
         other_service = create_service(user)
         
         group_of_other_service = create_subscription_group(other_service)
-        subscription_in_group1 = create_subscription(service, conector, group_of_other_service)
-
-        conector.save()
-        service.save()
-        other_service.save()
-        group_of_other_service.save()
-        subscription_in_group1.save()
+        # subscription_in_group1
+        create_subscription(service, conector, group_of_other_service)
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -179,12 +159,12 @@ class TestPostNotifications(APITransactionTestCase):
         subscription_in_group1 = create_subscription(service, conector, group1)
         subscription2_in_group1 = create_subscription(service, conector, group1)
 
-        conector.save()
-        service.save()
-        subscription_out_group.save()
-        group1.save()
-        subscription_in_group1.save()
-        subscription2_in_group1.save()
+
+
+
+
+
+
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -221,8 +201,8 @@ class TestPostNotifications(APITransactionTestCase):
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)
 
-        conector.save()
-        service.save()
+
+
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -253,8 +233,8 @@ class TestPostNotifications(APITransactionTestCase):
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)
 
-        conector.save()
-        service.save()
+
+
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -284,8 +264,8 @@ class TestPostNotifications(APITransactionTestCase):
         conector = create_conector(ConectorForTest.name)
         service = create_service(other_user)
 
-        conector.save()
-        service.save()
+
+
 
         # Cuerpo del POST sin el campo message
         data = {

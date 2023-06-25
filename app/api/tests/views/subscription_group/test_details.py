@@ -22,12 +22,6 @@ class TestGetSubscriptionGroup(APITestCase):
         group = create_subscription_group(service)
         subscription_in_group = create_subscription(service, conector, group)
 
-        service.save()
-        conector.save()
-        subscription.save()
-        group.save()
-        subscription_in_group.save()
-
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{subscription.id}')
         force_authenticate(request, user, token)
@@ -48,9 +42,6 @@ class TestGetSubscriptionGroup(APITestCase):
         service = create_service(another_user)
         group = create_subscription_group(service)
 
-        service.save()
-        group.save()
-
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{group.id}')
         force_authenticate(request, user, token)
@@ -70,9 +61,6 @@ class TestGetSubscriptionGroup(APITestCase):
         service = create_service(another_user)
         group = create_subscription_group(service)
 
-        service.save()
-        group.save()
-
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{group.id + 1}')
         force_authenticate(request, user, token)
@@ -90,9 +78,6 @@ class TestGetSubscriptionGroup(APITestCase):
         user, _ = create_user()
         service = create_service(user)
         group = create_subscription_group(service)
-
-        service.save()
-        group.save()
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(f'{endpoint}/{group.id}')

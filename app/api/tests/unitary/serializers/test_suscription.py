@@ -10,11 +10,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que es válido la suscipción con todos los campos y todos válidos'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             "field_required": "value1",
@@ -29,11 +26,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si el servicio no existe'''
         user, _ = create_user()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         service = create_service(user)
-        service.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             "field_required": "value1",
@@ -49,9 +43,9 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si el conector no existe'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
+
         group = create_subscription_group(service)
-        group.save()
+
 
         subscription_data = {
             "field_required": "value1",
@@ -67,11 +61,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si el conector no existe'''
         user, _ = create_user()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         service = create_service(user)
-        service.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             # "field_required": "value1",
@@ -90,9 +81,9 @@ class TestConectorSerializer(APITestCase):
         ''''Comprueba que no es válido la suscipción si el grupo no existe'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
+
         conector = create_conector(ConectorForTest.name)
-        conector.save()
+
 
         subscription_data = {
             "field_required": "value1",
@@ -108,11 +99,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el servicio'''
         user, _ = create_user()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         service = create_service(user)
-        service.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             "field_required": "value1",
@@ -128,9 +116,7 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el conector'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             "field_required": "value1",
@@ -146,11 +132,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el subscription_data'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         group = create_subscription_group(service)
-        group.save()
 
         data = {"service": service.id, "conector": conector.id, "group": group.id}
         serializer = SubscriptionsSerializer(data=data)
@@ -161,9 +144,7 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el grupo'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
 
         subscription_data = {
             "field_required": "value1",
@@ -178,11 +159,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el subscription_data'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         group = create_subscription_group(service)
-        group.save()
 
         data = {"service": service.id, "conector": conector.id, "group": group.id}
         serializer = SubscriptionsSerializer(data=data)
@@ -193,11 +171,8 @@ class TestConectorSerializer(APITestCase):
         '''Comprueba que no es válido la suscipción si falta el meta'''
         user, _ = create_user()
         service = create_service(user)
-        service.save()
         conector = create_conector(ConectorForTest.name)
-        conector.save()
         group = create_subscription_group(service)
-        group.save()
 
         subscription_data = {
             "field_required": "value1",

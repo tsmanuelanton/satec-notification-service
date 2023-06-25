@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from api.models import SubscriptionGroup
 from api.serializers import SubscriptionGroupsSerializer
 from api.models import Service
-from api.util import has_permissions
+from api.util import get_group, has_permissions
 
 import logging
 logger = logging.getLogger("file_logger")
@@ -126,13 +126,3 @@ class SubscriptionGroupDetails(APIView):
         logger.info(
             f"Grupo de suscripción {group_id} eliminada correctamente.")
         return Response({"detail": "Grupo de suscripción eliminada."})
-
-
-def get_group(group_id):
-    '''
-    Busca en la BD el grupo con id group_id
-    '''
-    try:
-        return SubscriptionGroup.objects.get(id=group_id)
-    except SubscriptionGroup.DoesNotExist:
-        return None

@@ -19,7 +19,6 @@ class TestUpdateServices(APITestCase):
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_user()
         my_service = create_service(user)
-        my_service.save()
 
         data = {
             "name": "name"
@@ -44,10 +43,8 @@ class TestUpdateServices(APITestCase):
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
-
         # Creamos el servicio a actualizar
         service = create_service(user)
-        service.save()
 
         data = {
             "owner": -1
@@ -68,14 +65,12 @@ class TestUpdateServices(APITestCase):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''
 
         # Creamos otro usuario con un servicio
-        other_user, other_token = create_user()
+        other_user, _ = create_user()
         not_owned_service = create_service(other_user)
-        not_owned_service.save()
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_user()
-        my_service = create_service(user)
-        my_service.save()
+        create_service(user)
 
         data = {
             "name": "name"

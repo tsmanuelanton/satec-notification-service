@@ -29,14 +29,6 @@ class TestUpdateSubscriptions(APITestCase):
         group2 = create_subscription_group(service2)
         subscription = create_subscription(service, conector, group1)
 
-
-        conector.save()
-        service.save()
-        service2.save()
-        group1.save()
-        group2.save()
-        subscription.save()
-
         # Cuerpo del PUT
         data = {
             "subscription_data": {"field_required": "Value"},
@@ -74,10 +66,6 @@ class TestUpdateSubscriptions(APITestCase):
         conector = create_conector()
         subscription = create_subscription(service, conector)
 
-        service.save()
-        conector.save()
-        subscription.save()
-
         # Cuerpo del PUT
         data = {
             "service": service.id + 1,
@@ -110,10 +98,6 @@ class TestUpdateSubscriptions(APITestCase):
         service_not_owned = create_service(other_user)
         conector = create_conector()
         subscription_not_owned = create_subscription(service_not_owned, conector)
-
-        service_not_owned.save()
-        conector.save()
-        subscription_not_owned.save()
 
         # Apuntamos el endpoint con el método put
         request = self.factory.put(f"{endpoint}/{subscription_not_owned}")

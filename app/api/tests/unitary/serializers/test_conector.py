@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from api.serializers import ConectorsSerializer
-from api.models import Conector
+from api.tests.views.util import create_conector
 endpoint = "/v1/conectors"
 
 class TestConectorSerializer(APITestCase):
@@ -8,15 +8,13 @@ class TestConectorSerializer(APITestCase):
     def test_full_unique(self):
         '''Comprueba que es válido un conector con todos los campos y  con nombre único'''
 
-        Conector.objects.create(name="conectorPrevio").save()
-
         data = {"name": "conectorNuevo", "description": "descripción", "meta": {"key": "value"}}
         self.assertTrue(ConectorsSerializer(data=data).is_valid())
     
     def test_full_not_unique(self):
         '''Comprueba que se muestra un error indicando que el nombre ya existe'''
 
-        Conector.objects.create(name="conectorPrevio").save()
+        create_conector("conectorPrevio")
         data = {"name": "conectorPrevio", "description": "descripción", "meta": {"key": "value"}}
         serializer = ConectorsSerializer(data=data)
         self.assertFalse(serializer.is_valid())

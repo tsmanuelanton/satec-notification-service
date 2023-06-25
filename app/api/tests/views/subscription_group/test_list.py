@@ -34,17 +34,11 @@ class TestGetSubscriptionGroups(APITestCase):
         service = create_service(user)
         group1 = create_subscription_group(service)
         group2 = create_subscription_group(service)
-        service.save()
-        group1.save()
-        group2.save()
 
         another_user, _ = create_user()
         service_not_owned = create_service(another_user)
-        group_not_owned = create_subscription_group(service_not_owned)
-
-        service_not_owned.save()
-        group_not_owned.save()
-        
+        # group_not_owned
+        create_subscription_group(service_not_owned)
 
         # Apuntamos el endpoint con el método get
         request = self.factory.get(endpoint)
