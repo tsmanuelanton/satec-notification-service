@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang='es'>
+
+<head>
+    <!-- Datos que describen el documento -->
+    <meta charset='UTF-8' />
+    <title>Satec Notification Service- Registro</title>
+    <meta name='author' content='Manuel Antón' />
+    <meta name='keywords' content='Satec Notfication Service, registro, notificaciones, mensajería, API' />
+    <meta name='description' content='formulario de registro a Satec Notification Service' />
+    <meta name='viewport' content='width=device-width, initial scale=1.0' />
+
+    <link rel='stylesheet' href='{% static 'frontend/style.css' %}'>
+</head>
+
+<body>
+    <h1>Satec Notification Service</h1>
+    <main>
+        <h2>Registrarse como Dueño de Servicio</h2>
+        <p>Registrate poara empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
+        <form name='datos'>
+            <fieldset>
+                <legend>Datos personales</legend>
+                <p><label for='nombre'>Nombre</label></p>
+                <input id='nombre' name='nombre' type='text' required autocomplete='on' />
+                <p><label for='apellidos'>Apellidos</label></p>
+                <input id='apellidos' name='apellidos' type='text' required />
+                <p><label for='correo'>Email</label></p>
+                <input id='correo' name='correo' type='email' required/>
+            </fieldset>
+            <fieldset>
+                <legend>Cuestionario</legend>
+                <p><label for='usoProfesional'> Indicar sio es para uso profesional</label></p>
+                <select name='usoProfesional'=>
+                    <option value='si'>Sí</option>
+                    <option value='si'>No</option>
+                </select>
+                <p><label for='nombreOrganizacon'>Nombre Organización</p>
+                    <input id='nombreOrganizacon' name='nombreOrganizacon' type='text' required autocomplete='on' /></label>
+                <p><label for='descripcion'>Descripción del uso</label></p>
+                <textarea id='descripcion' name='descripcion' placeholder='Escriba aquí'></textarea>
+            </fieldset>
+            <div>
+                <button id='submit' name='submit'><p>Enviar información</p></button>
+            </div>
+        </form>
+    </main>
+    <footer>
+        <p>Página realizada por <a href='https://github.com/UO276213'> Manuel Antón de la Calle </a> - Estudiante de la Universidad de Oviedo</p>
+        <address>
+            <p>Si necesitas contactarme no lo dudes a través de <a href='mailto:uo276213@uniovi.es'> mi correo</a>.</p>
+        </address>
+    </footer>
+</body>
+
+</html>
