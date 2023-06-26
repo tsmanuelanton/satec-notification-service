@@ -30,4 +30,4 @@ ENV DJANGO_DATABASE=$DJANGO_DATABASE
 
 CMD python manage.py collectstatic --noinput && \
     python manage.py migrate && \
-    python manage.py manageconectors add
+    python manage.py manageconectors --add
