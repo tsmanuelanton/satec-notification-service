@@ -111,16 +111,13 @@ body {
     font-size: 1.4em;
   }
 
-  input {
+  input:not([type=radio]) {
     width: 50%;
     height: 1.5em;
     border: none;
+    font-size: small;
   }
 
-  *:focus {
-    outline: none;
-}
-  
   /* Especificidad 001 */
   button, select, input, option,
   textarea {
@@ -138,14 +135,11 @@ body {
     resize: none;
   }
 
-div {
-    display: flex;
-    margin-top: 1em;
-}
-
 button {
-    margin-left: auto;
-    padding: 1em;
+  display: flex;
+  margin-top: 1em;
+  margin-left: auto;
+  padding: 1em;
 }
 
 input:disabled {
