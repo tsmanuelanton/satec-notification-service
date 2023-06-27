@@ -95,6 +95,11 @@ class ServiceDetails(APIView):
                 {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
+        
+        # Sobrescribimos el owner del servicio
+        data = {
+            **request.dat, "owner": request.user.id
+        }
 
         serializer = ServicesSerializer(
             instance=service, data=request.data, partial=True)
