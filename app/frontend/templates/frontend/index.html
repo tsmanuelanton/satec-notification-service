@@ -1,61 +1,47 @@
+{% extends "frontend/base.html" %}
 {% load static %}
-<!DOCTYPE HTML>
-<html lang='es'>
 
-<head>
-    <!-- Datos que describen el documento -->
-    <meta charset='UTF-8' />
+{% block title %}
     <title>Satec Notification Service- Registro</title>
-    <meta name='author' content='Manuel Antón' />
-    <meta name='keywords' content='Satec Notfication Service, registro, notificaciones, mensajería, API' />
-    <meta name='description' content='formulario de registro a Satec Notification Service' />
-    <meta name='viewport' content='width=device-width, initial scale=1.0' />
+{% endblock %}
 
-    <link rel='stylesheet' href='{% static 'frontend/style.css' %}'>
-    <script src='{% static 'frontend/script.js' %}' defer></script>
-</head>
+{% block scripts %}
+<script src='{% static 'frontend/script.js' %}' defer></script>
+{% endblock %}
 
-<body>
-    <h1>Satec Notification Service</h1>
-    <main>
-        <h2>Registrarse como Dueño de Servicio</h2>
-        <p>Registrate para empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
-        <form action="" method="post">
-            {% csrf_token %}
-            <fieldset>
-                <legend>Datos personales</legend>
-                <p><label for='name'>Nombre</label></p>
-                {{form.name}}
-                {{form.errors.name}}
-                <p><label for='lastname'>Apellidos</label></p>
-                {{form.lastname}}
-                {{form.errors.lastname}}
-                <p><label for='email'>Email</label></p>
-                {{form.email}}
-                {{form.errors.email}}
-            </fieldset>
-            <fieldset>
-                <legend>Cuestionario</legend>
-                <p><label for='id_commercial_use'> Indicar si es para uso profesional</label></p>
-                {{form.commercial_use}}
-                {{form.errors.commercial_use}}
-                <p><label for='company_name'>Nombre organización</p>
-                {{form.company_name }}
-                {{form.errors.company_name}}
-                <p><label for='description'>Descripción del uso</label></p>
-                {{form.description}}
-                {{form.errors.description}}
-            </fieldset>
-            <div>
-                <button type="Submit">Enviar información</button>
-            </div>
-        </form>
-    </main>
-    <footer>
-        <p>Página realizada por <a href='https://github.com/UO276213'> Manuel Antón de la Calle </a> - Estudiante de la Universidad de Oviedo</p>
-        <address>
-            <p>Si necesitas contactarme no lo dudes a través de <a href='mailto:uo276213@uniovi.es'> mi correo</a>.</p>
-        </address>
-    </footer>
-</body>
-</html>
+{% block content %}
+<main>
+    <h2>Registrarse como Dueño de Servicio</h2>
+    <p>Registrate para empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Datos personales</legend>
+            <p><label for='name'>Nombre</label></p>
+            {{form.name}}
+            {{form.errors.name}}
+            <p><label for='lastname'>Apellidos</label></p>
+            {{form.lastname}}
+            {{form.errors.lastname}}
+            <p><label for='email'>Email</label></p>
+            {{form.email}}
+            {{form.errors.email}}
+        </fieldset>
+        <fieldset>
+            <legend>Cuestionario</legend>
+            <p><label for='id_commercial_use'> Indicar si es para uso profesional</label></p>
+            {{form.commercial_use}}
+            {{form.errors.commercial_use}}
+            <p><label for='company_name'>Nombre organización</p>
+            {{form.company_name }}
+            {{form.errors.company_name}}
+            <p><label for='description'>Descripción del uso</label></p>
+            {{form.description}}
+            {{form.errors.description}}
+        </fieldset>
+        <div>
+            <button type="Submit">Enviar información</button>
+        </div>
+    </form>
+</main>
+{% endblock %}
