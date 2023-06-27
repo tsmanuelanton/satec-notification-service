@@ -30,7 +30,7 @@ body {
   /* Especificidad 001 */
   h2 {
     margin-top: 0;
-    margin-bottom: 0%;
+    margin-bottom: 1em;
     font-size: 2em;
     color: #342c49;
     background-color: transparent;
@@ -45,10 +45,6 @@ body {
     margin-bottom: 0%;
   }
 
-  form {
-    margin-top: 1em;
-  }
-  
   /* Especificidad 001 */
   p {
     font-weight: bold;
@@ -161,4 +157,15 @@ ul {
   padding-left: 0;
   color: brown;
   font-size: small;
+}
+
+.container {
+  padding: 2em;
+
+  border: solid 1px rgba(255, 255, 255, 0.5);
+  color: #2d2b3a;
+}
+
+span {
+  font-size: xx-large;
 }
