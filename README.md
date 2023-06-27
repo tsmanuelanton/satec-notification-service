@@ -7,10 +7,10 @@ Servicio que permite registrar usarios para enviarles notificaciones/mensajes a 
 El sistema ofrece una API desarrollada con Django Rest Framework para gestionar las suscripciones, ver plataformas disponibles o añadir aplicaciones que generen notificaciones.
 
 ## Tabla de Contenidos 📚
-- [Plataformas disponibles 📋](#plataformas-disponibles)
-- [Rutas de la API 🗺️](#rutas-de-la-api)
-- [Instalación 📦](#instalación)
-- [Recomendaciones 💡](#recomendaciones) 
+- [Plataformas disponibles 📋](#plataformas-disponibles-)
+- [Rutas de la API 🗺️](#rutas-de-la-api-)
+- [Instalación 📦](#instalación-)
+- [Recomendaciones 💡](#recomendaciones-) 
 ### Plataformas disponibles 📋
 
 El servicio ofrece, actualmente, los siguientes medios para recibir las notificaciones/mensajes.

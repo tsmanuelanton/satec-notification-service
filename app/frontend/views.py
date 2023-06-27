@@ -4,13 +4,14 @@ from django.views import View
 from django.views.generic import FormView
 from frontend.forms import RegisterForm
 import requests
+from django.conf import settings
 
 env = environ.Env()
 environ.Env.read_env()
 service_id = env("ID_SERVICE_REGISTER_SNS", None)
 token = env("TOKEN_SERVICE_REGISTER_SNS", None)
 
-if not service_id or not token:
+if settings.DEBUG != True and not service_id or not token:
     raise ValueError("ID_SERVICE_REGISTER_SNS and TOKEN_SERVICE_REGISTER_SNS must be set in .env file")
 
 
@@ -38,7 +39,7 @@ def send_mail(data):
             "body": format_data(data)
         }
     }
-    res = requests.post("http://localhost:8000/api/v1/notifications2",headers=headers, json=data)
+    res = requests.post("http://localhost:8000/api/v1/notifications",headers=headers, json=data)
     if not res.ok:
         raise Exception(f"Error al enviar el email: STATUS CODE {res.status_code} - {res.reason} ")
 
