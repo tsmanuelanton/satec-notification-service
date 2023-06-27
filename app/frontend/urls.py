@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from frontend.views import RegisterView, SuccessView
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', RegisterView.as_view(), name='index'),
+    path("success", SuccessView.as_view(), name='success'),
 ]

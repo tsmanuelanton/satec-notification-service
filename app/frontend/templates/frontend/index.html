@@ -12,37 +12,42 @@
     <meta name='viewport' content='width=device-width, initial scale=1.0' />
 
     <link rel='stylesheet' href='{% static 'frontend/style.css' %}'>
+    <script src='{% static 'frontend/script.js' %}' defer></script>
 </head>
 
 <body>
     <h1>Satec Notification Service</h1>
     <main>
         <h2>Registrarse como Dueño de Servicio</h2>
-        <p>Registrate poara empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
-        <form name='datos'>
+        <p>Registrate para empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
+        <form action="" method="post">
+            {% csrf_token %}
             <fieldset>
                 <legend>Datos personales</legend>
-                <p><label for='nombre'>Nombre</label></p>
-                <input id='nombre' name='nombre' type='text' required autocomplete='on' />
-                <p><label for='apellidos'>Apellidos</label></p>
-                <input id='apellidos' name='apellidos' type='text' required />
-                <p><label for='correo'>Email</label></p>
-                <input id='correo' name='correo' type='email' required/>
+                <p><label for='name'>Nombre</label></p>
+                {{form.name}}
+                {{form.errors.name}}
+                <p><label for='lastname'>Apellidos</label></p>
+                {{form.lastname}}
+                {{form.errors.lastname}}
+                <p><label for='email'>Email</label></p>
+                {{form.email}}
+                {{form.errors.email}}
             </fieldset>
             <fieldset>
                 <legend>Cuestionario</legend>
-                <p><label for='usoProfesional'> Indicar sio es para uso profesional</label></p>
-                <select name='usoProfesional'=>
-                    <option value='si'>Sí</option>
-                    <option value='si'>No</option>
-                </select>
-                <p><label for='nombreOrganizacon'>Nombre Organización</p>
-                    <input id='nombreOrganizacon' name='nombreOrganizacon' type='text' required autocomplete='on' /></label>
-                <p><label for='descripcion'>Descripción del uso</label></p>
-                <textarea id='descripcion' name='descripcion' placeholder='Escriba aquí'></textarea>
+                <p><label for='id_commercial_use'> Indicar si es para uso profesional</label></p>
+                {{form.commercial_use}}
+                {{form.errors.commercial_use}}
+                <p><label for='company_name'>Nombre organización</p>
+                {{form.company_name }}
+                {{form.errors.company_name}}
+                <p><label for='description'>Descripción del uso</label></p>
+                {{form.description}}
+                {{form.errors.description}}
             </fieldset>
             <div>
-                <button id='submit' name='submit'><p>Enviar información</p></button>
+                <button type="Submit">Enviar información</button>
             </div>
         </form>
     </main>
@@ -53,5 +58,4 @@
         </address>
     </footer>
 </body>
-
 </html>

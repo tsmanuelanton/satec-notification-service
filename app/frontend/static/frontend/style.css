@@ -17,33 +17,6 @@ body {
   }
   
   /* Especificidad 001 */
-  
-  nav {
-    font-size: 1.7em;
-    background-color: rgba(255, 255, 255, 0.5);
-    color: #000;
-    border: #25b7c4 1px solid;
-    padding: 1em;
-    grid-area: nav;
-    border-radius: 1rem;
-  }
-  
-  /* Especificidad 002 */
-  
-  nav > a {
-    padding-left: 1em;
-    color: #6c55f9;
-    background-color: transparent;
-  }
-  
-  /* Especificidad 012 */
-  
-  nav > a:hover {
-    font-weight: bolder;
-    text-decoration: wavy;
-  }
-  
-  /* Especificidad 001 */
   h1 {
     font-size: 4em;
     color: wheat;
@@ -72,12 +45,14 @@ body {
     margin-bottom: 0%;
   }
 
+  form {
+    margin-top: 1em;
+  }
   
   /* Especificidad 001 */
-  
-  p,
-  li {
+  p {
     font-weight: bold;
+    margin: 1em 0em 0.2em;
   }
   
   /* Especificidad 001 */
@@ -93,13 +68,6 @@ body {
     text-decoration: underline;
   }
   
-  img[alt="Imágen de la 3ra edición del libro de Bert Bos"] {
-    display: block;
-    height: 50vh;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
   main {
     grid-area: main;
     margin: auto;
@@ -108,18 +76,6 @@ body {
   /* Especificidad 001 */
   section {
     margin-bottom: 5em;
-  }
-  
-  /* Especificidad 001 */
-  aside {
-    padding: 1vh 2.5vw 1vh;
-    background-color: rgba(255, 255, 255, 0.5);
-    color: #2d2b3a;
-    border: #25b7c4 1px solid;
-    text-align: center;
-    grid-area: aside;
-    border-radius: 1rem;
-    min-width: 18em;
   }
   
   /* Especificidad 001 */
@@ -143,56 +99,7 @@ body {
   }
   
   /* Especificidad 001 */
-  video {
-    max-width: 32vw;
-    height: 18vw;
-    text-align: right;
-    padding-right: 1vw;
-  }
-  
-  /* Especificidad 001 */
-  
-  table {
-    border: solid 1px rgba(255, 255, 255, 0.5);
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #2d2b3a;
-    border-radius: 1rem;
-  }
-  
-  /* Especificidad 001 */
-  
-  th {
-    padding: 1.2em 1.2em 1.2em 1em;
-    text-align: left;
-    font-weight: 500;
-    font-size: 1.3em;
-    background-color: transparent;
-    color: #2d2b3a;
-    text-transform: uppercase;
-  }
-  
-  /* Especificidad 001 */
-  
-  td {
-    padding: 1.5em 1.5em 1.5em 1em;
-    text-align: left;
-    vertical-align: middle;
-    background-color: transparent;
-    color: #2d2b3a;
-    border-bottom: solid 1px rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Especificidad 001 */
-  
-  caption {
-    /* color: white; */
-    /* background-color: transparent; */
-    font-size: x-large;
-  }
-  
-  /* Especificidad 001 */
   fieldset {
-    border-radius: 1rem;
     border: solid 1px rgba(255, 255, 255, 0.5);
     background-color: rgba(255, 255, 255, 0.1);
     color: #2d2b3a;
@@ -207,9 +114,19 @@ body {
   legend {
     font-size: 1.4em;
   }
+
+  input {
+    width: 50%;
+    height: 1.5em;
+    border: none;
+  }
+
+  *:focus {
+    outline: none;
+}
   
   /* Especificidad 001 */
-  input,
+  button, select, input, option,
   textarea {
     background-color: rgba(255, 255, 255, 0.178);
     color: #2d2b3a;
@@ -232,4 +149,16 @@ div {
 
 button {
     margin-left: auto;
+    padding: 1em;
+}
+
+input:disabled {
+    background-color: rgba(23, 79, 100, 0.24);
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  color: brown;
+  font-size: small;
 }
