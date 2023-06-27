@@ -6,15 +6,6 @@ from frontend.forms import RegisterForm
 import requests
 from django.conf import settings
 
-env = environ.Env()
-environ.Env.read_env()
-service_id = env("ID_SERVICE_REGISTER_SNS", None)
-token = env("TOKEN_SERVICE_REGISTER_SNS", None)
-
-if settings.DEBUG != True and not service_id or not token:
-    raise ValueError("ID_SERVICE_REGISTER_SNS and TOKEN_SERVICE_REGISTER_SNS must be set in .env file")
-
-
 class SuccessView(View):
     def get(self, request):
         return render(request, "frontend/success.html")
@@ -31,9 +22,16 @@ class RegisterView(FormView):
     
 def send_mail(data):
     '''Usa la API  de notificaicones para enviar un email al administrador'''
+
+    env = environ.Env()
+    environ.Env.read_env()
+    
+    service_id = env("ID_SERVICE_REGISTER_SNS")
+    token = env("TOKEN_SERVICE_REGISTER_SNS")
+
     headers = {'Content-type': 'application/json', 'Authorization': f"Token {token}"}
     data = {
-        "service": 1,
+        "service": service_id,
         "message": {
             "title": "Solicitud de registro",
             "body": format_data(data)
