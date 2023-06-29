@@ -17,8 +17,8 @@ class EmailConector(IConector):
         email = EmailMessage()
         email['From'] = data['subscription_data']['From']
         email['To'] = data['subscription_data']['To']
-        email['Subject'] = data['subscription_data']['Subject']
-        content = data['message']['title'] + '\n' + data['message']['body']
+        email['Subject'] = data['message']['title']
+        content = data['message']['body']
         email.set_content(content)
 
         smtp_host = data['subscription_data'].get('smtp_host', "localhost")
