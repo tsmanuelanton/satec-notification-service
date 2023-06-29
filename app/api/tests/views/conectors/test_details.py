@@ -4,7 +4,7 @@ from rest_framework.test import APIRequestFactory, APITestCase, force_authentica
 from api.views.conectors import ConectorDetails
 from rest_framework import status
 from api.tests.views.util import FakeSerializer, create_conector, create_user
-from api.serializers import ConectorsSerializer
+from api.serializers import ConectorsSerializer, get_serializer_fields
 
 endpoint = "/v1/conectors"
 
@@ -15,7 +15,8 @@ class TestDetailsServices(APITestCase):
         self.factory = APIRequestFactory()
 
     def test_exist(self):
-        '''Comprueba que se muestra el conector cuando el usuario esta autenticado y existe'''
+        '''Comprueba que se muestra el id, nombre, descripción, meta y la interfaz para la suscripción
+          cuando el usuario esta autenticado y existe'''
 
         # Creamos un nuevo usario autenticado
         user, token = create_user()
@@ -34,12 +35,15 @@ class TestDetailsServices(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(
                 response.data, ConectorsSerializer(conector, context={"show_details": True}).data)
-            
-            declared_fields = FakeSerializer.__dict__["_declared_fields"]
-            field_pairs = {key:value for key, value in declared_fields.items()}
-            self.assertEqual(
-                response.data["interface"], str(field_pairs))
 
+            interface = get_serializer_fields(FakeSerializer)
+            self.assertEqual(response.data, {
+                "id": conector.id,
+                "name": conector.name,
+                "description": conector.description,
+                "meta": conector.meta,
+                "interface": interface,
+            })
 
     def test_not_exist(self):
         '''Comprueba que se lanza un error cuando no existe el conector'''
@@ -69,4 +73,5 @@ class TestDetailsServices(APITestCase):
         response = ConectorDetails.as_view()(request, conector_id=1)
         response.render()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(json.loads(response.content), {"detail": f"Authentication credentials were not provided."})
+        self.assertEqual(json.loads(response.content), {
+                         "detail": f"Authentication credentials were not provided."})

@@ -75,6 +75,7 @@ def create_subscription(service: Service, conector: Conector, group : Subscripti
     y conector que se pasan por parámetros'''
     # Genera un nombre un aleatorio
     value = gen_random_word()
+
     subscription = Subscription(service=service, conector=conector,
                          subscription_data={"Field": value}, group=group)
     subscription.save()

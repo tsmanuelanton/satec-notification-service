@@ -30,8 +30,13 @@ class TestDetailsServices(APITestCase):
             request, service_id=my_service.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data, ServicesSerializer(my_service).data)
+        self.assertDictContainsSubset({
+            "id": my_service.id,
+            "name": my_service.name,
+            "owner": user.id,
+            "meta": my_service.meta
+        }, response.data)
+        self.assertIsNotNone(response.data["created_at"])
 
     def test_not_owner(self):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''

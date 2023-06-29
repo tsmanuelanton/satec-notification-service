@@ -19,13 +19,6 @@ class TestGetSubscriptionGroup(APITestCase):
         conector = create_conector()
         subscription= create_subscription(service, conector)
         group = create_subscription_group(service)
-        subscription_in_group = create_subscription(service, conector, group)
-
-
-
-
-
-
 
         # Apuntamos el endpoint con el método delete
         request = self.factory.delete(f'{endpoint}/{subscription.id}')
@@ -35,8 +28,8 @@ class TestGetSubscriptionGroup(APITestCase):
         response = SubscriptionGroupDetails.as_view()(
             request, group_id=group.id)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, {'detail': 'Grupo de suscripción eliminada.'})
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data, {'detail': f'Resource {subscription.id} deleted successfully.'})
     
     def test_not_owner(self):
         '''Comprueba que se muestra error de permisos  cuando el usuario no es el dueño'''
@@ -74,7 +67,7 @@ class TestGetSubscriptionGroup(APITestCase):
             request, group_id=group.id + 1)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {"detail": f"Grupo de suscripción con id {group.id + 1} no existe."})
+        self.assertEqual(response.data, {"detail": f"Subscription group {group.id + 1} not found."})
 
     def test_not_authenticated(self):
         '''Comprueba que se muestran un error cuando el usuario no está autenticado'''

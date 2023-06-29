@@ -36,7 +36,7 @@ class SubscriptionGroupsList(APIView):
         Registra un grupo en el sistema.
         '''
 
-        serializer = SubscriptionGroupsSerializer(data=request.data, context={"show_details": True})
+        serializer = SubscriptionGroupsSerializer(data=request.data, context={"show_details": True, "request": request})
         if not serializer.is_valid():
             logger.error(
                 f"Error al registrar el grupo - {serializer.errors}.")
@@ -44,7 +44,7 @@ class SubscriptionGroupsList(APIView):
 
         group = serializer.save()
         logger.info(
-            f"Grupo nuevo con id {group.id} registrada al servicio '{group.service.name.upper()}' con id {group.service.id}.")
+            f"Grupo nuevo con id {group.id} registrada al servicio '{group.service.name}' con id {group.service.id}.")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -87,7 +87,7 @@ class SubscriptionGroupDetails(APIView):
             )
 
         serializer = SubscriptionGroupsSerializer(
-            instance=subscription_group, data=request.data, partial=True, context={"show_details": True})
+            instance=subscription_group, data=request.data, partial=True, context={"show_details": True, "request": request})
         if serializer.is_valid():
             serializer.save()
             logger.info(

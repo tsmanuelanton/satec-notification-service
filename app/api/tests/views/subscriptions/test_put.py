@@ -24,9 +24,8 @@ class TestUpdateSubscriptions(APITestCase):
 
         conector = create_conector(ConectorForTest.name)
         service = create_service(user)
-        service2 = create_service(user)
         group1 = create_subscription_group(service)
-        group2 = create_subscription_group(service2)
+        group2 = create_subscription_group(service)
         subscription = create_subscription(service, conector, group1)
 
         # Cuerpo del PUT
@@ -47,7 +46,7 @@ class TestUpdateSubscriptions(APITestCase):
             # Llamamos a la vista
             response = SubscriptionDetails.as_view()(request, subscription_id=subscription.id)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
             
             self.assertDictContainsSubset({"subscription_data": {"field_required": "Value"},
                 "group": group2.id,

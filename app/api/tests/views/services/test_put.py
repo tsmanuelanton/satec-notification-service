@@ -14,18 +14,22 @@ class TestUpdateServices(APITestCase):
         self.factory = APIRequestFactory()
 
     def test_valid(self):
-        '''Comprueba que se actualiza el servicio cuando el usuario está autenticado, es el dueño y no hay errores'''
+        '''Comprueba que se actualiza el servicio excepto usuario y la fecha de creación
+          cuando el usuario está autenticado,el servicio existe y es el dueño'''
 
         # Creamos un nuevo usario autenticado con un servicio
         user, token = create_user()
+        other_user, _ = create_user()
         my_service = create_service(user)
 
         data = {
-            "name": "name"
+            "name": "newName",
+            "owner": other_user.id,
+            "created_at": "2021-01-01"
         }
 
         # Apuntamos el endpoint con el método put y el campo name actualizado
-        request = self.factory.put(f'{endpoint}/{my_service.id}', data=data)
+        request = self.factory.put(f'{endpoint}/{my_service.id}', data=data, format="json")
 
         force_authenticate(request, user, token)
 
@@ -33,33 +37,32 @@ class TestUpdateServices(APITestCase):
         response = ServiceDetails.as_view()(
             request, service_id=my_service.id)
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data["name"], data["name"])
-        self.assertEqual(response.data.get("created_at"), my_service.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
-        
+        self.assertEqual(response.data["owner"], user.id)
+        self.assertNotEqual(response.data["created_at"], data["created_at"])
+    
+    def test_missing_all(self):
+        '''Comprueba que no se actualiza ningún campo si no se introduce ningún campo'''
 
-    def test_invalid(self):
-        '''Comprueba que se lanza un error cuando el usuario está autenticado, es el dueño y hay errores'''
-
-        # Creamos un nuevo usario autenticado
         user, token = create_user()
-        # Creamos el servicio a actualizar
         service = create_service(user)
 
-        data = {
-            "owner": -1
-        }
+        data = {}
 
-        # Apuntamos el endpoint con el método put y un cuerpo vacío
-        request = self.factory.put(f'{endpoint}/{service.id}', data=data)
+        # Apuntamos el endpoint con el método put y el campo name actualizado
+        request = self.factory.put(f'{endpoint}/{service.id}', data=data, format="json")
+
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
-        response = ServiceDetails.as_view()(request, service_id=service.id)
-        response.render()
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(json.loads(response.content),{'owner': ['Invalid pk "-1" - object does not exist.']})
+        response = ServiceDetails.as_view()(
+            request, service_id=service.id)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["name"], service.name)
+        self.assertEqual(response.data["owner"], user.id)
+        self.assertNotEqual(response.data["created_at"], service.created_at)
 
     def test_not_owner(self):
         '''Comprueba que se lanza un error cuando el servicio no pertene al usuario'''

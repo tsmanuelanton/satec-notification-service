@@ -11,44 +11,54 @@ class TestPostSubscriptionGroup(APITestCase):
 
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
-
-    def test_authenticated_service_exists(self):
-        '''Comprueba que se crea el grupo cuando el usuario está autenticado y existe el servicio'''
-
+    
+    def test_owned_service(self):
+        '''Comprueba que se crea y muestra un nuevo grupo de suscripciones registrado
+          a nombre del usuario si el usuario es el dueño del servicio'''
         user, token = create_user()
         service = create_service(user)
-        conector = create_conector()
-        create_subscription(service, conector)
-        group = create_subscription_group(service)
-        #subscription_in_group
-        create_subscription(service, conector, group)
 
-        new_group = {
-            "name": "Grupo de prueba",
-            "service": service.id,
-        }
-
+        data = {"name": "conectorNuevo", "service": service.id, "meta": {"key": "value"}}
+        
         # Apuntamos el endpoint con el método get
-        request = self.factory.post(endpoint, data=new_group, format="json")
+        request = self.factory.post(endpoint, data=data, format="json")
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
         response = SubscriptionGroupsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["name"], new_group["name"])
-        self.assertEqual(response.data["service"], service.id)
+        self.assertDictContainsSubset(data, response.data)
+        self.assertIsNotNone(response.data["created_at"])
     
-    def test_authenticated_service_no_exists(self):
+    def test_service_not_owned(self):
+        '''Comprueba que se lanza un error si el usuario no es el dueño del servicio'''
+        user, token = create_user()
+        other_user, token = create_user()
+        service = create_service(other_user)
+
+        data = {"name": "conectorNuevo", "service": service.id, "meta": {"key": "value"}}
+        
+        # Apuntamos el endpoint con el método get
+        request = self.factory.post(endpoint, data=data, format="json")
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = SubscriptionGroupsList.as_view()(request)
+        response.render()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(json.loads(response.content), {"service": ["El servicio no existe o no pertenece al usuario"]})
+
+    def test_service_no_exists(self):
         '''Comprueba que se lanza un error cuando el usuario está autenticado y no existe el servicio'''
 
         user, token = create_user()
         service = create_service(user)
         conector = create_conector()
         create_subscription(service, conector)
-        create_subscription_group(service)
 
-        new_group = {
+        data = {
             "name": "Grupo de prueba",
             "service": service.id + 1,
             "meta": {
@@ -57,7 +67,7 @@ class TestPostSubscriptionGroup(APITestCase):
         }
 
         # Apuntamos el endpoint con el método get
-        request = self.factory.post(endpoint, data=new_group, format="json")
+        request = self.factory.post(endpoint, data=data, format="json")
         force_authenticate(request, user, token)
 
         # Llamamos a la vista
@@ -65,12 +75,10 @@ class TestPostSubscriptionGroup(APITestCase):
         response.render()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(SubscriptionGroup.objects.all().count(), 1)
         self.assertEqual(json.loads(response.content), {"service":[f"Invalid pk \"{service.id + 1}\" - object does not exist."]})
-        self.assertTrue(response.data.get("created_at", False), "missing created_at")
 
 
-    def test_authenticated_missing_service(self):
+    def test_missing_service(self):
         '''Comprueba que se lanza un error cuando falta el servicio en la petición'''
 
         user, token = create_user()
@@ -93,8 +101,47 @@ class TestPostSubscriptionGroup(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(json.loads(response.content), {"service": ["This field is required."]})
 
-    def test_authenticated_missing_name_and_optionals(self):
-        '''Comprueba que se lanza un error cuando falta el campo nombre y otros opcionales'''
+    def test_missing_name(self):
+        '''Comprueba que se lanza un error indicando que falta el nombre'''
+        user, token = create_user()
+
+        service = create_service(user)
+
+        data = {"service": service.id, "meta": {"key": "value"}}
+        # Apuntamos el endpoint con el método get
+        request = self.factory.post(endpoint, data=data, format="json")
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = SubscriptionGroupsList.as_view()(request)
+        response.render()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(json.loads(response.content), {"name": ["This field is required."]})
+
+
+    def test_missing_meta(self):
+        '''Comprueba que se crea un grupo correctamente si no se especifica el meta'''
+        user, token = create_user()
+        service = create_service(user)
+
+        data = {"name": "conectorNuevo", "service": service.id}
+        # Apuntamos el endpoint con el método get
+        request = self.factory.post(endpoint, data=data, format="json")
+        force_authenticate(request, user, token)
+
+        # Llamamos a la vista
+        response = SubscriptionGroupsList.as_view()(request)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertDictContainsSubset({
+            "name": "conectorNuevo",
+            "service": service.id,
+            "meta": {}
+        }, response.data)
+
+    def test_missing_all(self):
+        '''Comprueba que se lanza un error indicando que faltan los campos nombre y servicio'''
 
         user, token = create_user()
         service = create_service(user)

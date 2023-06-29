@@ -33,8 +33,16 @@ class TestDetailsServices(APITestCase):
             response = ConectorsList.as_view()(request)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(
-                response.data, [ConectorsSerializer(conector1).data, ConectorsSerializer(conector2).data])
+            self.assertEqual(response.data[0], {
+                "id": conector1.id,
+                "name": conector1.name,
+                "description": conector1.description
+            })
+            self.assertEqual(response.data[1], {
+                "id": conector2.id,
+                "name": conector2.name,
+                "description": conector2.description
+            })
             # Comprobamos que se NO muestra la interfaz del conector para la suscripción
             self.assertIsNone(response.data[0].get("interface"))
 
@@ -64,4 +72,5 @@ class TestDetailsServices(APITestCase):
         response = ConectorsList.as_view()(request)
         response.render()
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(json.loads(response.content), {"detail": f"Authentication credentials were not provided."})
+        self.assertEqual(json.loads(response.content), {
+                         "detail": f"Authentication credentials were not provided."})
