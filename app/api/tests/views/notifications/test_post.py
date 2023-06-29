@@ -2,14 +2,13 @@ import asyncio
 import json
 from rest_framework.test import APIRequestFactory, force_authenticate, APITransactionTestCase
 from api.views.notifications import NotificationDetails
-from api.tests.views.util import ConectorForTest, create_user, create_conector, create_service, create_subscription, create_subscription_group
+from api.tests.views.util import ConectorForTest, ConectorForTestB, create_user, create_conector, create_service, create_subscription, create_subscription_group
 from rest_framework import status
 from unittest import mock
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 endpoint = "/api/v1/conectors"
-
 
 class TestPostNotifications(APITransactionTestCase):
 
@@ -196,7 +195,7 @@ class TestPostNotifications(APITransactionTestCase):
                                    {'subscription_id': subscription2_in_group1.id,
                                     'conector_name': 'ConectorForTest'}])
 
-    def test_not_owner_service(self):
+    def test_notification_fails(self):
         '''Comprueba que se muestra un error si el servicio no pertenece al usuario autenticado'''
 
         # Creamos un nuevo usario
@@ -253,14 +252,17 @@ class TestPostNotifications(APITransactionTestCase):
         self.assertEqual(json.loads(response.content), {
                          'message': {'title': ['This field is required.']}})
 
-    def test_not_owner_service(self):
-        '''Comprueba que se muestra un error si el servicio no pertenece al usuario autenticado'''
+    def test_notification_fails(self):
+        '''Comprueba que se muestran información del envío si este falla'''
 
         # Creamos un nuevo usario
         user, token = create_user()
-        other_user, _ = create_user()
+        service = create_service(user)
 
-        service = create_service(other_user)
+        conector1 = create_conector(ConectorForTest.name)
+        conector2 = create_conector(ConectorForTestB.name)
+        subscription1 = create_subscription(service, conector1)
+        subscription2 = create_subscription(service, conector2)
 
         # Cuerpo del POST sin el campo message
         data = {
@@ -269,18 +271,34 @@ class TestPostNotifications(APITransactionTestCase):
                 "title": "TestTitle",
                 "body": "TestBody"
             },
+            # Forzamos el fallo del envío de la notificación en el conector2
+            "options": {
+                f"{conector2.id}": {
+                    "force_fail": True
+                }
+            }
         }
 
-        # POST  del data
-        request = self.factory.post(endpoint, data, format="json")
-        force_authenticate(request, user, token)
+        # Mockeamos el import de los conectores para que solo se cargue el conector de test
+        with mock.patch("api.util.import_conectors") as mock_import_conectors:
 
-        # # Llamamos a la vista
-        response = asyncio.run(NotificationDetails.as_view()(request))
-        response.render()
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(json.loads(response.content), {
-                         "detail": "You do not have permission to perform this action."})
+            mock_import_conectors.return_value = [
+                ConectorForTest, ConectorForTestB]
+
+            # POST  del data
+            request = self.factory.post(endpoint, data, format="json")
+            force_authenticate(request, user, token)
+
+            # Llamamos a la vista
+            response = asyncio.run(NotificationDetails.as_view()(request))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data["successful"],
+                             [{'subscription_id': subscription1.id,
+                               'conector_name': ConectorForTest.name}])
+            self.assertEqual(response.data["fails"],
+                             [{'subscription_id': subscription2.id,
+                               'conector_name': ConectorForTestB.name,
+                               "description": {"force_fail": True}}])
 
     def test_token_not_sent(self):
         '''Comprueba que se muestra un error si el token no se envia'''

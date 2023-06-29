@@ -1,3 +1,6 @@
+from rest_framework.permissions import IsAuthenticated
+from adrf.views import APIView
+import asyncio
 from rest_framework import status
 from rest_framework.response import Response
 from api.models import Service, Subscription
@@ -7,12 +10,11 @@ from api.util import has_permissions, import_conectors
 import logging
 logger = logging.getLogger("file_logger")
 
-import asyncio
-from adrf.views import APIView
-from rest_framework.permissions import IsAuthenticated
+
 class NotificationDetails(APIView):
-    
+
     permission_classes = [IsAuthenticated]
+
     async def post(self, request,  *args, **kwargs):
         '''
         Envía el mensaje recibido al conector aducado
@@ -31,21 +33,21 @@ class NotificationDetails(APIView):
                 {"detail": "You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
-        
+
         # Enviamos las notificaciones a los suscriptores
         successful, fails = await notify_subscriptors(
             msgSerializer.validated_data,
-                service)
+            service)
 
         logger.info(
             f"El servicio {service.name} con id {service.id} ha enviado {len(successful)} notificaciones exitosas y han fallado {len(fails)}.")
 
         return Response({"detail": f"Sent {len(successful)} succesfull notifications and failed {len(fails)}.",
-                            "successful": successful,
-                            "fails": fails}, status=status.HTTP_200_OK)
+                         "successful": successful,
+                         "fails": fails}, status=status.HTTP_200_OK)
 
-    
-async def notify_subscriptor(subscription,message, options):
+
+async def notify_subscriptor(subscription, message, options):
     '''Obtinene los conectores cargados y envía los datos al conector adecuado'''
     try:
         conector = subscription.conector
@@ -66,21 +68,22 @@ async def notify_subscriptors(notification_req, service):
     '''Envía las notificaciones a los suscriptores del servicio'''
     successes, fails = [], []
     subscriptions = Subscription.objects.filter(
-        service=service).select_related("conector", "group") # Obtenemos las suscripciones del servicio y sus conectores
-    
-    tasks = [] # Almacena las tareas send_data_to_conector
+        service=service).select_related("conector", "group")  # Obtenemos las suscripciones del servicio y sus conectores
+
+    tasks = []  # Almacena las tareas send_data_to_conector
     async for subscription in subscriptions:
         if len(notification_req["restricted_to_groups"]) > 0:
             if subscription.group == None or subscription.group.id not in notification_req["restricted_to_groups"]:
                 continue
         message = notification_req["message"]
-        conector_options =  notification_req["options"].get(str(subscription.conector.id))
+        conector_options = notification_req["options"].get(str(subscription.conector.id), {})
 
-        coroutine = notify_subscriptor(subscription,message, conector_options)
+        coroutine = notify_subscriptor(subscription, message, conector_options)
         tasks.append(coroutine)
 
     for task in asyncio.as_completed(tasks):
-        subscription, error_info =  await task # Obtenemos el resultado de la tarea send_data_to_conector
+        # Obtenemos el resultado de la tarea send_data_to_conector
+        subscription, error_info = await task
         notification_context = {
             "subscription_id": subscription.id,
             "conector_name": subscription.conector.name
