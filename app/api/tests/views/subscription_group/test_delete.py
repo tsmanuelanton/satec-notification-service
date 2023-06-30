@@ -1,8 +1,8 @@
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
-from api.views.services import ServiceDetails
 from rest_framework import status
 from api.tests.views.util import create_conector, create_service, create_user, create_subscription, create_subscription_group
 from api.views.subscription_groups import SubscriptionGroupDetails
+from api.models import Subscription, SubscriptionGroup
 
 endpoint = "/v1/groups"
 
@@ -17,8 +17,8 @@ class TestGetSubscriptionGroup(APITestCase):
         user, token = create_user()
         service = create_service(user)
         conector = create_conector()
-        subscription= create_subscription(service, conector)
         group = create_subscription_group(service)
+        subscription= create_subscription(service, conector, group)
 
         # Apuntamos el endpoint con el método delete
         request = self.factory.delete(f'{endpoint}/{subscription.id}')
@@ -30,6 +30,12 @@ class TestGetSubscriptionGroup(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data, {'detail': f'Resource {subscription.id} deleted successfully.'})
+
+        # Comprobamos que se ha eliminado el grupo
+        self.assertIsNone(SubscriptionGroup.objects.filter(id=group.id).first())
+        # Comprobamos que no se ha eliminado la suscripción y el grupo se null
+        self.assertIsNotNone(Subscription.objects.filter(id=subscription.id).first())
+        self.assertIsNone(Subscription.objects.filter(id=subscription.id).first().group)
     
     def test_not_owner(self):
         '''Comprueba que se muestra error de permisos  cuando el usuario no es el dueño'''
