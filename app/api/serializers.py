@@ -34,9 +34,9 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
                 valid = False
 
             # Comprobamos con el serializador específico del conector si los datos de la suscripción son válidos
-            subscription_data = self.initial_data.get("subscription_data")
-            conector = self.validated_data.get("conector")
-            if conector:
+            subscription_data = self.validated_data.get("subscription_data")
+            conector = self.validated_data.get("conector") or getattr(self.instance, "conector", None)
+            if conector and subscription_data:
                 valid_sub, errors_sub = is_good_subscription_data(subscription_data, conector)
                 if not valid_sub:
                     self._errors["subscription_data"] = [errors_sub]
