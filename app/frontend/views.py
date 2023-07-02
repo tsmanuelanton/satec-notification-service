@@ -13,6 +13,7 @@ class SuccessView(View):
 class RegisterView(FormView):
     template_name = "frontend/index.html"
     form_class = RegisterForm
+    # Se considera success url cuando el formulario es valido,
     success_url = "/success"
 
     def form_valid(self, form):
@@ -37,7 +38,7 @@ def send_mail(data):
             "body": format_data(data)
         }
     }
-    res = requests.post("http://localhost:8000/api/v1/notifications",headers=headers, json=data)
+    res = requests.post(f"{settings.BASE_URL}/api/v1/notifications",headers=headers, json=data)
     if not res.ok:
         raise Exception(f"Error al enviar el email: STATUS CODE {res.status_code} - {res.reason} ")
 
