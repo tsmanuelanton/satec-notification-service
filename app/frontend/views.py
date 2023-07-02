@@ -5,6 +5,9 @@ from django.views.generic import FormView
 from frontend.forms import RegisterForm
 import requests
 from django.conf import settings
+import logging
+logger = logging.getLogger("file_logger")
+
 
 class SuccessView(View):
     def get(self, request):
@@ -17,11 +20,12 @@ class RegisterView(FormView):
     success_url = "/success"
 
     def form_valid(self, form):
+        context = self.get_context_data()
         if form.is_valid():
-            send_mail(form.cleaned_data)
-        return super().form_valid(form)
+            context["error"] = send_mail(form.cleaned_data)
+        return render(self.request, "frontend/success.html", context=context)
     
-def send_mail(data):
+def send_mail(data) -> str:
     '''Usa la API  de notificaicones para enviar un email al administrador'''
 
     env = environ.Env()
@@ -40,7 +44,10 @@ def send_mail(data):
     }
     res = requests.post(f"{settings.BASE_URL}/api/v1/notifications",headers=headers, json=data)
     if not res.ok:
-        raise Exception(f"Error al enviar el email: STATUS CODE {res.status_code} - {res.reason} ")
+        logger.error(
+            f"Error al enviar el email: ERROR {res.status_code} - {res.reason} -{res.json()}")
+        return "Se ha producido un error al enviar el email, por favor intente más tarde."
+    return None
 
 def format_data(data):
     return f'''
