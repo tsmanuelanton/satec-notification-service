@@ -1,3 +1,10 @@
+# Docker-compose file for production
+# Make sure to set the environment variables before running this file in a .env file
+# Also make sure to create a folder called data/certs and put the certificates there
+# The certificates must be named as follows:
+#   - server.crt
+#   - server.key
+
 services:
   satec-notification-service:
     build:
@@ -5,10 +12,13 @@ services:
       dockerfile: Dockerfile.prod
     environment:
       - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-      - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
-      - DJANGO_DATABASE=$DJANGO_DATABASE
-      - ID_SERVICE_REGISTER_SNS=$ID_SERVICE_REGISTER_SNS
-      - TOKEN_SERVICE_REGISTER_SNS=$TOKEN_SERVICE_REGISTER_SNS
+      - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS # Dominio del host
+      - DJANGO_DATABASE=$DJANGO_DATABASE # Nombre de la base de datos
+      - ID_SERVICE_REGISTER_SNS=$ID_SERVICE_REGISTER_SNS      # ID del servicio que envía mensajes de nuevos dueños de servicio
+      - TOKEN_SERVICE_REGISTER_SNS=$TOKEN_SERVICE_REGISTER_SNS # Token de acceso al servicio que
+                                                                # envía mensajes de nuevos dueños de servicio 
+      - DJANGO_THIS_HOST=$DJANGO_THIS_HOST # HOST
+      - DJANGO_DEBUG=$DJANGO_DEBUG # 1 para obtener los errores de la aplicación
     command:
       - /bin/bash
       - -c
@@ -27,8 +37,10 @@ services:
     volumes: 
       - static_volume:/app/staticfiles
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./data/certs:/etc/nginx/certs
     ports: 
       - 80:80
+      - "443:443"
     depends_on: 
       - satec-notification-service
 

@@ -30,7 +30,8 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="NOT_SECRET_KEY" if DEBUG else Non
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="").split(" ")
 CORS_ALLOW_ALL_ORIGINS = True
-BASE_URL = env("DJANGO_BASE_URL", default="http://localhost:8000")
+THIS_HOST = env("DJANGO_THIS_HOST", default="http://localhost:8000")
+CSRF_TRUSTED_ORIGINS = [THIS_HOST, "https://127.0.0.1","https://localhost"]
 
 # Application definition
 

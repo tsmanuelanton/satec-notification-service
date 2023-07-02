@@ -4,7 +4,6 @@ from django.views import View
 from django.views.generic import FormView
 from frontend.forms import RegisterForm
 import requests
-from django.conf import settings
 import logging
 logger = logging.getLogger("file_logger")
 
@@ -42,7 +41,8 @@ def send_mail(data) -> str:
             "body": format_data(data)
         }
     }
-    res = requests.post(f"{settings.BASE_URL}/api/v1/notifications",headers=headers, json=data)
+    # Se hace por localhost ya que es para la otra app de django que escucha en el purto 8000
+    res = requests.post(f"http://localhost:8000/api/v1/notifications",headers=headers, json=data)
     if not res.ok:
         logger.error(
             f"Error al enviar el email: ERROR {res.status_code} - {res.reason} -{res.json()}")
