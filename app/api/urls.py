@@ -4,6 +4,7 @@ from .views.notifications import NotificationDetails
 from .views.services import ServiceDetails, ServicesList
 from .views.subscriptions import SubscriptionsList, SubscriptionDetails
 from .views.subscription_groups import SubscriptionGroupsList, SubscriptionGroupDetails
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("subscriptions", SubscriptionsList.as_view(), name="subscriptions"),
@@ -17,5 +18,8 @@ urlpatterns = [
     path("conectors", ConectorsList.as_view(), name="conectors"),
     path("conectors/<int:conector_id>", ConectorDetails.as_view()),
     path("notifications", NotificationDetails.as_view(), name="notifications"),
-
+    path('schema', TemplateView.as_view(
+        template_name='api/swagger-ui.html',
+    ), name='schema'),
+    
 ]

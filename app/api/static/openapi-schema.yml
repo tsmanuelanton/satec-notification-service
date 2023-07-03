@@ -1,0 +1,788 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: 1.0.0
+paths:
+  /api/v1/subscriptions:
+    get:
+      operationId: listSubscriptions
+      description: Devuelve las suscripciones del usuario.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/SubscriptionLite'
+          description: "Operación exitosa"
+        '401':
+          description: "Usuario no autenticado"
+        '403':
+          description: "Error de permisos"
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    post:
+      operationId: createSubscriptionsList
+      description: "Registra una suscripci\xF3n en el sistema."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostSubscription'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: "Operación exitosa"
+        '400':
+          description: 'Servicio no válido'
+        '401':
+          description: 'Usuario no autenticado'
+      tags:
+      - api
+  /api/v1/subscriptions/{subscription_id}:
+    get:
+      operationId: retrieveSubscriptionDetails
+      description: "Muestra los detalles de la suscripci\xF3n con el id pasado por\
+        \ par\xE1metros."
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: "Operación exitosa"
+        '401':
+          description: "Usuario no autenticado"
+        '403':
+          description: "Error de permisos"
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    put:
+      operationId: updateSubscriptionDetails
+      description: "Actualizar una suscripci\xF3n"
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutSubscription'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+          description: 'Operación exitosa'
+        '400':
+          description: 'Error en la validación'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    delete:
+      operationId: destroySubscriptionDetails
+      description: "Eliminar una suscripci\xF3n del sistema"
+      parameters:
+      - name: subscription_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+  /api/v1/groups:
+    get:
+      operationId: listSubscriptionGroups
+      description: Muestra los grupos existentes.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                      $ref: '#/components/schemas/Group'
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    post:
+      operationId: createSubscriptionGroupsList
+      description: Registra un grupo en el sistema.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostGroup'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: 'Operación exitosa'
+        '400':
+          description: 'Error en la validación'
+        '401':
+          description: 'Usuario no autenticado'
+      tags:
+      - api
+  /api/v1/groups/{group_id}:
+    get:
+      operationId: retrieveSubscriptionGroupDetails
+      description: "Muestra los detalles del grupo de suscipci\xF3n con el id pasado\
+        \ por par\xE1metros."
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    put:
+      operationId: updateSubscriptionGroupDetails
+      description: Actualizar un grupo de suscriptores.
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutGroup'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+        '400':
+          description: 'Error en la validación'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+    delete:
+      operationId: destroySubscriptionGroupDetails
+      description: "Eliminar una grupo de suscripci\xF3n del sistema"
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usuario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+  /api/v1/services:
+    get:
+      operationId: listServices
+      description: Muestra los servicios registrados del usuario.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceLite'
+          description: 'Operación exitosa'
+        '401':
+          'description': 'Usuario no autenticado'
+      tags:
+      - api
+    post:
+      operationId: createServicesList
+      description: Registra un servicio en el sistema.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostService'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: 'Operación exitosa'
+        '400':
+          'description': 'Error en la validación'
+        '401':
+          'description': 'Usuario no autenticado'
+      tags:
+      - api
+  /api/v1/services/{service_id}:
+    get:
+      operationId: retrieveServiceDetails
+      description: "Muestra los detalles del servicio con id pasado por par\xE1metros."
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: 'Operación exitosa'
+        '401':
+           description: 'Usuario no autenticado'
+        '403':
+           description: 'Error de permisos'
+        '404':
+           description: "Recurso no encontrado"
+      tags:
+      - api
+    put:
+      operationId: updateServiceDetails
+      description: Actualizar un servicio
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutService'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: 'Operación exitosa'
+        '400':
+          description: 'Error de validación'
+        '401':
+          description: 'Usario no autenticado'
+        '403':
+          description: 'Error de permisos'
+      tags:
+      - api
+    delete:
+      operationId: destroyServiceDetails
+      description: Elimina un servicio del sistema
+      parameters:
+      - name: service_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usario no autenticado'
+        '403':
+          description: 'Error de permisos'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+  /api/v1/conectors:
+    get:
+      operationId: listConectors
+      description: Muestra los conectores disponibles.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConectorLite'
+          description: 'Operación exitosa'
+        '401':
+          description: 'Usuario no autenticado'
+      tags:
+      - api
+  /api/v1/conectors/{conector_id}:
+    get:
+      operationId: retrieveConectorDetails
+      description: Muestra los detalles del conector
+      parameters:
+      - name: conector_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conector'
+          description: ''
+        '401':
+          description: 'Usuario no autenticado'
+        '404':
+          description: "Recurso no encontrado"
+      tags:
+      - api
+  /api/v1/notifications:
+    post:
+      operationId: createNotificationDetails
+      description: "Env\xEDa el mensaje recibido al conector aducado"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/NotificationRes'
+          description: 'Oeración exitosa'
+      tags:
+      - api
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 2
+        service:
+          type: number
+          example: 1
+        conector:
+          type: integer
+          example: 6
+        meta:
+          type: object
+          properties:
+            name: 
+              type: string
+              example: Para Telegram
+        group:
+          type: number
+          example: 2
+        subscription_data:
+          type: object
+          properties:
+            chat_id:
+              type: string
+              example: -005515012
+            bot_token:
+              type: string
+              example: AAFrNbM2yIHqheIF6yorPHp0xUT1NC3O51c
+        created_at:
+          type: string
+          example: 2023-06-30T21:47:41.312258Z
+    SubscriptionLite:
+        type: object
+        properties:
+          id:
+            type: number
+            example: 3
+          service:
+            type: integer
+            example: 1
+          conector:
+            type: integer
+            example: 5
+    PostSubscription:
+        type: object
+        properties:
+          service:
+            type: number
+            example: 1
+          conector:
+            type: integer
+            example: 6
+          group:
+            type: number
+            example: 2
+          meta:
+            type: object
+            properties:
+              name: 
+                type: string
+                example: Para Telegram
+          subscription_data:
+            type: object
+            properties:
+              chat_id:
+                type: string
+                example: -005515012
+              bot_token:
+                type: string
+                example: AAFrNbM2yIHqheIF6yorPHp0xUT1NC3O51c
+    PutSubscription:
+      type: object
+      properties:
+        group:
+          type: number
+          example: 2
+        meta:
+          type: object
+          properties:
+            name: 
+              type: string
+              example: Para Telegram
+        subscription_data:
+          type: object
+          properties:
+            chat_id:
+              type: string
+              example: -005515012
+            bot_token:
+              type: string
+              example: AAFrNbM2yIHqheIF6yorPHp0xUT1NC3O51c
+    Group:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: EquipoA
+        meta:
+          type: object
+          properties:
+            disponiblidad:
+              type: string
+              example: "baja"
+        created_at:
+          type: string
+          example: '2023-06-24T21:08:31.305168Z'
+        service:
+          type: number
+          example: 1
+        subscriptions:
+          type: object
+          properties:
+            id:
+              type: number
+              example: 16
+            service:
+              type: number
+              example: 1
+            conector:
+              type: number
+              example: 1
+    GroupLite:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: EquipoA
+        service:
+          type: number
+          example: 1
+    PostGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          example: EquipoA
+        meta:
+          type: object
+          properties:
+            disponiblidad:
+              type: string
+              example: "baja"
+        service:
+          type: number
+          example: 1
+    PutGroup:
+      type: object
+      properties:
+        name:
+          type: string
+          example: EquipoA
+        meta:
+          type: object
+          properties:
+            disponiblidad:
+              type: string
+              example: "baja"
+    Service:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: "Servicio alertas de nuevos clientes"
+        meta:
+          type: object
+          properties:
+            clientes_totales:
+              type: number
+              example: 319
+        created_at:
+          type: string
+          example: '2023-06-24T21:08:31.298306Z'
+        owner:
+          type: number
+          example: 1
+    ServiceLite:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: "Servicio alertas de nuevos clientes"
+        owner:
+          type: number
+          example: 1
+    PostService:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Servicio alertas de nuevos clientes"
+        meta:
+          type: object
+          properties:
+            clientes_totales:
+              type: number
+              example: 319
+        owner:
+          type: number
+          example: 1
+    PutService:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Servicio alertas de nuevos clientes"
+        meta:
+          type: object
+          properties:
+            clientes_totales:
+              type: number
+              example: 319
+    Conector:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Telegram Conector
+        description:
+          type: string
+          example: Permite obtener notificaciones a través de Telegram
+        meta: {}
+        interface:
+          type: object
+          properties:
+            chat_id:
+              type: string 
+              example: CharField()
+            bot_token:
+              type: string
+              example: CharField()
+    ConectorLite:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: Telegram Conector
+        description:
+          type: string
+          example: Permite obtener notificaciones a través de Telegram
+    Notification:
+      type: object
+      properties:
+        service: 
+          type: number
+          example: 2
+        message:
+          type: object
+          properties:
+            title:
+              type: string
+              example: "Nuevo cliente"
+            body:
+              type: string
+              example: "Walter White se ha registrado desde Oviedo."
+        restricted_to_groups:
+          type: array
+          items:
+            oneOf:
+              - type: number
+        options:
+          type: object
+          properties:
+            "1": 
+              type: object
+              properties:
+                force_fail:
+                  type: boolean
+                  example: True
+    NotificationRes:
+      type: object
+      properties:
+        detail:
+          type: string
+          example: "Sent 2 succesfull notifications and failed 1."
+        successful:
+          type: array
+          items:
+            anyOf:
+              - properties: 
+                  subscription_id:
+                    type: number
+                    example: 16
+                  conector_name:
+                    type: string
+                    example: "Telegram Conector"
+              - properties:
+                  subscription_id:
+                    type: number
+                    example: 4
+                  conector_name:
+                    type: string
+                    example: "Email Conector"
+                    
+        fails:
+          type: array
+          items:
+            anyOf:
+            - properties:
+                subscription_id:
+                  type: number
+                  example: 15
+                conector_name:
+                  type: string
+                  example: "Microsoft Teams Conector"
+                description_:
+                  type: string 
+                  example: "Erro durante la conexión"

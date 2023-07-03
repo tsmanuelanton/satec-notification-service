@@ -23,18 +23,19 @@ El servicio ofrece, actualmente, los siguientes medios para recibir las notifica
 
 
 ### Rutas de la API 🗺️
+Las rutas cumplen con la especificación [OpenAPI]("https://www.openapis.org/"). Para obtener más detalles de los *endponts* están disponibles bajo la ruta `api/v1/schema`.
 
 | Endpoint | GET | POST | PUT |DELETE|
 | -- | -- | -- | -- | -- |
-| `v1/subscriptions` | Listar las suscripciones | Registrar una suscripción | N/A | N/A |
-| `v1/subscriptions/id` | Detalles de la suscripción | N/A | Actualizar la suscripción | Eliminar suscripción |
-| `v1/groups` | Listar grupos de suscripción | Registrar grupo | N/A | N/A | 
-| `v1/groups/id` | Detalles del grupo de suscripción | N/A | Actualizar el grupo | Eliminar grupo |
-| `v1/services` | Listar los servicios | Registrar un nuevo servicio | N/A | N/A
-| `v1/services/id` | Detalles del servicio | N/A | Actualizar servicio | Eliminar servicio
-| `v1/conectors` | Muestra los conectores disponibles | N/A | N/A | N/A
-| `v1/conectors/id` | Detalles del conector | N/A | N/A | N/A
-| `v1/notifications` | N/A | Enviar mensaje para notificar a los suscriptores | N/A | N/A |
+| `api/v1/subscriptions` | Listar las suscripciones | Registrar una suscripción | N/A | N/A |
+| `api/v1/subscriptions/id` | Detalles de la suscripción | N/A | Actualizar la suscripción | Eliminar suscripción |
+| `api/v1/groups` | Listar grupos de suscripción | Registrar grupo | N/A | N/A | 
+| `api/v1/groups/id` | Detalles del grupo de suscripción | N/A | Actualizar el grupo | Eliminar grupo |
+| `api/v1/services` | Listar los servicios | Registrar un nuevo servicio | N/A | N/A
+| `api/v1/services/id` | Detalles del servicio | N/A | Actualizar servicio | Eliminar servicio
+| `api/v1/conectors` | Muestra los conectores disponibles | N/A | N/A | N/A
+| `api/v1/conectors/id` | Detalles del conector | N/A | N/A | N/A
+| `api/v1/notifications` | N/A | Enviar mensaje para notificar a los suscriptores | N/A | N/A |
 
 ### Instalación 📦
 
