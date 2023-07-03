@@ -35,15 +35,15 @@ class ServicesList(APIView):
 
         data = {
             'name': request.data.get('name'),
-            'owner': request.user.id, 
             'meta': request.data.get('meta', {})
         }
 
-        serializer = ServicesSerializer(data=data)
+        serializer = ServicesSerializer(data=data, 
+                context={"request": request, "show_details": True})
         if serializer.is_valid():
             service = serializer.save()
             logger.info(
-                f"El usuario {data.get('owner')} ha registrado el servicio '{data.get('name').upper()}' con id {service.id}.")
+                f"El usuario {data.get('owner')} ha registrado el servicio '{data.get('name')}' con id {service.id}.")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         logger.error(
@@ -71,7 +71,7 @@ class ServiceDetails(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = ServicesSerializer(service)
+        serializer = ServicesSerializer(service, context={"show_details": True})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, service_id, *args, **kwargs):
@@ -95,9 +95,10 @@ class ServiceDetails(APIView):
                 {"detail": f"You do not have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN
             )
-
+        
         serializer = ServicesSerializer(
-            instance=service, data=request.data, partial=True)
+            instance=service, data=request.data, partial=True,
+            context={"request": request, "show_details": True})
         if serializer.is_valid():
             serializer.save()
             logger.info(

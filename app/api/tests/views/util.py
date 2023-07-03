@@ -18,6 +18,27 @@ class ConectorForTest(IConector):
         }
 
     async def notify(data, options={}) -> dict or None:
+        if options.get("force_fail", False):
+            return {"data": data, "options": options}
+        return None
+
+    def get_subscription_serializer() -> serializers:
+        return FakeSerializer
+
+class ConectorForTestB(IConector):
+    '''Conector para pruebas'''
+
+    name = "ConectorForTestB"
+
+    def getDetails() -> dict:
+        return {
+            'name': ConectorForTestB.name,
+            'description': f"{ConectorForTestB.name} description",
+        }
+
+    async def notify(data, options={}) -> dict or None:
+        if options.get("force_fail", False):
+            return {"force_fail": True}
         return None
 
     def get_subscription_serializer() -> serializers:
@@ -75,6 +96,7 @@ def create_subscription(service: Service, conector: Conector, group : Subscripti
     y conector que se pasan por parámetros'''
     # Genera un nombre un aleatorio
     value = gen_random_word()
+
     subscription = Subscription(service=service, conector=conector,
                          subscription_data={"Field": value}, group=group)
     subscription.save()

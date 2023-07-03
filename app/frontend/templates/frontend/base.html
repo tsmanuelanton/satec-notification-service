@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang='es'>
+{% block head %}
+    <head>
+        <!-- Datos que describen el documento -->
+        <meta charset='UTF-8' />
+        {% block title %}
+        <title>Satec Notification Service</title>
+        {% endblock %}
+        <meta name='author' content='Manuel Antón' />
+        <meta name='keywords' content='Satec Notfication Service, registro, notificaciones, mensajería, API' />
+        <meta name='description' content='formulario de registro a Satec Notification Service' />
+        <meta name='viewport' content='width=device-width, initial scale=1.0' />
+        <link rel='stylesheet' href='{% static 'frontend/style.css' %}'>
+        {% block scripts %}
+        {% endblock %}
+    </head>
+{% endblock %}
+
+<body>
+    <h1>Satec Notification Service</h1>
+{% block content %}
+
+{% endblock %}
+    <footer>
+        <p>Página realizada por <a href='https://github.com/UO276213'> Manuel Antón de la Calle </a> - Estudiante de la Universidad de Oviedo</p>
+        <address>
+            <p>Si necesitas contactarme no lo dudes a través de <a href='mailto:uo276213@uniovi.es'> mi correo</a>.</p>
+        </address>
+    </footer>
+</body>
+</html>

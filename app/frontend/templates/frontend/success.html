@@ -1,0 +1,18 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}
+<title>Satec Notification Service- Éxito</title>
+{% endblock %}
+
+{% block content %}
+<main>
+    <h2>Registrarse como Dueño de Servicio</h2>
+    <div class="container">
+        {% if error %}
+            <p> <span>⚠️</span>{{ error }}</p>
+        {% else %}
+            <p> <span>👏</span>Se ha enviado la solicitud al administrador. Se te enviará un correo si eres aceptado.</p>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

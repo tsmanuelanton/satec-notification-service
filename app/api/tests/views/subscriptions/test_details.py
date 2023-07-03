@@ -2,7 +2,6 @@ import json
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from api.views.subscriptions import SubscriptionDetails
 from api.tests.views.util import create_user, create_service, create_subscription, create_conector
-from api.serializers import SubscriptionsSerializer
 from rest_framework import status
 
 endpoint = "/v1/subscriptions"
@@ -32,11 +31,15 @@ class TestDetailsSubscriptions(APITestCase):
             request, subscription_id=subscription.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data, SubscriptionsSerializer(subscription, context={"show_details": True}).data)
-        self.assertEqual(response.data.get("subscription_data"), subscription.subscription_data)
-        self.assertEqual(response.data.get("meta"), subscription.meta)
-        self.assertEqual(response.data.get("created_at"), subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+        self.assertDictEqual({
+            "id": subscription.id,
+            "service": subscription.service.id,
+            "conector": subscription.conector.id,
+            "subscription_data": subscription.subscription_data,
+            "group": subscription.group,
+            "meta": subscription.meta,
+            "created_at": subscription.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        }, response.data)
 
     def test_not_owner(self):
         '''Comprueba que se lanza un error cuando la suscripción no pertene al usuario'''

@@ -1,0 +1,45 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Satec Notification Service- Registro</title>
+{% endblock %}
+
+{% block scripts %}
+<script src='{% static 'frontend/script.js' %}' defer></script>
+{% endblock %}
+
+{% block content %}
+<main>
+    <h2>Registrarse como Dueño de Servicio</h2>
+    <p>Registrate para empezar a notificar a tus suscriptores. Se te enviará un correo si eres aceptado.</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Datos personales</legend>
+            <p><label for='name'>Nombre</label></p>
+            {{form.name}}
+            {{form.errors.name}}
+            <p><label for='lastname'>Apellidos</label></p>
+            {{form.lastname}}
+            {{form.errors.lastname}}
+            <p><label for='email'>Email</label></p>
+            {{form.email}}
+            {{form.errors.email}}
+        </fieldset>
+        <fieldset>
+            <legend>Cuestionario</legend>
+            <p><label for='id_commercial_use'> Indicar si es para uso profesional</label></p>
+            {{form.commercial_use}}
+            {{form.errors.commercial_use}}
+            <p><label for='company_name'>Nombre organización</p>
+            {{form.company_name }}
+            {{form.errors.company_name}}
+            <p><label for='description'>Descripción del uso</label></p>
+            {{form.description}}
+            {{form.errors.description}}
+        </fieldset>
+        <button type="Submit">Enviar información</button>
+    </form>
+</main>
+{% endblock %}

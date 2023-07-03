@@ -53,8 +53,13 @@ class TestListServices(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
-        self.assertEqual(
-            response.data[0], ServicesSerializer(created_service0).data)
+
+        self.assertDictEqual(
+            response.data[0], {
+                "id": created_service0.id,
+                "name": created_service0.name,
+                "owner": user.id,
+            })
         self.assertEqual(
             response.data[1], ServicesSerializer(created_service1).data)
         

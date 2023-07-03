@@ -12,7 +12,7 @@ class TestGetSubscriptionGroups(APITestCase):
     def setUp(self) -> None:
         self.factory = APIRequestFactory()
 
-    def test_autheticated_no_groups(self):
+    def test_no_groups(self):
         '''Comprueba que se devuelve una lista vacía cuando no hay grupos'''
 
         user, token = create_user()
@@ -27,13 +27,14 @@ class TestGetSubscriptionGroups(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
     
-    def test_authenticated_groups_owned_and_not_owned(self):
-        '''Comprueba que se devuelve sólo los'''
+    def test_owned_and_not_owned(self):
+        '''Comprueba que se devuelve sólo los grupos del usuario autenticado'''
 
         user, token = create_user()
-        service = create_service(user)
-        group1 = create_subscription_group(service)
-        group2 = create_subscription_group(service)
+        service1 = create_service(user)
+        service2 = create_service(user)
+        group1 = create_subscription_group(service1)
+        group2 = create_subscription_group(service2)
 
         another_user, _ = create_user()
         service_not_owned = create_service(another_user)
@@ -48,8 +49,17 @@ class TestGetSubscriptionGroups(APITestCase):
         response = SubscriptionGroupsList.as_view()(request)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, [SubscriptionGroupsSerializer(group1).data,
-                                         SubscriptionGroupsSerializer(group2).data ])
+        self.assertDictEqual(response.data[0], {
+            "id": group1.id,
+            "name": group1.name,
+            "service": service1.id,
+        })
+        
+        self.assertDictEqual(response.data[1], {
+            "id": group2.id,
+            "name": group2.name,
+            "service": service2.id,
+        })
 
     def test_not_authenticated(self):
         '''Comprueba que se lanza un error cuando el usuario no está autenticado'''

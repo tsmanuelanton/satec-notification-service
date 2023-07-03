@@ -17,7 +17,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "-d",
             "--delete",
-            nargs="+",
+            nargs="*",
             help="Delete specified conectors from database",
         )
         parser.add_argument(
