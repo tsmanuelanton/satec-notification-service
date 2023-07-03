@@ -16,4 +16,9 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+RUN python manage.py migrate
+
 CMD [ "python", "manage.py", "runserver", "127.0.0.1:8000" ]
