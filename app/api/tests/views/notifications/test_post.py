@@ -8,7 +8,7 @@ from unittest import mock
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-endpoint = "/api/v1/conectors/"
+endpoint = "/api/v1/conectors"
 
 class TestPostNotifications(APITransactionTestCase):
 
