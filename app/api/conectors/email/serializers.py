@@ -6,9 +6,6 @@ class SubcriptionDataEmail(serializers.Serializer):
     smtp_host = serializers.CharField()
     port = serializers.IntegerField(
         min_value=0, max_value=65535)
-    port = serializers.IntegerField(
-        min_value=0, max_value=65535)
-    Subject = serializers.CharField()
     From = serializers.CharField()
     To = serializers.CharField()
     user = serializers.EmailField()
