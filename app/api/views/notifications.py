@@ -24,7 +24,7 @@ class NotificationDetails(APIView):
         if not await msgSerializer.is_valid():
             return Response(msgSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
         service_id = request.data.get('service')
-        service = await Service.objects.select_related().aget(id=service_id)
+        service = await Service.objects.select_related().filter(id=service_id).afirst()
         if not service:
             return Response({"detail": f"Service {service_id} not found."}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -11,9 +11,10 @@ services:
       context: ./app
       dockerfile: Dockerfile.prod
     environment:
+      - PUSH_API_APP_SERVER_KEY=$PUSH_API_APP_SERVER_KEY # Need to be set in .env file for Push API Conector
+      - PUSH_API_PRIVATE_KEY=$PUSH_API_PRIVATE_KEY # Need to be set in .env file for Push API Conector
       - DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
       - DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS # Dominio del host
-      - DJANGO_DATABASE=$DJANGO_DATABASE # Nombre de la base de datos
       - ID_SERVICE_REGISTER_SNS=$ID_SERVICE_REGISTER_SNS      # ID del servicio que envía mensajes de nuevos dueños de servicio
       - TOKEN_SERVICE_REGISTER_SNS=$TOKEN_SERVICE_REGISTER_SNS # Token de acceso al servicio que
                                                                 # envía mensajes de nuevos dueños de servicio 

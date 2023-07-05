@@ -4,7 +4,10 @@ services:
   web:
     build: ./app
     command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-    - ./app/:/app/
     ports:
       - 8000:8000
+    environment:
+      - PUSH_API_APP_SERVER_KEY=$PUSH_API_APP_SERVER_KEY # Need to be set in .env file for Push API Conector
+      - PUSH_API_PRIVATE_KEY=$PUSH_API_PRIVATE_KEY # Need to be set in .env file for Push API Conector
+      - ID_SERVICE_REGISTER_SNS=$ID_SERVICE_REGISTER_SNS  # ID del servicio que envía mensajes de nuevos dueños de servicio
+      - TOKEN_SERVICE_REGISTER_SNS=$TOKEN_SERVICE_REGISTER_SNS # Token para el portal de reigstro

@@ -42,7 +42,7 @@ Las rutas cumplen con la especificación [OpenAPI]("https://www.openapis.org/").
 Creamos un directorio e inicilizamos un entorno virtual de python dentro.
 Depués, ejecutamos los siguientes comandos
 ```
-git clone https://github.com/manuel-anton-satec/satec-notification-service.git
+git clone https://github.com/UO276213/satec-notification-service.git
 cd satec-notification-service
 cd app
 pip install -r requirements.txt
