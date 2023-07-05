@@ -16,6 +16,7 @@ jobs:
         user: ${{ secrets.DEPLOY_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
         command: |
+          rm nginx.conf
           wget --header="Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://raw.githubusercontent.com/UO276213/satec-notification-service/main/nginx.conf
           wget --header="Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://raw.githubusercontent.com/UO276213/satec-notification-service/main/docker-compose.deploy.yml -O docker-compose.yml
           docker compose stop
